@@ -176,22 +176,18 @@ class Bookings(Table):
         sql = "SELECT * FROM Bookings WHERE Date=? AND Time=?"
         return self.select_dataspecific_fetchall(sql, (date, time))
 
-
-
-
-    def bookings_select_booking_bill(self):
-        tableid = input("Please enter the Table of the bill you would like: ")
-        time = input("Please enter the time of the booking of the bill you would like: ")
-        date = input("Please enter the date of the booking of the bill you would like (YYYY-MM-DD): ")
-        sql = "SELECT BillTotal FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
+    def bookings_select_booking_bill(self, tableid, time, date):
         values = (tableid, time, date)
-        bill = str(self.select_dataspecific_fetchone(sql, values))
-        bill = bill[1: len(bill)-2]
-        print("The current bill for table " + str(tableid) + " is: " + bill)
+        sql = "SELECT BillTotal FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
+        billtuple = self.select_dataspecific_fetchone(sql, values)
+        bill = billtuple[0]
+        return bill
 
     def bookings_select_booking_fromtableid(self, tableid):
         sql = "SELECT * FROM Bookings WHERE TableID=?"
         return self.select_dataspecific_fetchone(sql, (tableid,))
+
+
 
     def bookings_select_bookingid(self, TableID):
         sql = "SELECT BookingID FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
@@ -240,35 +236,23 @@ class Tables(Table):
             else:
                 return -1
 
-    def insert_table_record(self):
-        NoSeats = input("Please enter the number of seats for this table: ")
-        Description = input("Please enter the description for this table: ")
+    def tables_add_table(self, NoSeats, Description):
         values = (NoSeats, Description)
         sql = "INSERT INTO Tables (NoSeats, Description) VALUES (?, ?)"
         self.insert_record(sql, values)
-        print("\nThe Table has been added to the database.")
-
-    def delete_table_record(self, tableid):
+        
+    def tables_delete_table(self, tableid):
         sql = "DELETE FROM Tables WHERE TableID=?"
         self.delete_record(sql, (tableid,))
-        print("\nThe Table has been deleted from the database.")
-    
-    def update_table_record(self, oldtableid):
-        print("Please enter the new details of the table:")
-        noseats = input("Number of Seats: ")
-        description = input("Description: ")
-        sql = "UPDATE Tables SET NoSeats=?, Description=? WHERE TableID=?"
+
+    def tables_update_table(self, oldtableid, noseats, description):
         values = (noseats, description, oldtableid)
+        sql = "UPDATE Tables SET NoSeats=?, Description=? WHERE TableID=?"
         self.update(sql, values)
-        print("The details of the table have been updated.")
 
     def print_all_tables(self):
         sql = "SELECT * FROM Tables ORDER BY NoSeats ASC"
-        tables = self.select(sql)
-        for i in range(0, (len(tables))):
-            print("\nTable " + str(tables[i][0]) + " details:"
-                    + "\n   Number of Seats: " + str(tables[i][1])
-                    + "\n   Description: " + str(tables[i][2]))
+        return self.select(sql)
 
 
 class Order(Table):

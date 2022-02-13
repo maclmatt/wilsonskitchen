@@ -190,10 +190,58 @@ while choice != "E":
                         + "\n   Current bill: " + str(bookings[i][5])
                         + "\n   Customer ID: " + str(bookings[i][6]))
 
-
-
-            
         elif bookchoice == "5":
-            bookings.select_booking_bill()
+            tableid = input("Please enter the Table of the bill you would like: ")
+            time = input("Please enter the time of the booking of the bill you would like: ")
+            date = input("Please enter the date of the booking of the bill you would like (YYYY-MM-DD): ")
+            bill = wilsonskitchen.bookings.bookings_select_booking_bill(tableid, time, date)
+            print("The current bill for table " + str(tableid) + " is: " + bill)
+
         else:
             print("That is not a valid choice, the main menu will now reload:")
+
+    elif choice == "4":#table
+        print("\nTable Details menu:\n"
+            + "   1. Add new table\n"
+            + "   2. Delete table\n"
+            + "   3. Update table details\n"
+            + "   4. Get list of all tables")
+        tablechoice = input("Please choose an option from the menu above (E to exit table menu): ")
+        
+        if tablechoice == "1":
+            print("Please enter the details of the table.")
+            NoSeats = input("Please enter the number of seats for this table: ")
+            Description = input("Please enter the description for this table: ")
+            wilsonskitchen.tables.tables_add_table(NoSeats, Description)
+            print("\nThe Table has been added to the database.")
+
+        elif tablechoice == "2":
+            tableid = input("Please enter the Table ID of the Table you wish to delete: ")
+            check = wilsonskitchen.bookings.bookings_select_booking_fromtableid(tableid)
+            if check == None:
+                wilsonskitchen.tables.tables_delete_table(tableid)
+                print("\nThe Table has been deleted from the database.")
+            else:
+                print("You cannot delete this table as there are bookings made for it.")
+
+        elif tablechoice == "3":
+            oldtableid = input("Please enter the Table ID of the Table you wish to update: ")
+            check = wilsonskitchen.bookings.bookings_select_booking_fromtableid(oldtableid)
+            if check == None:
+                print("Please enter the new details of the table:")
+                noseats = input("Number of Seats: ")
+                description = input("Description: ")
+                wilsonskitchen.tables.tables_update_table(oldtableid, noseats, description)
+                print("The details of the table have been updated.")
+            else:
+                print("You cannot update this table as there are bookings made for it.")
+
+        elif tablechoice == "4":
+            tables = wilsonskitchen.tables.print_all_tables()
+            for i in range(0, (len(tables))):
+                print("\nTable " + str(tables[i][0]) + " details:"
+                        + "\n   Number of Seats: " + str(tables[i][1])
+                        + "\n   Description: " + str(tables[i][2]))
+
+        else:
+            print("That is not a valid choice, the menu will now reload:")

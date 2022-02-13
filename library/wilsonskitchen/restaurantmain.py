@@ -86,33 +86,6 @@ class Restaurant():
 
 
 
-    elif choice == "4":
-        print("\nTable Details menu:\n"
-            + "   1. Add new table\n"
-            + "   2. Delete table\n"
-            + "   3. Update table details\n"
-            + "   4. Get list of all tables")
-        tablechoice = input("Please choose an option from the menu above (E to exit table menu): ")
-        if tablechoice == "1":
-            tables.insert_table_record()
-        elif tablechoice == "2":
-            tableid = input("Please enter the Table ID of the Table you wish to delete: ")
-            check = booking.select_booking_fromtableid(tableid)
-            if check == None:
-                tables.delete_table_record(tableid)
-            else:
-                print("You cannot delete this table as there are bookings made for it.")
-        elif tablechoice == "3":
-            oldtableid = input("Please enter the Table ID of the Table you wish to update: ")
-            check = booking.select_booking_fromtableid(oldtableid)
-            if check == None:
-                tables.update_table_record(oldtableid)
-            else:
-                print("You cannot update this table as there are bookings made for it.")
-        elif tablechoice == "4":
-            tables.print_all_tables()
-        else:
-            print("That is not a valid choice, the menu will now reload:")
             
     elif choice == "5":
         print("\nOrder Details menu:\n"
