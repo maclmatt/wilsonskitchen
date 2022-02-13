@@ -200,7 +200,7 @@ while choice != "E":
         else:
             print("That is not a valid choice, the main menu will now reload:")
 
-    elif choice == "4":#table
+    elif choice == "4":#tables
         print("\nTable Details menu:\n"
             + "   1. Add new table\n"
             + "   2. Delete table\n"
@@ -245,3 +245,45 @@ while choice != "E":
 
         else:
             print("That is not a valid choice, the menu will now reload:")
+
+    elif choice == "5":#orders
+        print("\nOrder Details menu:\n"
+            + "   1. Add new order\n"
+            + "   2. Get all orders\n")
+        orderchoice = input("Please choose an option from the menu above (E to exit order menu): ")
+        
+        if orderchoice == "1":
+            TableID = input("Please enter which table the order is for: ")
+            n = int(input("Please enter the number of different items on the order: "))
+            for i in range(1, n):
+                newproductname = input("Please enter the product name: ")
+                wilsonskitchen.productnamelist.list_add_item(newproductname)
+                wilsonskitchen.productidlist.list_add_item(wilsonskitchen.products.products_select_productid(newproductname))
+                wilsonskitchen.quantitylist.list_add_item(int(input("Please enter the quantity of the item ordered: ")))
+            check = wilsonskitchen.restaurant_make_order(TableID, n)
+            if check:
+                print("Order has been added to the database.")
+            else:#if returned FALSE!!
+                    print("This product is out of stock, please re-enter order excluding this item.")
+            
+        elif orderchoice == "2":
+            type = input("Would you like to see all orders made by a particular table (t) or a particular date (d): ")
+            if type == "t":
+                tableid = input("Please enter the table of the orders you would like to see: ")
+                orders = wilsonskitchen.orders.orders_select_orders_for_table(tableid)
+                for i in range(0, (len(orders))):
+                    print("\nOrder " + str(orders[i][0]) + " details:"
+                        + "\n   Date and Time: " + str(orders[i][1])
+                        + "\n   Total Price: " + str(orders[i][2])
+                        + "\n   Table ID: " + str(orders[i][3]))
+            elif type == "d":
+                chosendate = input("Please enter the date of the orders you would like to see (YYYY-MM-DD): ")
+                orders = wilsonskitchen.orders.orders_select_orders_for_date(date)
+                for i in range(0, (len(orders))):
+                    print("\nOrder " + str(orders[i][0]) + " details:"
+                        + "\n   Date and Time: " + str(orders[i][1])
+                        + "\n   Total Price: " + str(orders[i][2])
+                        + "\n   Table ID: " + str(orders[i][3]))
+
+#next to do: choice 6 menu details
+#left to update on classes.py: 192-206 in Bookings and OrderProducts onwards (excluding a few methods)

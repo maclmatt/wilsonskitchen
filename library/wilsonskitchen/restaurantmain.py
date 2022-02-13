@@ -1,27 +1,36 @@
-from classes import List, Customers, Bookings, Tables, Order, OrderProduct, Product, Use, Ingredient, IngredientBatch
+from unittest import TextTestRunner
+from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches
 
 class Restaurant():
     _customers = None
     _bookings = None
     _tables = None
-    _order = None
-    _orderproduct = None
-    _product = None
-    _use = None
-    _ingredient = None
-    _ingredientbatch = None
+    _orders = None
+    _orderproducts = None
+    _products = None
+    _uses = None
+    _ingredients = None
+    _ingredientbatches = None
+    _productnamelist = None
+    _productidlist = None
+    _quantitylist = None
+    _productavailabilitieslist = None
     _db_name = "wilsons_kitchen.db"
 
     def __init__(self):
         self._customers = Customers(self._db_name, "Customers")
         self._bookings = Bookings(self._db_name, "Booking")
         self._tables = Tables(self._db_name, "Tables")
-        self._order = Order(self._db_name, "OrderTable")
-        self._orderproduct = OrderProduct(self._db_name, "OrderProduct")
-        self._product = Product(self._db_name, "Product")
-        self._use = Use(self._db_name, "Use")
-        self._ingredient = Ingredient(self._db_name, "Ingredient")
-        self._ingredientbatch = IngredientBatch(self._db_name, "IngredientBatch")
+        self._orders = Orders(self._db_name, "Orders")
+        self._orderproducts = OrderProducts(self._db_name, "OrderProducts")
+        self._products = Products(self._db_name, "Products")
+        self._uses = Uses(self._db_name, "Uses")
+        self._ingredients = Ingredients(self._db_name, "Ingredients")
+        self._ingredientbatches = IngredientBatches(self._db_name, "IngredientBatches")
+        self._productnamelist = List()
+        self._productidlist = List()
+        self._quantitylist = List()
+        self._productavailabilitieslist = List()
 
     @property
     def customers(self):
@@ -36,28 +45,44 @@ class Restaurant():
         return self._tables
 
     @property
-    def order(self):
-        return self._order
+    def orders(self):
+        return self._orders
     
     @property
-    def orderproduct(self):
-        return self._orderproduct
+    def orderproducts(self):
+        return self._orderproducts
 
     @property
-    def product(self):
-        return self._product
+    def products(self):
+        return self._products
 
     @property
-    def use(self):
-        return self._use
+    def uses(self):
+        return self._uses
 
     @property
-    def ingredient(self):
-        return self._ingredient
+    def ingredients(self):
+        return self._ingredients
 
     @property
-    def ingredientbatch(self):
-        return self._ingredientbatch
+    def ingredientbatches(self):
+        return self._ingredientbatches
+
+    @property
+    def productnamelist(self):
+        return self._productnamelist
+
+    @property
+    def productidlist(self):
+        return self._productidlist
+
+    @property
+    def quantitylist(self):
+        return self._quantitylist
+
+    @property
+    def productavailabilitieslist(self):
+        return self._productavailabilitieslist
 
     def restaurant_make_booking(self, time, date, nopeople, custid):
         tableid = self._tables.tables_find_table_for_booking(time, date, nopeople)
@@ -71,84 +96,53 @@ class Restaurant():
         custid = self._customers.customers_select_custid(email)[0]
         self._bookings.bookings_delete_booking(custid, time, date)
 
-    
+    def restaurant_make_order(self, tableid, n):
+        orderid = self._orders.orders_add_order(tableid)
+        names = self._productnamelist.return_list()
+        ids = self._productidlist.return_list()
+        quantity = self._quantitylist.return_list()
 
+        check = True
+        for i in range(0, n-1):
+            check = self._products.products_check_quantity_availabilty(quantity[i], ids[i])
+            if check == False:
+                break
 
+            self._orderproducts.orderproducts_add_orderproduct(orderid, ids[i], quantity[i])
+            price = self._products.products_get_product_price(ids[i])
+            sumprice = price * quantity[i]
+            self._orders.orders_add_orderproduct_price(orderid, sumprice)
 
-
-
-
-
-
-
-
-
-
-
-
+            usesofproduct = self._uses.uses_select_uses_forproduct(ids[i])
+            for i in range(0, len(usesofproduct)):
+                usequantity = quantity[i] * usesofproduct[i][3]
+                self._ingredients.ingredients_reduce_ingredient_stock(usesofproduct[i][2], usequantity)
             
-    elif choice == "5":
-        print("\nOrder Details menu:\n"
-            + "   1. Add new order\n"
-            + "   2. Get all orders\n")
-        orderchoice = input("Please choose an option from the menu above (E to exit order menu): ")
-        if orderchoice == "1":
-            TableID = input("Please enter which table the order is for: ")
-            orderid = order.insert_order_record(TableID)
-            n = int(input("Please enter the number of different items on the order: "))
-            productnamelist = List()
-            productidlist = List()
-            Quantitylist = List()
-            check = True
-            for i in range(1, n):
-                newproductname = input("Please enter the product name: ")
-                productnamelist.add_item(newproductname)
-                newproductid = product.select_product_id(newproductname)
-                productidlist.add_item(newproductid)
-                newquantity = int(input("Please enter the quantity of the item ordered: "))
-                Quantitylist.add_item(newquantity)
-                check = product.check_quantity_availabilty(newquantity, newproductid)
-                if check == False:
-                    break
-            if check:
-                names = productnamelist.return_list()
-                ids = productidlist.return_list()
-                quantity = Quantitylist.return_list()
-                for i in range(0, n-1):
-                    orderproduct.insert_orderproduct_record(orderid, ids[i], quantity[i])
-                    price = product.get_product_price(ids[i])
-                    sumprice = price * quantity[i]
-                    order.increase_order_totalprice(orderid, sumprice)
-                    uses = use.select_all_uses_forproduct(ids[i])
-                    for i in range(0, len(uses)):
-                        usequantity = quantity[i] * uses[i][3]
-                        ingredient.reduce_ingredient_stock(uses[i][2], usequantity)
-                    ordercost = order.get_order_totalprice(orderid)
-                    bookingid = booking.select_bookingid(TableID)
-                    booking.increase_booking_billtotal(bookingid, ordercost)
-                    
-                    products = product.get_all_products()
-                    for i in range(0, len(products)):
-                        uses = use.select_all_uses_forproduct(int(products[i][0]))
-                        availabilitiesofproduct = List()
-                        for i in range(0, len(uses)):
-                            stock = ingredient.select_ingredient_stock(uses[i][2])
-                            usequant = use.select_use_quantity(uses[i][0])
-                            available = stock // usequant
-                            availabilitiesofproduct.add_item(available)
-                        lowest = availabilitiesofproduct.return_lowest()
-                        product.insert_product_quantity(lowest, products[i][0])
+            ordercost = self._orders.orders_get_order_totalprice(orderid)
+            bookingid = self._bookings.bookings_select_bookingid(tableid)
+            self._bookings.bookings_increase_booking_billtotal(bookingid, ordercost)
 
-                else:
-                    order.delete_order_record(orderid)
-                    print("This product is out of stock, please re-enter order excluding this item.")
-            
-        elif orderchoice == "2":
-            type = input("Would you like to see all orders made by a particular table (t) or a particular date (d): ")
-            if type == "t":
-                order.select_orders_for_table()
-            elif type == "d":
-                order.select_orders_for_date()
+            checkproducts = self._products.products_get_all_products()
+            for i in range(0, len(checkproducts)):
+                usesofproduct = self._uses.uses_select_uses_forproduct(checkproducts[i][0])
+                for i in range(0, len(usesofproduct)):
+                    stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
+                    usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
+                    available = stock // usequantity
+                    self._productavailabilitieslist.list_add_item(available)
+                lowest = self._productavailabilitieslist.list_return_lowest()
+                self._products.products_add_product_quantity(lowest, checkproducts[i][0])
+            return True
+
+        if check == False:
+            self._orders.orders_delete_order(orderid)
+            return False
+
+
+
+
+
+
 
     elif choice == "6":
         print("\nMenu Details menu:\n"

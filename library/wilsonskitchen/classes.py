@@ -6,12 +6,12 @@ class List():
         self._list = []
         self.length = 0
 
-    def add_item(self, item):
+    def list_add_item(self, item):
         list = self.list
         list.append(item)
         self.length += 1
 
-    def switch(self, numbers, low, high):
+    def list_sort_switch(self, numbers, low, high):
         pivot = numbers[high]
         item = low - 1
         for i in range(low, high):
@@ -21,19 +21,19 @@ class List():
         (numbers[item + 1], numbers[high]) = (numbers[high], numbers[item + 1])
         return item + 1
 
-    def quick_sort(self, numbers, low, high):
+    def list_quick_sort(self, numbers, low, high):
         if low < high:
-            pivot = self.switch(numbers, low, high)
-            self.quick_sort(numbers, low, pivot-1)
-            self.quick_sort(numbers, pivot + 1, high)
+            pivot = self.list_sort_switch(numbers, low, high)
+            self.list_quick_sort(numbers, low, pivot-1)
+            self.list_quick_sort(numbers, pivot + 1, high)
 
     def sort_list(self):
-        self.quick_sort(self.list, 0, (self.length)-1)
+        self.list_quick_sort(self.list, 0, (self.length)-1)
 
     def return_list(self):
         return self.list
 
-    def return_lowest(self):
+    def list_return_lowest(self):
         self.sort_list()
         return self.list[0]
 
@@ -255,13 +255,13 @@ class Tables(Table):
         return self.select(sql)
 
 
-class Order(Table):
+class Orders(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_order_table()
+        self.reset_orders_table()
 
-    def reset_order_table(self):
-        sql = """CREATE TABLE OrderTable
+    def reset_orders_table(self):
+        sql = """CREATE TABLE Orders
                 (OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Date TEXT,
                 Time TEXT,
@@ -270,65 +270,52 @@ class Order(Table):
                 FOREIGN KEY (TableID) REFERENCES Tables(TableID))"""
         self.recreate_table(sql)
 
-    def insert_order_record(self, TableID):
+    def orders_add_order(self, TableID):
         TotalPrice = 0.00
         today = date.today()
         now = datetime.now()
         time = now.strftime("%H:%M:%S")
         values = (today, time, TotalPrice, TableID)
-        sql = "INSERT INTO OrderTable (Date, Time, TotalPrice, TableID) VALUES (?, ?, ?, ?)"
+        sql = "INSERT INTO Orders (Date, Time, TotalPrice, TableID) VALUES (?, ?, ?, ?)"
         self.insert_record(sql, values)
-        sql = "SELECT OrderID FROM OrderTable WHERE Date=? AND Time=? AND TotalPrice=? AND TableID=?"
+        sql = "SELECT OrderID FROM Orders WHERE Date=? AND Time=? AND TotalPrice=? AND TableID=?"
         orderidtuple = self.select_dataspecific_fetchone(sql, values)
         orderid = orderidtuple[0]
         return orderid
 
-    def delete_order_record(self, orderid):
-        sql = "DELETE FROM OrderTable WHERE OrderID=?"
+    def orders_delete_order(self, orderid):
+        sql = "DELETE FROM Orders WHERE OrderID=?"
         self.delete_record(sql, (orderid,))
 
-    def increase_order_totalprice(self, orderid, price):
-        sql = "SELECT TotalPrice FROM OrderTable WHERE OrderID=?"
+    def orders_add_orderproduct_price(self, orderid, price):
+        sql = "SELECT TotalPrice FROM Orders WHERE OrderID=?"
         oldpricetuple = self.select_dataspecific_fetchone(sql, (orderid,))
         oldprice = oldpricetuple[0]
         newprice = oldprice + price
-        sql = "UPDATE OrderTable SET TotalPrice=? WHERE OrderID=?"
+        sql = "UPDATE Orders SET TotalPrice=? WHERE OrderID=?"
         self.update(sql, (newprice, orderid))
 
-    def get_order_totalprice(self, orderid):
-        sql = "SELECT TotalPrice FROM OrderTable WHERE OrderID=?"
+    def orders_get_order_totalprice(self, orderid):
+        sql = "SELECT TotalPrice FROM Orders WHERE OrderID=?"
         pricetuple = self.select_dataspecific_fetchone(sql, (orderid,))
         price = pricetuple[0]
         return price
 
-    def select_orders_for_table(self):
-        tableid = input("Please enter the table of the orders you would like to see: ")
-        sql = "SELECT * FROM OrderTable WHERE TableID=?"
+    def orders_select_orders_for_table(self, tableid):
+        sql = "SELECT * FROM Orders WHERE TableID=?"
         orders = self.select_dataspecific_fetchall(sql, (tableid,))
-        for i in range(0, (len(orders))):
-            print("\nOrder " + str(orders[i][0]) + " details:"
-                    + "\n   Date and Time: " + str(orders[i][1])
-                    + "\n   Total Price: " + str(orders[i][2])
-                    + "\n   Table ID: " + str(orders[i][3]))
 
-    def select_orders_for_date(self):
-        chosendate = input("Please enter the date of the orders you would like to see (YYYY-MM-DD): ")
-        sql = "SELECT * FROM OrderTable WHERE Date=?"
-        orders = self.select_dataspecific_fetchall(sql, (chosendate,))
-        for i in range(0, (len(orders))):
-            print("\nOrder " + str(orders[i][0]) + " details:"
-                    + "\n   Date and Time: " + str(orders[i][1])
-                    + "\n   Total Price: " + str(orders[i][2])
-                    + "\n   Table ID: " + str(orders[i][3]))
+    def orders_select_orders_for_date(self, date):
+        sql = "SELECT * FROM Orders WHERE Date=?"
+        orders = self.select_dataspecific_fetchall(sql, (date,))
 
-
-class OrderProduct(Table):
+class OrderProducts(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_orderproduct_table()
+        self.reset_orderproducts_table()
 
-    def reset_orderproduct_table(self):
-        sql = """CREATE TABLE OrderProduct
+    def reset_orderproducts_table(self):
+        sql = """CREATE TABLE OrderProducts
                 (OrderProductID INTEGER PRIMARY KEY AUTOINCREMENT,
                 ProductID INTEGER,
                 Quantity INTEGER,
@@ -337,18 +324,18 @@ class OrderProduct(Table):
                 FOREIGN KEY (OrderID) REFERENCES OrderTable(OrderID))"""
         self.recreate_table(sql)
 
-    def insert_orderproduct_record(self, OrderID, ProductID, quantity):
-        sql = "INSERT INTO OrderProduct (ProductID, Quantity, OrderID) VALUES (?, ?, ?)"
+    def orderproducts_add_orderproduct(self, OrderID, ProductID, quantity):
+        sql = "INSERT INTO OrderProducts (ProductID, Quantity, OrderID) VALUES (?, ?, ?)"
         self.insert_record(sql, (ProductID, quantity, OrderID))
 
 
-class Product(Table):
+class Products(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_product_table()
+        self.reset_products_table()
 
-    def reset_product_table(self):
-        sql = """CREATE TABLE Product
+    def reset_products_table(self):
+        sql = """CREATE TABLE Products
                 (ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Type TEXT,
                 Name TEXT,
@@ -362,20 +349,20 @@ class Product(Table):
         price = input("Please enter the price of the product: ")
         quantity = 0
         values = (type, name, price, quantity)
-        sql = "INSERT INTO Product (Type, Name, Price, QuantityAvailable) VALUES (?, ?, ?, ?)"
+        sql = "INSERT INTO Products (Type, Name, Price, QuantityAvailable) VALUES (?, ?, ?, ?)"
         self.insert_record(sql, values)
-        sql = "SELECT ProductID FROM Product WHERE Name=? AND Price=?"
+        sql = "SELECT ProductID FROM Products WHERE Name=? AND Price=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name, price))
         id = idtuple[0]
         return id
 
     def delete_product_record(self, productid):
-        sql = "DELETE FROM Product WHERE ProductID=?"
+        sql = "DELETE FROM Products WHERE ProductID=?"
         self.delete_record(sql, (productid,))
         print("\nThe Product has been deleted from the the database.")
 
     def print_all_products(self):
-        sql = "SELECT * FROM Product ORDER BY Type ASC"
+        sql = "SELECT * FROM Products ORDER BY Type ASC"
         products = self.select(sql)
         for i in range(0, (len(products))):
             print("\nProduct " + str(products[i][0]) + " details:"
@@ -385,7 +372,7 @@ class Product(Table):
                     + "\n   Quantity Available: " + str(products[i][4]))
 
     def print_menu(self):
-        sql = "SELECT * FROM Product WHERE Type=?"
+        sql = "SELECT * FROM Products WHERE Type=?"
         starters = self.select_dataspecific_fetchall(sql, "Starter")
         print("\nStarters:")
         for i in range(0, (len(starters))):
@@ -403,14 +390,14 @@ class Product(Table):
         for i in range(0, (len(desserts))):
             print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
 
-    def select_product_id(self, name):
-        sql = "SELECT ProductID FROM Product WHERE Name=?"
+    def products_select_productid(self, name):
+        sql = "SELECT ProductID FROM Products WHERE Name=?"
         prodidtuple = self.select_dataspecific_fetchone(sql, (name,))
         prodid = prodidtuple[0]
         return prodid
 
-    def check_quantity_availabilty(self, quantity, productid):
-        sql = "SELECT QuantityAvailable FROM Product WHERE ProductID=?"
+    def products_check_quantity_availabilty(self, quantity, productid):
+        sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
         availabletuple = self.select_dataspecific_fetchone(sql, (productid,))
         available = availabletuple[0]
         if available < quantity:
@@ -419,35 +406,35 @@ class Product(Table):
         else:
             return True
 
-    def get_product_price(self, productid):
-        sql = "SELECT Price FROM Product WHERE ProductID=?"
+    def products_get_product_price(self, productid):
+        sql = "SELECT Price FROM Products WHERE ProductID=?"
         price = self.select_dataspecific_fetchone(sql, (productid,))[0]
         return price
 
     def reduce_product_quantity(self, productid, quantity):
-        sql = "SELECT QuantityAvailable FROM Product WHERE ProductID=?"
+        sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
         oldquantity = self.select_dataspecific_fetchone(sql, (productid,))
         newquantity = oldquantity - quantity
-        sql = "UPDATE Product SET QuantityAvailable=? WHERE ProductID=?"
+        sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
         self.update(sql, (newquantity, productid))
 
-    def get_all_products(self):
-        sql = "SELECT * FROM Product"
+    def products_get_all_products(self):
+        sql = "SELECT * FROM Products"
         return self.select(sql)
 
-    def insert_product_quantity(self, quantity, productid):
-        sql = "UPDATE Product SET QuantityAvailable=? WHERE ProductID=?"
+    def products_add_product_quantity(self, quantity, productid):
+        sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
         values = (quantity, productid)
         self.update(sql, values)
 
 
-class Use(Table):
+class Uses(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_use_table()
+        self.reset_uses_table()
 
-    def reset_use_table(self):
-        sql = """CREATE TABLE Use
+    def reset_uses_table(self):
+        sql = """CREATE TABLE Uses
                 (UseID INTEGER PRIMARY KEY AUTOINCREMENT,
                 ProductID INTEGER,
                 IngredientID INTEGER,
@@ -458,32 +445,32 @@ class Use(Table):
         
     def insert_use_record(self, ProductID, IngredientID):
         Quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
-        sql = "INSERT INTO Use (ProductID, IngredientID, QuantityInKilos) VALUES (?, ?, ?)"
+        sql = "INSERT INTO Uses (ProductID, IngredientID, QuantityInKilos) VALUES (?, ?, ?)"
         self.insert_record(sql, (ProductID, IngredientID, Quantity))
 
     def delete_use_record(self, productid):
-        sql = "DELETE FROM Use WHERE ProductID=?"
+        sql = "DELETE FROM Uses WHERE ProductID=?"
         self.delete_record(sql, (productid,))
 
-    def select_all_uses_forproduct(self, productid):
-        sql = "SELECT * FROM Use WHERE ProductID=?"
+    def uses_select_uses_forproduct(self, productid):
+        sql = "SELECT * FROM Uses WHERE ProductID=?"
         uses = self.select_dataspecific_fetchall(sql, (productid,))
         return uses
 
-    def select_use_quantity(self, useid):
-        sql = "SELECT QuantityInKilos FROM Use WHERE UseID=?"
+    def uses_select_use_quantity(self, useid):
+        sql = "SELECT QuantityInKilos FROM Uses WHERE UseID=?"
         quantitytuple = self.select_dataspecific_fetchone(sql, (useid,))
         quantity = quantitytuple[0]
         return quantity
 
 
-class Ingredient(Table):
+class Ingredients(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_ingredient_table()
+        self.reset_ingredients_table()
 
-    def reset_ingredient_table(self):
-        sql = """CREATE TABLE Ingredient
+    def reset_ingredients_table(self):
+        sql = """CREATE TABLE Ingredients
                 (IngredientID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT,
                 Type TEXT,
@@ -494,45 +481,45 @@ class Ingredient(Table):
 
     def insert_ingredient_record(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos):
         values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
-        sql = "INSERT INTO Ingredient (Name, Type, StoragePlace, CostPerKilo, StockInKilos) VALUES (?, ?, ?, ?, ?)"
+        sql = "INSERT INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) VALUES (?, ?, ?, ?, ?)"
         self.insert_record(sql, values)
 
     def delete_ingredient_record(self):
         ingid = input("Please enter the Ingredient ID of the Ingredient you wish to delete: ")
-        sql = "DELETE FROM Ingredient WHERE IngredientID=?"
+        sql = "DELETE FROM Ingredients WHERE IngredientID=?"
         self.delete_record(sql, (ingid,))
         print("\nThe Ingredient has been deleted from the database.")
 
-    def reduce_ingredient_stock(self, ingredientid, quantity):
-        sql = "SELECT StockInKilos FROM Ingredient WHERE IngredientID=?"
+    def ingredients_reduce_ingredient_stock(self, ingredientid, quantity):
+        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
         oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         oldstock = oldstocktuple[0]
         newstock = oldstock - quantity
-        sql = "UPDATE Ingredient SET StockInKilos=? WHERE IngredientID=?"
+        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
         values = (newstock, ingredientid)
         self.update(sql, values)
 
-    def select_ingredient_stock(self, ingredientid):
-        sql = "SELECT StockInKilos FROM Ingredient WHERE IngredientID=?"
+    def ingredients_select_ingredient_stock(self, ingredientid):
+        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
         stocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         stock = stocktuple[0]
         return stock
 
     def select_ingredientid(self):
         name = input("Please enter the name of an ingredient for this product: ")
-        sql = "SELECT IngredientID FROM Ingredient WHERE Name=?"
+        sql = "SELECT IngredientID FROM Ingredients WHERE Name=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
         id = idtuple[0]
         return id
 
     
-class IngredientBatch(Table):
+class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
         self.reset_ingredientbatch_table()
 
     def reset_ingredientbatch_table(self):
-        sql = """CREATE TABLE IngredientBatch
+        sql = """CREATE TABLE IngredientBatches
                 (IngredientBatchID INTEGER PRIMARY KEY AUTOINCREMENT,
                 IngredientID INTEGER,
                 Quantity REAL,
@@ -542,11 +529,11 @@ class IngredientBatch(Table):
 
     def insert_ingredientbatch_record(self, IngredientID, Quantity,
                                       ExpiryDate):
-        sql = "INSERT INTO IngredientBatch (IngredientID, Quantity, ExpiryDate) VALUES (?, ?, ?)"
+        sql = "INSERT INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) VALUES (?, ?, ?)"
         self.insert_record(sql, (IngredientID, Quantity, ExpiryDate))
 
     def delete_ingredientbatch_record(self):
         ingbatchid = input("Please enter the Ingredient Batch ID of the Batch you wish to delete: ")
-        sql = "DELETE FROM IngredientBatch WHERE IngredientBatchID=?"
+        sql = "DELETE FROM IngredientBatches WHERE IngredientBatchID=?"
         self.delete_record(sql, (ingbatchid,))
         print("\nThe Batch has been deleted from the database.")
