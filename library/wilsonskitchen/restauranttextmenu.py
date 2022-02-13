@@ -194,6 +194,6 @@ while choice != "E":
 
             
         elif bookchoice == "5":
-            booking.select_booking_bill()
+            bookings.select_booking_bill()
         else:
             print("That is not a valid choice, the main menu will now reload:")
