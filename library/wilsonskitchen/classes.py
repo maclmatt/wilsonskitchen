@@ -95,7 +95,6 @@ class Table():
             cursor.execute(sql, data)
             db.commit()
 
-
 class Customers(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -139,7 +138,6 @@ class Customers(Table):
     def customers_select_customers(self):
         sql = "SELECT * FROM Customers"
         return self.select(sql)
-
 
 class Bookings(Table):
     def __init__(self, dbname, tblname):
@@ -189,8 +187,6 @@ class Bookings(Table):
         sql = "SELECT * FROM Bookings WHERE TableID=?"
         return self.select_dataspecific_fetchone(sql, (tableid,))
 
-
-
     def bookings_select_bookingid(self, TableID):
         sql = "SELECT BookingID FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
         now = datetime.now()
@@ -207,7 +203,6 @@ class Bookings(Table):
         sql = "UPDATE Booking SET BillTotal=? WHERE BookingID=?"
         self.update(sql, newbill, bookingid)
   
-
 class Tables(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -255,7 +250,6 @@ class Tables(Table):
     def print_all_tables(self):
         sql = "SELECT * FROM Tables ORDER BY NoSeats ASC"
         return self.select(sql)
-
 
 class Orders(Table):
     def __init__(self, dbname, tblname):
@@ -330,7 +324,6 @@ class OrderProducts(Table):
         sql = "INSERT INTO OrderProducts (ProductID, Quantity, OrderID) VALUES (?, ?, ?)"
         self.insert_record(sql, (ProductID, quantity, OrderID))
 
-
 class Products(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -371,7 +364,6 @@ class Products(Table):
         desserts = self.select_dataspecific_fetchall(sql, "Dessert")
         return [starters, mains, sides, desserts]
         
-
     def products_select_productid(self, name):
         sql = "SELECT ProductID FROM Products WHERE Name=?"
         prodidtuple = self.select_dataspecific_fetchone(sql, (name,))
@@ -400,7 +392,6 @@ class Products(Table):
         sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
         values = (quantity, productid)
         self.update(sql, values)
-
 
 class Uses(Table):
     def __init__(self, dbname, tblname):
@@ -435,7 +426,6 @@ class Uses(Table):
         quantitytuple = self.select_dataspecific_fetchone(sql, (useid,))
         quantity = quantitytuple[0]
         return quantity
-
 
 class Ingredients(Table):
     def __init__(self, dbname, tblname):

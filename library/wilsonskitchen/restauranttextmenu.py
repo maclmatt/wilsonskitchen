@@ -365,7 +365,7 @@ while choice != "E":
   
 
 #next to do: choice 6 menu details
-#left to update on classes.py: 192-206 in Bookings, 363 onwards in products, ingredients and ingredientbatches
+#left to update on classes.py: ingredients and ingredientbatches
 
 #note for deleting ingredient:
 #find all products attatched to ingredient and return list. saying these products must be deleted before an ingredient is deleted.
