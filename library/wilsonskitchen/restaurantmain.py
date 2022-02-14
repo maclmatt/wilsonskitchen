@@ -1,4 +1,5 @@
-from unittest import TextTestRunner
+
+from math import prod
 from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches
 
 class Restaurant():
@@ -11,10 +12,11 @@ class Restaurant():
     _uses = None
     _ingredients = None
     _ingredientbatches = None
-    _productnamelist = None
     _productidlist = None
     _quantitylist = None
     _productavailabilitieslist = None
+    _ingredientnameslist = None
+    _ingredientquantitylist = None
     _db_name = "wilsons_kitchen.db"
 
     def __init__(self):
@@ -27,10 +29,11 @@ class Restaurant():
         self._uses = Uses(self._db_name, "Uses")
         self._ingredients = Ingredients(self._db_name, "Ingredients")
         self._ingredientbatches = IngredientBatches(self._db_name, "IngredientBatches")
-        self._productnamelist = List()
         self._productidlist = List()
         self._quantitylist = List()
         self._productavailabilitieslist = List()
+        self._ingredientnameslist = List()
+        self._ingredientquantitylist = List()
 
     @property
     def customers(self):
@@ -69,10 +72,6 @@ class Restaurant():
         return self._ingredientbatches
 
     @property
-    def productnamelist(self):
-        return self._productnamelist
-
-    @property
     def productidlist(self):
         return self._productidlist
 
@@ -83,6 +82,24 @@ class Restaurant():
     @property
     def productavailabilitieslist(self):
         return self._productavailabilitieslist
+
+    @property
+    def ingredientnameslist(self):
+        return self._ingredientnameslist
+
+    @property
+    def ingredientquantitylist(self):
+        return self._ingredientquantitylist
+
+    def restaruant_recalculate_quantityavailable_for_product(self, productid):
+        usesofproduct = self._uses.uses_select_uses_forproduct(productid)
+        for i in range(0, len(usesofproduct)):
+            stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
+            usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
+            available = stock // usequantity
+            self._productavailabilitieslist.list_add_item(available)
+        lowest = self._productavailabilitieslist.list_return_lowest()
+        self._products.products_add_product_quantity(lowest, productid)
 
     def restaurant_make_booking(self, time, date, nopeople, custid):
         tableid = self._tables.tables_find_table_for_booking(time, date, nopeople)
@@ -98,7 +115,6 @@ class Restaurant():
 
     def restaurant_make_order(self, tableid, n):
         orderid = self._orders.orders_add_order(tableid)
-        names = self._productnamelist.return_list()
         ids = self._productidlist.return_list()
         quantity = self._quantitylist.return_list()
 
@@ -124,123 +140,20 @@ class Restaurant():
 
             checkproducts = self._products.products_get_all_products()
             for i in range(0, len(checkproducts)):
-                usesofproduct = self._uses.uses_select_uses_forproduct(checkproducts[i][0])
-                for i in range(0, len(usesofproduct)):
-                    stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
-                    usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
-                    available = stock // usequantity
-                    self._productavailabilitieslist.list_add_item(available)
-                lowest = self._productavailabilitieslist.list_return_lowest()
-                self._products.products_add_product_quantity(lowest, checkproducts[i][0])
+                self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
             return True
 
         if check == False:
             self._orders.orders_delete_order(orderid)
             return False
 
+    def restaurant_make_product(self, type, name, price, n):
+        productid = self._products.products_add_product(type,  name, price)
+        ingredientnames = self._ingredientnameslist.return_list()
+        ingredientquantities = self._ingredientquantitylist.return_list()
+        for i in range(0, n-1):
+            ingredientid = self._ingredients.ingredients_select_ingredientid(ingredientnames[i])
+            self._uses.uses_add_use(productid, ingredientid, ingredientquantities[i])
+        self.restaruant_recalculate_quantityavailable_for_product(productid)
 
 
-
-
-
-
-    elif choice == "6":
-        print("\nMenu Details menu:\n"
-            + "   1. Add new product\n"
-            + "   2. Delete product\n"
-            + "   3. Update product details\n"
-            + "   4. Get all products\n"
-            + "   5. Print current menu")
-        menuchoice = input("Please choose an option from the menu above (E to exit this menu): ")
-        if menuchoice == "1":
-            productid = product.insert_product_record()
-            n = int(input("Please enter the number of ingredients needed for this product: "))
-            for i in range(1, n):
-                ingredientid = ingredient.select_ingredientid()
-                use.insert_use_record(productid, ingredientid)
-            uses = use.select_all_uses_forproduct(productid)
-            availabilitiesofproduct = List()
-            for i in range(0, len(uses)):
-                stock = ingredient.select_ingredient_stock(uses[i][2])
-                usequant = use.select_use_quantity(uses[i][0])
-                available = stock // usequant
-                availabilitiesofproduct.add_item(available)
-            lowest = availabilitiesofproduct.return_lowest()
-            product.insert_product_quantity(lowest, productid)
-        elif menuchoice == "2":
-            productid = input("Please enter the product id of the product you wish to delete: ")
-            product.delete_product_record(productid)
-            use.delete_use_record(productid)
-            print("The product has been deleted from the database")
-        elif menuchoice == "3":
-            type = input("Would you like the ingredient details of the product (i) or the general details of the product: ")
-            if type == "i":
-                productid = input("Please enter the product id of the product you wish to update: ")
-                product.delete_product_record(productid)
-                use.delete_use_record(productid)
-                productid = product.insert_product_record()
-                n = int(input("Please enter the number of ingredients needed for this product: "))
-                for i in range(1, n):
-                    ingredientid = ingredient.select_ingredientid()
-                    use.insert_use_record(productid, ingredientid)
-                uses = use.select_all_uses_forproduct(productid)
-                availabilitiesofproduct = List()
-                for i in range(0, len(uses)):
-                    stock = ingredient.select_ingredient_stock(uses[i][2])
-                    usequant = use.select_use_quantity(uses[i][0])
-                    available = stock // usequant
-                    availabilitiesofproduct.add_item(available)
-                lowest = availabilitiesofproduct.return_lowest()
-                product.insert_product_quantity(lowest, productid)
-        elif menuchoice == "4":
-            product.print_all_products()
-        elif menuchoice == "5":
-            product.print_menu()
-
-    elif choice == "7":
-        print("\nIngredient Details menu\n"
-            + "   1. Add new ingredient\n"
-            + "   2. Delete ingredient\n" #do check of any products with that ingredient - ask if they want to delete that too.
-            + "   3. Update ingredient\n"
-            + "   4. Print list of all ingredients")
-        ingredientchoice = input("Please choose an option from the menu above (E to exit ingredient menu): ")
-        if ingredientchoice == "1":
-            name = input("Please enter the name of the ingredient: ")
-            type = input("Please enter the type of ingredient: ")
-            StoragePlace = input("Please enter the storage place of the ingredient: ")
-            cost = input("Please enter the cost of the ingredient per kilo: ")
-            stock = 50
-            ingredient.insert_ingredient_record(name, type, StoragePlace, cost, stock)
-
-    elif choice == "8":
-        print("\nStock Details menu\n"
-            + "   1. Add new batch of ingredients\n"
-            + "   2. Delete batch of ingredients\n"
-            + "   3. Update batch of ingredients\n"
-            + "   4. Get run down of all ingredient stock")
-        stockchoice = input("Please choose an option from the menu above (E to exit stock menu): ")
-        if stockchoice == "1":
-            ingredientid = input("Please enter the ingredient id of the batch: ")
-            quantity = input("Please enter the quantity of the ingredient in kilos: ")
-            expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
-            ingredientbatch.insert_ingredientbatch_record(ingredientid, quantity, expirydate)
-
-    elif choice == "9":
-        print("\nLogin Details menu\n"
-            + "   1. Add new member of staff account"
-            + "   2. Delete an account"
-            + "   3. Update account details"
-            + "   4. Get list of current employees")
-        loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
-
-    print("\nMain menu:\n"
-        + "\n   1. Reload Main menu\n"
-        + "\n   2. Customer details\n"
-        + "\n   3. Booking details\n"
-        + "\n   4. Table details\n"
-        + "\n   5. Order details\n"
-        + "\n   6. Menu details\n"
-        + "\n   7. Ingredient details\n"
-        + "\n   8. Stock details\n"
-        + "\n   9. Login details\n")
-    choice = input("Please choose an option from the menu above (E to exit):")

@@ -37,6 +37,8 @@ class List():
         self.sort_list()
         return self.list[0]
 
+    def wipe(self):
+        self._list = []
 
 class Table():
     def __init__(self, dbname, tblname):
@@ -343,10 +345,7 @@ class Products(Table):
                 QuantityAvailable INTEGER)"""
         self.recreate_table(sql)
 
-    def insert_product_record(self):
-        type = input("Please enter the type of product: ")
-        name = input("Please enter the name of the product: ")
-        price = input("Please enter the price of the product: ")
+    def products_add_product(self, type, name, price):
         quantity = 0
         values = (type, name, price, quantity)
         sql = "INSERT INTO Products (Type, Name, Price, QuantityAvailable) VALUES (?, ?, ?, ?)"
@@ -356,39 +355,22 @@ class Products(Table):
         id = idtuple[0]
         return id
 
-    def delete_product_record(self, productid):
+    def products_delete_product(self, productid):
         sql = "DELETE FROM Products WHERE ProductID=?"
         self.delete_record(sql, (productid,))
-        print("\nThe Product has been deleted from the the database.")
 
-    def print_all_products(self):
+    def products_return_products(self):
         sql = "SELECT * FROM Products ORDER BY Type ASC"
         products = self.select(sql)
-        for i in range(0, (len(products))):
-            print("\nProduct " + str(products[i][0]) + " details:"
-                    + "\n   Type: " + str(products[i][1])
-                    + "\n   Name: " + str(products[i][2])
-                    + "\n   Price: " + str(products[i][3])
-                    + "\n   Quantity Available: " + str(products[i][4]))
 
-    def print_menu(self):
+    def products_print_menu(self):
         sql = "SELECT * FROM Products WHERE Type=?"
         starters = self.select_dataspecific_fetchall(sql, "Starter")
-        print("\nStarters:")
-        for i in range(0, (len(starters))):
-            print("\n   " + str(starters[i][2]) + " - " + str(starters[i][3]))
         mains = self.select_dataspecific_fetchall(sql, "Main")
-        print("\nMains:")
-        for i in range(0, (len(mains))):
-            print("\n   " + str(mains[i][2]) + " - " + str(mains[i][3]))
         sides = self.select_dataspecific_fetchall(sql, "Side")
-        print("\nSides:")
-        for i in range(0, (len(sides))):
-            print("\n   " + str(sides[i][2]) + " - " + str(sides[i][3]))
         desserts = self.select_dataspecific_fetchall(sql, "Dessert")
-        print("\nDesserts:")
-        for i in range(0, (len(desserts))):
-            print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
+        return [starters, mains, sides, desserts]
+        
 
     def products_select_productid(self, name):
         sql = "SELECT ProductID FROM Products WHERE Name=?"
@@ -401,7 +383,6 @@ class Products(Table):
         availabletuple = self.select_dataspecific_fetchone(sql, (productid,))
         available = availabletuple[0]
         if available < quantity:
-            print("There is sold out, please re-enter order.")
             return False
         else:
             return True
@@ -410,13 +391,6 @@ class Products(Table):
         sql = "SELECT Price FROM Products WHERE ProductID=?"
         price = self.select_dataspecific_fetchone(sql, (productid,))[0]
         return price
-
-    def reduce_product_quantity(self, productid, quantity):
-        sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
-        oldquantity = self.select_dataspecific_fetchone(sql, (productid,))
-        newquantity = oldquantity - quantity
-        sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
-        self.update(sql, (newquantity, productid))
 
     def products_get_all_products(self):
         sql = "SELECT * FROM Products"
@@ -443,12 +417,11 @@ class Uses(Table):
                 FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
         self.recreate_table(sql)
         
-    def insert_use_record(self, ProductID, IngredientID):
-        Quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
+    def uses_add_use(self, ProductID, IngredientID, Quantity):
         sql = "INSERT INTO Uses (ProductID, IngredientID, QuantityInKilos) VALUES (?, ?, ?)"
         self.insert_record(sql, (ProductID, IngredientID, Quantity))
 
-    def delete_use_record(self, productid):
+    def uses_delete_use(self, productid):
         sql = "DELETE FROM Uses WHERE ProductID=?"
         self.delete_record(sql, (productid,))
 
@@ -505,8 +478,7 @@ class Ingredients(Table):
         stock = stocktuple[0]
         return stock
 
-    def select_ingredientid(self):
-        name = input("Please enter the name of an ingredient for this product: ")
+    def ingredients_select_ingredientid(self, name):
         sql = "SELECT IngredientID FROM Ingredients WHERE Name=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
         id = idtuple[0]

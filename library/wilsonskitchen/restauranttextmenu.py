@@ -255,15 +255,16 @@ while choice != "E":
         if orderchoice == "1":
             TableID = input("Please enter which table the order is for: ")
             n = int(input("Please enter the number of different items on the order: "))
+            wilsonskitchen.productidlist.wipe()
+            wilsonskitchen.quantitylist.wipe()
             for i in range(1, n):
                 newproductname = input("Please enter the product name: ")
-                wilsonskitchen.productnamelist.list_add_item(newproductname)
                 wilsonskitchen.productidlist.list_add_item(wilsonskitchen.products.products_select_productid(newproductname))
                 wilsonskitchen.quantitylist.list_add_item(int(input("Please enter the quantity of the item ordered: ")))
             check = wilsonskitchen.restaurant_make_order(TableID, n)
             if check:
                 print("Order has been added to the database.")
-            else:#if returned FALSE!!
+            else:
                     print("This product is out of stock, please re-enter order excluding this item.")
             
         elif orderchoice == "2":
@@ -285,5 +286,93 @@ while choice != "E":
                         + "\n   Total Price: " + str(orders[i][2])
                         + "\n   Table ID: " + str(orders[i][3]))
 
+    elif choice == "6":#menu/prodcuts
+        print("\nMenu Details menu:\n"
+            + "   1. Add new product\n"
+            + "   2. Delete product\n"
+            + "   3. Update product details\n"
+            + "   4. Get all products\n"
+            + "   5. Print current menu")
+        menuchoice = input("Please choose an option from the menu above (E to exit this menu): ")
+
+        if menuchoice == "1":
+            type = input("Please enter the type of product: ")
+            name = input("Please enter the name of the product: ")
+            price = input("Please enter the price of the product: ")
+            n = int(input("Please enter the number of ingredients needed for this product: "))
+            wilsonskitchen.ingredientnameslist.wipe()
+            wilsonskitchen.ingredientquantitylist.wipe()
+            for i in range(1, n):
+                ingredientname = input("Please enter the name of an ingredient for this product: ")
+                wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
+                quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
+                wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
+            wilsonskitchen.restaurant_make_product(type, name, price, n)
+
+        elif menuchoice == "2":
+            productid = input("Please enter the product id of the product you wish to delete: ")
+            wilsonskitchen.products.products_delete_product(productid)
+            wilsonskitchen.uses.uses_delete_use(productid)
+            print("The product has been deleted from the database")
+
+        elif menuchoice == "3":
+            productid = input("Please enter the product id of the product you wish to update: ")
+            wilsonskitchen.products.products_delete_product(productid)
+            wilsonskitchen.uses.uses_delete_use(productid)
+            print("Please enter the new product details: ")
+            type = input("Please enter the type of product: ")
+            name = input("Please enter the name of the product: ")
+            price = input("Please enter the price of the product: ")
+            n = int(input("Please enter the number of ingredients needed for this product: "))
+            wilsonskitchen.ingredientnameslist.wipe()
+            wilsonskitchen.ingredientquantitylist.wipe()
+            for i in range(1, n):
+                ingredientname = input("Please enter the name of an ingredient for this product: ")
+                wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
+                quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
+                wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
+            wilsonskitchen.restaurant_make_product(type, name, price, n)
+
+        elif menuchoice == "4":
+            products = wilsonskitchen.products.products_return_products()
+            for i in range(0, (len(products))):
+                print("\nProduct " + str(products[i][0]) + " details:"
+                        + "\n   Type: " + str(products[i][1])
+                        + "\n   Name: " + str(products[i][2])
+                        + "\n   Price: " + str(products[i][3])
+                        + "\n   Quantity Available: " + str(products[i][4]))
+
+        elif menuchoice == "5":
+            menu = wilsonskitchen.products.products_print_menu()
+            starters = menu[0]
+            print("\nStarters:")
+            for i in range(0, (len(starters))):
+                print("\n   " + str(starters[i][2]) + " - " + str(starters[i][3]))
+            mains = menu[1]
+            print("\nMains:")
+            for i in range(0, (len(mains))):
+                print("\n   " + str(mains[i][2]) + " - " + str(mains[i][3]))
+            sides = menu[2]
+            print("\nSides:")
+            for i in range(0, (len(sides))):
+                print("\n   " + str(sides[i][2]) + " - " + str(sides[i][3]))
+            desserts = menu[3]
+            print("\nDesserts:")
+            for i in range(0, (len(desserts))):
+                print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
+
+            
+  
+
 #next to do: choice 6 menu details
-#left to update on classes.py: 192-206 in Bookings and OrderProducts onwards (excluding a few methods)
+#left to update on classes.py: 192-206 in Bookings, 363 onwards in products, ingredients and ingredientbatches
+
+#note for deleting ingredient:
+#find all products attatched to ingredient and return list. saying these products must be deleted before an ingredient is deleted.
+
+    #def reduce_product_quantity(self, productid, quantity):
+        #sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
+        #oldquantity = self.select_dataspecific_fetchone(sql, (productid,))
+        #newquantity = oldquantity - quantity
+        #sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
+        #self.update(sql, (newquantity, productid))
