@@ -1,5 +1,3 @@
-
-from math import prod
 from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches
 
 class Restaurant():
@@ -155,5 +153,3 @@ class Restaurant():
             ingredientid = self._ingredients.ingredients_select_ingredientid(ingredientnames[i])
             self._uses.uses_add_use(productid, ingredientid, ingredientquantities[i])
         self.restaruant_recalculate_quantityavailable_for_product(productid)
-
-

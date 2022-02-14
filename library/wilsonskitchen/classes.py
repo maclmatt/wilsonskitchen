@@ -442,16 +442,14 @@ class Ingredients(Table):
                 StockInKilos REAL)"""
         self.recreate_table(sql)
 
-    def insert_ingredient_record(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos):
+    def ingredients_add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos):
         values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
         sql = "INSERT INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) VALUES (?, ?, ?, ?, ?)"
         self.insert_record(sql, values)
 
-    def delete_ingredient_record(self):
-        ingid = input("Please enter the Ingredient ID of the Ingredient you wish to delete: ")
+    def ingredients_delete_ingredient(self, ingid):
         sql = "DELETE FROM Ingredients WHERE IngredientID=?"
         self.delete_record(sql, (ingid,))
-        print("\nThe Ingredient has been deleted from the database.")
 
     def ingredients_reduce_ingredient_stock(self, ingredientid, quantity):
         sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
@@ -474,7 +472,6 @@ class Ingredients(Table):
         id = idtuple[0]
         return id
 
-    
 class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -489,13 +486,11 @@ class IngredientBatches(Table):
                 FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
         self.recreate_table(sql)
 
-    def insert_ingredientbatch_record(self, IngredientID, Quantity,
-                                      ExpiryDate):
+    def batches_add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate):
         sql = "INSERT INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) VALUES (?, ?, ?)"
         self.insert_record(sql, (IngredientID, Quantity, ExpiryDate))
 
-    def delete_ingredientbatch_record(self):
-        ingbatchid = input("Please enter the Ingredient Batch ID of the Batch you wish to delete: ")
-        sql = "DELETE FROM IngredientBatches WHERE IngredientBatchID=?"
-        self.delete_record(sql, (ingbatchid,))
-        print("\nThe Batch has been deleted from the database.")
+    def batches_delete_ingredientbatch(self, ingid, expirydate):
+        sql = "DELETE FROM IngredientBatches WHERE IngredientID=? AND ExpiryDate=?"
+        self.delete_record(sql, (ingid,expirydate))
+
