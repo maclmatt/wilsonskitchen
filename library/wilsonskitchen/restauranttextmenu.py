@@ -361,8 +361,21 @@ while choice != "E":
             for i in range(0, (len(desserts))):
                 print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
 
-            
-  
+    elif choice == "7":#ingredients
+        print("\nIngredient Details menu\n"
+            + "   1. Add new ingredient\n"
+            + "   2. Delete ingredient\n" #do check of any products with that ingredient - ask if they want to delete that too.
+            + "   3. Update ingredient\n"
+            + "   4. Print list of all ingredients")
+        ingredientchoice = input("Please choose an option from the menu above (E to exit ingredient menu): ")
+
+        if ingredientchoice == "1":
+            name = input("Please enter the name of the ingredient: ")
+            type = input("Please enter the type of ingredient: ")
+            StoragePlace = input("Please enter the storage place of the ingredient: ")
+            cost = input("Please enter the cost of the ingredient per kilo: ")
+            stock = 50
+            ingredient.insert_ingredient_record(name, type, StoragePlace, cost, stock)
 
 #next to do: choice 6 menu details
 #left to update on classes.py: ingredients and ingredientbatches
@@ -376,3 +389,36 @@ while choice != "E":
         #newquantity = oldquantity - quantity
         #sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
         #self.update(sql, (newquantity, productid))
+
+    elif choice == "8":
+        print("\nStock Details menu\n"
+            + "   1. Add new batch of ingredients\n"
+            + "   2. Delete batch of ingredients\n"
+            + "   3. Update batch of ingredients\n"
+            + "   4. Get run down of all ingredient stock")
+        stockchoice = input("Please choose an option from the menu above (E to exit stock menu): ")
+        if stockchoice == "1":
+            ingredientid = input("Please enter the ingredient id of the batch: ")
+            quantity = input("Please enter the quantity of the ingredient in kilos: ")
+            expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+            ingredientbatch.insert_ingredientbatch_record(ingredientid, quantity, expirydate)
+
+    elif choice == "9":
+        print("\nLogin Details menu\n"
+            + "   1. Add new member of staff account"
+            + "   2. Delete an account"
+            + "   3. Update account details"
+            + "   4. Get list of current employees")
+        loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
+
+    print("\nMain menu:\n"
+        + "\n   1. Reload Main menu\n"
+        + "\n   2. Customer details\n"
+        + "\n   3. Booking details\n"
+        + "\n   4. Table details\n"
+        + "\n   5. Order details\n"
+        + "\n   6. Menu details\n"
+        + "\n   7. Ingredient details\n"
+        + "\n   8. Stock details\n"
+        + "\n   9. Login details\n")
+    choice = input("Please choose an option from the menu above (E to exit):")
