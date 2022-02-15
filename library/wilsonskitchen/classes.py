@@ -98,7 +98,6 @@ class Table():
 class Customers(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_customers_table()
 
     def reset_customers_table(self):
         sql = """CREATE TABLE Customers            
@@ -142,7 +141,6 @@ class Customers(Table):
 class Bookings(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_bookings_table()
 
     def reset_bookings_table(self):
         sql = """CREATE TABLE Bookings
@@ -206,7 +204,6 @@ class Bookings(Table):
 class Tables(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_tables_table()
 
     def reset_tables_table(self):
         sql = """CREATE TABLE Tables
@@ -254,7 +251,6 @@ class Tables(Table):
 class Orders(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_orders_table()
 
     def reset_orders_table(self):
         sql = """CREATE TABLE Orders
@@ -308,7 +304,6 @@ class Orders(Table):
 class OrderProducts(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_orderproducts_table()
 
     def reset_orderproducts_table(self):
         sql = """CREATE TABLE OrderProducts
@@ -327,7 +322,6 @@ class OrderProducts(Table):
 class Products(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_products_table()
 
     def reset_products_table(self):
         sql = """CREATE TABLE Products
@@ -396,7 +390,6 @@ class Products(Table):
 class Uses(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_uses_table()
 
     def reset_uses_table(self):
         sql = """CREATE TABLE Uses
@@ -430,7 +423,6 @@ class Uses(Table):
 class Ingredients(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_ingredients_table()
 
     def reset_ingredients_table(self):
         sql = """CREATE TABLE Ingredients
@@ -475,7 +467,6 @@ class Ingredients(Table):
 class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
-        self.reset_ingredientbatch_table()
 
     def reset_ingredientbatch_table(self):
         sql = """CREATE TABLE IngredientBatches
