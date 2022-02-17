@@ -1,5 +1,4 @@
 from restaurantmain import Restaurant
-import random
 import sys
 
 wilsonskitchen = Restaurant()
@@ -40,7 +39,7 @@ choice = input("Please choose an option from the menu above (E to logout): ")
 
 while choice != "E":
 
-    if choice == "1":#reset
+    if choice == "1":#reset, TODO add in check for access level
         check = input("Are you sure you want to reset the Customer table (y/n): ")
         if check == "y":
             wilsonskitchen.customers.reset_customers_table()
@@ -340,7 +339,6 @@ while choice != "E":
                     stock = 0
                     wilsonskitchen.ingredients.ingredients_add_ingredient(ingredientname, ingtype, StoragePlace, cost, stock)
                     print("The Ingredient has been added to the database")
-                #TODO add in how much the product will cost to make (from ingredients cost)
                 wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
                 quantity = float(input("Please enter the amount in kilos needed of this ingredient for the product: "))
                 wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
@@ -377,7 +375,8 @@ while choice != "E":
                         + "\n   Type: " + str(products[i][1])
                         + "\n   Name: " + str(products[i][2])
                         + "\n   Price: " + str(products[i][3])
-                        + "\n   Quantity Available: " + str(products[i][4]))
+                        + "\n   Quantity Available: " + str(products[i][4])
+                        + "\n   Cost per portion: " + str(products[i][5]))
 
         elif menuchoice == "5":
             menu = wilsonskitchen.products.products_print_menu()

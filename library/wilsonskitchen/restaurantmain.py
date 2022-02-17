@@ -161,6 +161,9 @@ class Restaurant():
         for i in range(0, n):
             ingredientid = self._ingredients.ingredients_select_ingredientid(ingredientnames[i])[0]
             self._uses.uses_add_use(productid, ingredientid, ingredientquantities[i])
+            costofingredient = self._ingredients.ingredients_select_cost(ingredientid)
+            costofproduct = costofingredient * ingredientquantities[i]
+            self._products.products_increase_cost(productid, costofproduct)
         self.restaruant_recalculate_quantityavailable_for_product(productid)
 
     def restaurant_add_ingredientbatch(self, ingname, quantity, expirydate):

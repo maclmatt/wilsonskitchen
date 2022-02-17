@@ -335,18 +335,29 @@ class Products(Table):
                 Type TEXT,
                 Name TEXT,
                 Price REAL,
-                QuantityAvailable INTEGER)"""
+                QuantityAvailable INTEGER,
+                CostPerPortion FLOAT)"""
         self.recreate_table(sql)
 
     def products_add_product(self, type, name, price):
         quantity = 0
-        values = (type, name, price, quantity)
-        sql = "INSERT INTO Products (Type, Name, Price, QuantityAvailable) VALUES (?, ?, ?, ?)"
+        cost = 0.0
+        values = (type, name, price, quantity, cost)
+        sql = "INSERT INTO Products (Type, Name, Price, QuantityAvailable, CostPerPortion) VALUES (?, ?, ?, ?, ?)"
         self.insert_record(sql, values)
         sql = "SELECT ProductID FROM Products WHERE Name=? AND Price=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name, price))
         id = idtuple[0]
         return id
+
+    def products_increase_cost(self, productid, cost):
+        sql = "SELECT CostPerPortion FROM Products WHERE ProductID=?"
+        oldcosttuple = self.select_dataspecific_fetchone(sql, (productid,))
+        oldcost = oldcosttuple[0]
+        newcost = oldcost + cost 
+        values = (newcost, productid)
+        sql = "UPDATE Products SET CostPerPortion=? WHERE ProductID=?"
+        self.update(sql, values)
 
     def products_delete_product(self, productid):
         sql = "DELETE FROM Products WHERE ProductID=?"
@@ -479,6 +490,12 @@ class Ingredients(Table):
         sql = "SELECT IngredientID FROM Ingredients WHERE Name=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
         return idtuple
+
+    def ingredients_select_cost(self, ingid):
+        sql = "SELECT CostPerKilo FROM Ingredients WHERE IngredientID=?"
+        costtuple = self.select_dataspecific_fetchone(sql, (ingid,))
+        cost = costtuple[0]
+        return cost
 
     def ingredients_update_ingredient(self, name, newtype, newstorageplace, newcost):
         values = (newtype, newstorageplace, newcost, name)
