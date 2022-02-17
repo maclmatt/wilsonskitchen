@@ -97,6 +97,7 @@ class Restaurant():
 
     def restaruant_recalculate_quantityavailable_for_product(self, productid):
         usesofproduct = self._uses.uses_select_uses_forproduct(productid)
+        self._productavailabilitieslist.wipe()
         for i in range(0, len(usesofproduct)):
             stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
             usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
@@ -158,12 +159,12 @@ class Restaurant():
         ingredientnames = self._ingredientnameslist.return_list()
         ingredientquantities = self._ingredientquantitylist.return_list()
         for i in range(0, n):
-            ingredientid = self._ingredients.ingredients_select_ingredientid(ingredientnames[i])
+            ingredientid = self._ingredients.ingredients_select_ingredientid(ingredientnames[i])[0]
             self._uses.uses_add_use(productid, ingredientid, ingredientquantities[i])
         self.restaruant_recalculate_quantityavailable_for_product(productid)
 
     def restaurant_add_ingredientbatch(self, ingname, quantity, expirydate):
-        ingredientid = self._ingredients.ingredients_select_ingredientid(ingname)
+        ingredientid = self._ingredients.ingredients_select_ingredientid(ingname)[0]
         self._ingredientbatches.batches_add_ingredientbatch(ingredientid, quantity, expirydate)
         self._ingredients.ingredients_increase_ingredient_stock(ingredientid, quantity)
 
@@ -173,7 +174,6 @@ class Restaurant():
 
     def restaurant_delete_ingredient_and_products(self, ingid):
         usesofingredient = self._uses.uses_select_uses_from_ingid(ingid)
-        print(usesofingredient)
         for i in range(0, len(usesofingredient)):
             self._products.products_delete_product(usesofingredient[i][1])
             self._uses.uses_delete_use(usesofingredient[i][1])

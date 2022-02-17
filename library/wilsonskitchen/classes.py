@@ -39,6 +39,7 @@ class List():
 
     def wipe(self):
         self._list = []
+        self.length = 0
 
 class Table():
     def __init__(self, dbname, tblname):
@@ -358,10 +359,10 @@ class Products(Table):
 
     def products_print_menu(self):
         sql = "SELECT * FROM Products WHERE Type=?"
-        starters = self.select_dataspecific_fetchall(sql, "Starter")
-        mains = self.select_dataspecific_fetchall(sql, "Main")
-        sides = self.select_dataspecific_fetchall(sql, "Side")
-        desserts = self.select_dataspecific_fetchall(sql, "Dessert")
+        starters = self.select_dataspecific_fetchall(sql, ("Starter",))
+        mains = self.select_dataspecific_fetchall(sql, ("Main",))
+        sides = self.select_dataspecific_fetchall(sql, ("Side",))
+        desserts = self.select_dataspecific_fetchall(sql, ("Dessert",))
         return [starters, mains, sides, desserts]
         
     def products_select_productid(self, name):
@@ -477,8 +478,7 @@ class Ingredients(Table):
     def ingredients_select_ingredientid(self, name):
         sql = "SELECT IngredientID FROM Ingredients WHERE Name=?"
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
-        id = idtuple[0]
-        return id
+        return idtuple
 
     def ingredients_update_ingredient(self, name, newtype, newstorageplace, newcost):
         values = (newtype, newstorageplace, newcost, name)
@@ -556,9 +556,9 @@ class StaffMembers(Table):
         sql = "DELETE FROM StaffMembers WHERE Email=?"
         self.delete_record(sql, (email,))
 
-    def staffmembers_update_self(self, staffid, email, fname, sname, password):
-        values = (email, fname, sname, password, staffid)
-        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, Password=? WHERE StaffID=?"
+    def staffmembers_update_self(self, username, email, fname, sname, password):
+        values = (email, fname, sname, password, username)
+        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, Password=? WHERE Username=?"
         self.update(sql, values)
 
     def staffmembers_update_member(self, oldemail, email, fname, sname, job, access, password):
@@ -568,9 +568,9 @@ class StaffMembers(Table):
 
     def staffmembers_check_login(self, username, password):
         values = (username, password)
-        sql = "SELECT StaffID FROM StaffMembers WHERE Username=? AND Password=?"
-        staffidtuple = self.select_dataspecific_fetchone(sql, values)
-        if staffidtuple == None:
+        sql = "SELECT AccessLevel FROM StaffMembers WHERE Username=? AND Password=?"
+        accesstuple = self.select_dataspecific_fetchone(sql, values)
+        if accesstuple == None:
             sql = "SELECT Password FROM StaffMembers WHERE Username=?"
             passwordtuple = self.select_dataspecific_fetchone(sql, (username,))
             if passwordtuple == None:
@@ -579,6 +579,6 @@ class StaffMembers(Table):
                 password = passwordtuple[0]
                 return [False, password]
         else:
-            staffid = staffidtuple[0]
-            return [True, staffid]
+            access = accesstuple[0]
+            return [True, access]
             

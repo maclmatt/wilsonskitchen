@@ -8,12 +8,12 @@ username = int(input("Please enter your username: "))
 password = input("Please enter your password: ")
 valid = False
 logincount = 1
-while valid == False:
-    if logincount == 3:
-        sys.exit("You have entered the wrong details 3 times and will be blocked from the system.")
+while valid == False and logincount <= 3:
     status = wilsonskitchen.staffmembers.staffmembers_check_login(username, password)
     if status[0] == False:
         logincount += 1
+        if logincount == 4:
+            sys.exit("You have entered the wrong details 3 times and will be blocked from the system.")
         if status[1] == "neither":
             print("You have entered the wrong username or wrong username and password, please re-try:")
             username = int(input("Please enter your username: "))
@@ -23,7 +23,7 @@ while valid == False:
             password = input("Please enter your password: ")
     else:
         print("Welcome!")
-        staffid = status[1]
+        access = status[1]
         valid = True
 
 print("\nMain menu:\n"
@@ -222,7 +222,7 @@ while choice != "E":
             time = input("Please enter the time of the booking of the bill you would like: ")
             date = input("Please enter the date of the booking of the bill you would like (YYYY-MM-DD): ")
             bill = wilsonskitchen.bookings.bookings_select_booking_bill(tableid, time, date)
-            print("The current bill for table " + str(tableid) + " is: " + bill)
+            print("The current bill for table " + str(tableid) + " is: £" + str(bill))
 
         else:
             print("That is not a valid choice, the main menu will now reload:")
@@ -331,7 +331,15 @@ while choice != "E":
             wilsonskitchen.ingredientquantitylist.wipe()
             for i in range(0, n):
                 ingredientname = input("Please enter the name of an ingredient for this product: ")
-                #TODO maybe add check to see if ingredient exists?
+                check = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingredientname)
+                if check == None:
+                    print("The Ingredient does not exist on the database, please enter its details: ")
+                    ingtype = input("Please enter the type of ingredient: ")
+                    StoragePlace = input("Please enter the storage place of the ingredient: ")
+                    cost = float(input("Please enter the cost of the ingredient per kilo: "))
+                    stock = 0
+                    wilsonskitchen.ingredients.ingredients_add_ingredient(ingredientname, ingtype, StoragePlace, cost, stock)
+                    print("The Ingredient has been added to the database")
                 #TODO add in how much the product will cost to make (from ingredients cost)
                 wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
                 quantity = float(input("Please enter the amount in kilos needed of this ingredient for the product: "))
@@ -409,9 +417,9 @@ while choice != "E":
 
         elif ingredientchoice == "2":
             ingname = input("Please enter the name of the ingredient you wish to delete: ")
-            ingid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
+            ingid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)[0]
             uses = wilsonskitchen.uses.uses_select_uses_from_ingid(ingid)
-            if uses == None:
+            if uses == []:
                 wilsonskitchen._ingredients.ingredients_delete_ingredient(ingid)
                 print("\nThe Ingredient has been deleted from the database.")
             else:
@@ -456,14 +464,14 @@ while choice != "E":
 
         elif stockchoice == "2":
             ingname = input("Please enter the name of the ingredient: ")
-            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
+            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)[0]
             expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
             wilsonskitchen.restaurant_delete_ingredientbatch(ingredientid, expirydate)
             print("The Batch has been deleted from the database.")
 
         elif stockchoice == "3":
             ingname = input("Please enter the name of the ingredient: ")
-            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
+            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)[0]
             expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
             wilsonskitchen.restaurant_delete_ingredientbatch(ingredientid, expirydate)
             print("\nPlease enter below the new details of the ingredient batch: ")
@@ -491,7 +499,7 @@ while choice != "E":
         loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
 
         if loginchoice == "1":
-            if staffid != 1:
+            if access != 1:
                 print("Unfortunately your account does not have access to add a new member.")
             else:
                 print("Please enter the details of the new staff member: ")
@@ -502,12 +510,12 @@ while choice != "E":
                 access = int(input("Please enter the access level: "))
                 password = input("Please enter a secure password: ")
                 #TODO add in check to enter password twice and make sure they are the same
-                username = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
-                print("Your username is " + str(username))
+                newusername = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
+                print("Your username is " + str(newusername))
                 print("The Staff Member has been added to the database.")
 
         elif loginchoice == "2":
-            if staffid != 1:
+            if access != 1:
                 print("Unfortunately your account does not have access to delete a member.")
             else:
                 email = input("Please enter the email of the staff member you wish to delete: ")
@@ -519,12 +527,12 @@ while choice != "E":
             email = input("Please enter your new email: ")
             fname = input("Please enter your new Firstname: ")
             sname = input("Please enter your new surname: ")
-            password = input("Please enter your new secure password: ")
-            wilsonskitchen.staffmembers.staffmembers_update_self(staffid, email, fname, sname, password)
+            newpassword = input("Please enter your new secure password: ")
+            wilsonskitchen.staffmembers.staffmembers_update_self(username, email, fname, sname, password)
             print("Your details have been updated.")
 
         elif loginchoice == "4":
-            if staffid != 1:
+            if access != 1:
                 print("Unfortunately your account does not have access to update a member's details.")
             else:
                 oldemail = input("Please enter the original email of the staff member: ")
