@@ -1,4 +1,9 @@
 from restaurantmain import Restaurant
+import random
+import sys
+
+#TODO login function, with sys.exit("You have entered too many wrong login details")
+#remember to get and assign staffid for later on
 
 wilsonskitchen = Restaurant()
 
@@ -12,7 +17,7 @@ print("\nMain menu:\n"
     + "\n   7. Ingredient details\n"
     + "\n   8. Stock details\n"
     + "\n   9. Login details\n")
-choice = input("Please choose an option from the menu above (E to exit): ")
+choice = input("Please choose an option from the menu above (E to logout): ")
 
 while choice != "E":
 
@@ -44,6 +49,9 @@ while choice != "E":
         check = input("Are you sure you want to reset the Ingredientbatch table (y/n): ")
         if check == "y":
             wilsonskitchen.ingredientbatches.reset_ingredientbatch_table()
+        check = input("Are you sure you want to reset the StaffMembers table (y/n): ")
+        if check == "y":
+            wilsonskitchen.staffmembers.reset_staffmembers_table()
         
     elif choice == "2":#customers
         print("\nCustomer Details menu:\n"
@@ -454,13 +462,55 @@ while choice != "E":
                         + "\n   Quantity: " + str(batches[i][2])
                         + "\n   Expiry Date: " + str(batches[i][3]))
 
-    elif choice == "9":#login: 0/4 completed
+    elif choice == "9":#login
         print("\nLogin Details menu\n"
-            + "   1. Add new member of staff account"
-            + "   2. Delete an account"
-            + "   3. Update account details"
+            + "   1. Add new member of staff account\n"
+            + "   2. Delete an account\n"
+            + "   3. Update account details\n"
             + "   4. Get list of current employees")
-        #loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
+        loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
+
+        if loginchoice == "1":
+            #TODO add in check of access level
+            print("Please enter the details of the new staff member: ")
+            email = input("Please enter the staff email: ")
+            fname = input("Please enter the Firstname: ")
+            sname = input("Please enter the surname: ")
+            job = input("Please enter the Job title: ")
+            access = int(input("Please enter the access level: "))
+            password = input("Please enter a secure password: ")
+            #TODO add in check to enter password twice and make sure they are the same
+            username = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
+            print("Your username is " + str(username))
+            print("The Staff Member has been added to the database.")
+
+        elif loginchoice == "2":
+            #TODO add in check of access level
+            email = input("Please enter the email of the staff member you wish to delete: ")
+            wilsonskitchen.staffmembers.staffmembers_delete_member(email)
+            print("The staff member has been deleted.")
+
+        elif loginchoice == "3":
+            oldemail = input("Please enter the original email of the staff member: ")
+            email = input("Please enter the new email: ")
+            fname = input("Please enter the new firstname: ")
+            sname = input("Please enter the new surname: ")
+            job = input("Please enter the new job title: ")
+            access = input("Please enter the new access level: ")
+            password = input("Please enter the new password: ")
+            #TODO add in check to enter password twice and make sure they are the same
+            wilsonskitchen.staffmembers.staffmembers_update_member(oldemail, email, fname, sname, job, access, password)
+            print("The staff member's details have been updated.")
+
+        elif loginchoice == "4":
+            staffmembers = wilsonskitchen.staffmembers.staffmembers_get_all()
+            for i in range(0, len(staffmembers)):
+                print("\nStaff Member " + str(staffmembers[i][0]) + " details:"
+                        + "\n   Email: " + str(staffmembers[i][1])
+                        + "\n   Name: " + str(staffmembers[i][2]) + str(staffmembers[i][3])
+                        + "\n   Job Title: " + str(staffmembers[i][4])
+                        + "\n   Access Level: " + str(staffmembers[i][5])
+                        + "\n   Username: " + str(staffmembers[i][6]))
 
     print("\nMain menu:\n"
         + "\n   1. Reload Main menu\n"
@@ -472,4 +522,6 @@ while choice != "E":
         + "\n   7. Ingredient details\n"
         + "\n   8. Stock details\n"
         + "\n   9. Login details\n")
-    choice = input("Please choose an option from the menu above (E to exit):")
+    choice = input("Please choose an option from the menu above (E to logout):")
+
+print("You will now be logged out.")

@@ -1,4 +1,4 @@
-from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches
+from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches, StaffMembers
 
 class Restaurant():
     _customers = None
@@ -10,6 +10,7 @@ class Restaurant():
     _uses = None
     _ingredients = None
     _ingredientbatches = None
+    _staffmembers = None
     _productidlist = None
     _quantitylist = None
     _productavailabilitieslist = None
@@ -27,6 +28,7 @@ class Restaurant():
         self._uses = Uses(self._db_name, "Uses")
         self._ingredients = Ingredients(self._db_name, "Ingredients")
         self._ingredientbatches = IngredientBatches(self._db_name, "IngredientBatches")
+        self._staffmembers = StaffMembers(self._db_name, "StaffMembers")
         self._productidlist = List()
         self._quantitylist = List()
         self._productavailabilitieslist = List()
@@ -68,6 +70,10 @@ class Restaurant():
     @property
     def ingredientbatches(self):
         return self._ingredientbatches
+
+    @property
+    def staffmembers(self):
+        return self._staffmembers
 
     @property
     def productidlist(self):

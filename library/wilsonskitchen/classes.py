@@ -518,3 +518,48 @@ class IngredientBatches(Table):
     def batches_select_all_batches(self):
         sql = "SELECT * FROM IngredientBatches"
         return self.select(sql)
+
+class StaffMembers(Table):
+    def __init__(self, dbname, tblname):
+        super().__init__(dbname, tblname)
+        self._username = 1111
+    
+    def reset_staffmembers_table(self):
+        sql = """CREATE TABLE StaffMembers
+                (StaffID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Email TEXT,
+                Firstname TEXT,
+                Surname TEXT,
+                JobTitle TEXT,
+                AccessLevel INTEGER,
+                Username INTEGER,
+                Password)"""
+        self.recreate_table(sql)
+
+    def staffmembers_add_member(self, email, fname, sname, job, accesslevel, password):
+        staffmembers = self.staffmembers_get_all()
+        if staffmembers == []:
+            username = self._username
+        else:
+            prevusername = staffmembers[len(staffmembers)-1][6]
+            username = prevusername + 1
+        values = (email, fname, sname, job, accesslevel, username, password)
+        sql = "INSERT INTO StaffMembers (Email, Firstname, Surname, JobTitle, AccessLevel, Username, Password) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        self.insert_record(sql, values)
+        return username
+
+    def staffmembers_get_all(self):
+        sql = "SELECT * FROM StaffMembers"
+        return self.select(sql)
+
+    def staffmembers_delete_member(self, email):
+        sql = "DELETE FROM StaffMembers WHERE Email=?"
+        self.delete_record(sql, (email,))
+
+    def staffmembers_update_member(self, oldemail, email, fname, sname, job, access, password):
+        values = (email, fname, sname, job, access, password, oldemail)
+        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, JobTitle=?, AccessLevel=?, Password=? WHERE Email=?"
+        self.update(sql, values)
+
+
+    
