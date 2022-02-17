@@ -7,7 +7,7 @@ class List():
         self.length = 0
 
     def list_add_item(self, item):
-        list = self.list
+        list = self._list
         list.append(item)
         self.length += 1
 
@@ -28,14 +28,14 @@ class List():
             self.list_quick_sort(numbers, pivot + 1, high)
 
     def sort_list(self):
-        self.list_quick_sort(self.list, 0, (self.length)-1)
+        self.list_quick_sort(self._list, 0, (self.length)-1)
 
     def return_list(self):
-        return self.list
+        return self._list
 
     def list_return_lowest(self):
         self.sort_list()
-        return self.list[0]
+        return self._list[0]
 
     def wipe(self):
         self._list = []
@@ -191,15 +191,20 @@ class Bookings(Table):
         current_hour = now.strftime("%H")
         today = date.today()
         values = (TableID, current_hour, today)
-        self.select_dataspecific_fetchone(sql, values)
+        bookingidtuple = self.select_dataspecific_fetchone(sql, values)
+        bookingid = bookingidtuple[0]
+        return bookingid
 
     def bookings_increase_booking_billtotal(self, bookingid, ordercost):
         sql = "SELECT BillTotal FROM Bookings WHERE BookingID=?"
         oldbilltuple = self.select_dataspecific_fetchone(sql, (bookingid,))
-        oldbill = oldbilltuple[0]
-        newbill = oldbill + ordercost
-        sql = "UPDATE Booking SET BillTotal=? WHERE BookingID=?"
-        self.update(sql, newbill, bookingid)
+        if oldbilltuple == None:
+            newbill = ordercost
+        else:
+            oldbill = oldbilltuple[0]
+            newbill = oldbill + ordercost
+        sql = "UPDATE Bookings SET BillTotal=? WHERE BookingID=?"
+        self.update(sql, (newbill, bookingid))
   
 class Tables(Table):
     def __init__(self, dbname, tblname):
@@ -220,7 +225,7 @@ class Tables(Table):
             for i in range(0, len(tableids)):
                 tableid = str(tableids[i])
                 values = (tableid[1], Time, Date)
-                sql = "SELECT * FROM Booking WHERE TableID=? AND Time=? AND Date=?"
+                sql = "SELECT * FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
                 booking = self.select_dataspecific_fetchall(sql,values)
                 if booking == []:
                     break
@@ -349,6 +354,7 @@ class Products(Table):
     def products_return_products(self):
         sql = "SELECT * FROM Products ORDER BY Type ASC"
         products = self.select(sql)
+        return products
 
     def products_print_menu(self):
         sql = "SELECT * FROM Products WHERE Type=?"
@@ -377,10 +383,6 @@ class Products(Table):
         sql = "SELECT Price FROM Products WHERE ProductID=?"
         price = self.select_dataspecific_fetchone(sql, (productid,))[0]
         return price
-
-    def products_get_all_products(self):
-        sql = "SELECT * FROM Products"
-        return self.select(sql)
 
     def products_add_product_quantity(self, quantity, productid):
         sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
@@ -420,6 +422,11 @@ class Uses(Table):
         quantity = quantitytuple[0]
         return quantity
 
+    def uses_select_uses_from_ingid(self, ingid):
+        sql = "SELECT * FROM Uses WHERE IngredientID=?"
+        uses = self.select_dataspecific_fetchall(sql, (ingid,))
+        return uses
+
 class Ingredients(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -448,8 +455,17 @@ class Ingredients(Table):
         oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         oldstock = oldstocktuple[0]
         newstock = oldstock - quantity
-        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
         values = (newstock, ingredientid)
+        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
+        self.update(sql, values)
+
+    def ingredients_increase_ingredient_stock(self, ingredientid, quantity):
+        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
+        oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
+        oldstock = oldstocktuple[0]
+        newstock = oldstock + quantity
+        values = (newstock, ingredientid)
+        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
         self.update(sql, values)
 
     def ingredients_select_ingredient_stock(self, ingredientid):
@@ -463,6 +479,15 @@ class Ingredients(Table):
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
         id = idtuple[0]
         return id
+
+    def ingredients_update_ingredient(self, name, newtype, newstorageplace, newcost):
+        values = (newtype, newstorageplace, newcost, name)
+        sql = "UPDATE Ingredients SET Type=?, StoragePlace=?, CostPerKilo=? WHERE Name=?"
+        self.update(sql, values)
+
+    def ingredients_select_ingredients(self):
+        sql = "SELECT * FROM Ingredients"
+        return self.select(sql)
 
 class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
@@ -485,3 +510,11 @@ class IngredientBatches(Table):
         sql = "DELETE FROM IngredientBatches WHERE IngredientID=? AND ExpiryDate=?"
         self.delete_record(sql, (ingid,expirydate))
 
+    def batches_select_quant(self, ingid, expirydate):
+        values = (ingid, expirydate)
+        sql = "SELECT Quantity FROM IngredientBatches WHERE IngredientID=? AND ExpiryDate=?"
+        return self.select_dataspecific_fetchone(sql, values)
+
+    def batches_select_all_batches(self):
+        sql = "SELECT * FROM IngredientBatches"
+        return self.select(sql)

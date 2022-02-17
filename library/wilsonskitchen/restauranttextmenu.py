@@ -28,22 +28,22 @@ while choice != "E":
             wilsonskitchen.tables.reset_tables_table()
         check = input("Are you sure you want to reset the Order table (y/n): ")
         if check == "y":
-            wilsonskitchen.order.reset_order_table()
+            wilsonskitchen.orders.reset_orders_table()
         check = input("Are you sure you want to reset the Orderproduct table (y/n): ")
         if check == "y":
-            wilsonskitchen.orderproduct.reset_orderproduct_table()
+            wilsonskitchen.orderproducts.reset_orderproducts_table()
         check = input("Are you sure you want to reset the Product table (y/n): ")
         if check == "y":
-            wilsonskitchen.product.reset_product_table()
+            wilsonskitchen.products.reset_products_table()
         check = input("Are you sure you want to reset the Use table (y/n): ")
         if check == "y":
-            wilsonskitchen.use.reset_use_table()
+            wilsonskitchen.uses.reset_uses_table()
         check = input("Are you sure you want to reset the Ingredient table (y/n): ")
         if check == "y":
-            wilsonskitchen.ingredient.reset_ingredient_table()
+            wilsonskitchen.ingredients.reset_ingredients_table()
         check = input("Are you sure you want to reset the Ingredientbatch table (y/n): ")
         if check == "y":
-            wilsonskitchen.ingredientbatch.reset_ingredientbatch_table()
+            wilsonskitchen.ingredientbatches.reset_ingredientbatch_table()
         
     elif choice == "2":#customers
         print("\nCustomer Details menu:\n"
@@ -98,7 +98,7 @@ while choice != "E":
 
         else:
             print("That is not a valid choice, the main menu will now reload:")
-    
+
     elif choice == "3":#bookings
         print("\nBooking Details menu:\n"
             + "   1. Add new booking\n"
@@ -114,15 +114,16 @@ while choice != "E":
             Date = input("Date (YYYY-MM-DD): ")
             nopeople = input("Number of people: ")
             email = input("Email of customer: ")
-            custid = wilsonskitchen.customers.customers_select_custid(email)[0]
+            custid = wilsonskitchen.customers.customers_select_custid(email)
             if custid == None:
                 print("The Customer does not exist on the database, please enter their details: ")
-                email = input("Email: ")
                 fname = input("Firstname: ")
                 sname = input("Surname: ")
                 contactno = input("Phone number: ")
                 wilsonskitchen.customers.customers_add_customer(email, fname, sname, contactno)
+                custid = wilsonskitchen.customers.customers_select_custid(email)
                 print("\n" + fname, sname, "has been added to the database.")
+            custid = custid[0]
             booked = wilsonskitchen.restaurant_make_booking(Time, Date, nopeople, custid)
             if booked:
                 print("The Booking has been added to the database.")
@@ -135,7 +136,6 @@ while choice != "E":
             time = input("Time: ")
             date = input("Date: ")
             wilsonskitchen.restaurant_delete_booking(email, time, date)
-            print("\nThe Booking has been deleted from the database.")
 
         elif bookchoice == "3":
             print("Please enter the old booking details: ")
@@ -257,7 +257,7 @@ while choice != "E":
             n = int(input("Please enter the number of different items on the order: "))
             wilsonskitchen.productidlist.wipe()
             wilsonskitchen.quantitylist.wipe()
-            for i in range(1, n):
+            for i in range(0, n):
                 newproductname = input("Please enter the product name: ")
                 wilsonskitchen.productidlist.list_add_item(wilsonskitchen.products.products_select_productid(newproductname))
                 wilsonskitchen.quantitylist.list_add_item(int(input("Please enter the quantity of the item ordered: ")))
@@ -302,11 +302,12 @@ while choice != "E":
             n = int(input("Please enter the number of ingredients needed for this product: "))
             wilsonskitchen.ingredientnameslist.wipe()
             wilsonskitchen.ingredientquantitylist.wipe()
-            for i in range(1, n):
+            for i in range(0, n):
                 ingredientname = input("Please enter the name of an ingredient for this product: ")
-                #maybe add check to see if ingredient exists?
+                #TODO maybe add check to see if ingredient exists?
+                #TODO add in how much the product will cost to make (from ingredients cost)
                 wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
-                quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
+                quantity = float(input("Please enter the amount in kilos needed of this ingredient for the product: "))
                 wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
             wilsonskitchen.restaurant_make_product(type, name, price, n)
 
@@ -330,7 +331,7 @@ while choice != "E":
             for i in range(1, n):
                 ingredientname = input("Please enter the name of an ingredient for this product: ")
                 wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
-                quantity = int(input("Please enter the amount in kilos needed of this ingredient for the product: "))
+                quantity = float(input("Please enter the amount in kilos needed of this ingredient for the product: "))
                 wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
             wilsonskitchen.restaurant_make_product(type, name, price, n)
 
@@ -362,7 +363,7 @@ while choice != "E":
             for i in range(0, (len(desserts))):
                 print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
 
-    elif choice == "7":#ingredients: 2/4 completed
+    elif choice == "7":#ingredients
         print("\nIngredient Details menu\n"
             + "   1. Add new ingredient\n"
             + "   2. Delete ingredient\n"
@@ -374,18 +375,44 @@ while choice != "E":
             name = input("Please enter the name of the ingredient: ")
             type = input("Please enter the type of ingredient: ")
             StoragePlace = input("Please enter the storage place of the ingredient: ")
-            cost = input("Please enter the cost of the ingredient per kilo: ")
-            stock = 50
+            cost = float(input("Please enter the cost of the ingredient per kilo: "))
+            stock = 0
             wilsonskitchen.ingredients.ingredients_add_ingredient(name, type, StoragePlace, cost, stock)
             print("The Ingredient has been added to the database")
 
         elif ingredientchoice == "2":
-            #do check of any products with that ingredient - ask if they want to delete those too.
-            ingid = input("Please enter the Ingredient ID of the Ingredient you wish to delete: ")
-            wilsonskitchen._ingredients.ingredients_delete_ingredient()
-            print("\nThe Ingredient has been deleted from the database.")
+            ingname = input("Please enter the name of the ingredient you wish to delete: ")
+            ingid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
+            uses = wilsonskitchen.uses.uses_select_uses_from_ingid(ingid)
+            if uses == None:
+                wilsonskitchen._ingredients.ingredients_delete_ingredient(ingid)
+                print("\nThe Ingredient has been deleted from the database.")
+            else:
+                check = input("This ingredient is being used for products on the menu, would you like to cancel (c) or delete those products as well (d): ")
+                if check == "c":
+                    print("The deletion of the ingredient has been cancelled.")
+                elif check == "d":
+                    wilsonskitchen.restaurant_delete_ingredient_and_products(ingid)
+                    print("\nThe Ingredient has been deleted from the database.")
 
-    elif choice == "8":#stock: 2/4 completed
+        elif ingredientchoice == "3":
+            name = input("Please enter the name of the ingredient you wish to update: ")
+            type = input("Please enter the new type: ")
+            storageplace = input("Please enter the new storage place: ")
+            cost = float(input("Please enter the new cost per kilo: "))
+            wilsonskitchen.ingredients.ingredients_update_ingredient(name, type, storageplace, cost)
+            print("The ingredient has been updated.")
+
+        elif ingredientchoice == "4":
+            ingredients = wilsonskitchen.ingredients.ingredients_select_ingredients()
+            for i in range(0, len(ingredients)):
+                print("\nIngredient " + str(ingredients[i][0]) + " details:"
+                        + "\n   Name: " + str(ingredients[i][1])
+                        + "\n   Type: " + str(ingredients[i][2])
+                        + "\n   Storage Place: " + str(ingredients[i][3])
+                        + "\n   Cost per Kilo: " + str(ingredients[i][4]))
+                    
+    elif choice == "8":#stock: TODO add in expiry date check and deletion of out of date batches
         print("\nStock Details menu\n"
             + "   1. Add new batch of ingredients\n"
             + "   2. Delete batch of ingredients\n"
@@ -395,17 +422,37 @@ while choice != "E":
 
         if stockchoice == "1":
             ingname = input("Please enter the name of the ingredient: ")
-            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
-            quantity = input("Please enter the quantity of the ingredient in kilos: ")
+            quantity = int(input("Please enter the quantity of the ingredient in kilos: "))
             expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
-            wilsonskitchen.ingredientbatches.batches_add_ingredientbatch(ingredientid, quantity, expirydate)
+            wilsonskitchen.restaurant_add_ingredientbatch(ingname, quantity, expirydate)
             print("The Batch has been added to the database.")
 
         elif stockchoice == "2":
             ingname = input("Please enter the name of the ingredient: ")
             ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
             expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+            wilsonskitchen.restaurant_delete_ingredientbatch(ingredientid, expirydate)
             print("The Batch has been deleted from the database.")
+
+        elif stockchoice == "3":
+            ingname = input("Please enter the name of the ingredient: ")
+            ingredientid = wilsonskitchen.ingredients.ingredients_select_ingredientid(ingname)
+            expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+            wilsonskitchen.restaurant_delete_ingredientbatch(ingredientid, expirydate)
+            print("\nPlease enter below the new details of the ingredient batch: ")
+            ingname = input("Please enter the name of the ingredient: ")
+            quantity = int(input("Please enter the quantity of the ingredient in kilos: "))
+            expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+            wilsonskitchen.restaurant_add_ingredientbatch(ingname, quantity, expirydate)
+            print("The Batch has been updated.")
+
+        elif stockchoice == "4":
+            batches = wilsonskitchen.ingredientbatches.batches_select_all_batches()
+            for i in range(0, len(batches)):
+                print("\nIngredient Batch " + str(batches[i][0]) + " details:"
+                        + "\n   Ingredient ID: " + str(batches[i][1])
+                        + "\n   Quantity: " + str(batches[i][2])
+                        + "\n   Expiry Date: " + str(batches[i][3]))
 
     elif choice == "9":#login: 0/4 completed
         print("\nLogin Details menu\n"
