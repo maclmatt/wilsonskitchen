@@ -1,4 +1,5 @@
 from classes import List, Customers, Bookings, Tables, Orders, OrderProducts, Products, Uses, Ingredients, IngredientBatches, StaffMembers
+from datetime import date, datetime
 
 class Restaurant():
     _customers = None
@@ -183,7 +184,7 @@ class Restaurant():
         self._ingredients.ingredients_delete_ingredient(ingid)
 
     def restaurant_delete_ingredientbatch(self, ingid, expirydate):
-        #selectin quantity for the ingredient batch
+        #selecting quantity for the ingredient batch
         quantitytuple = self._ingredientbatches.batches_select_quant(ingid, expirydate)
         quantity = quantitytuple[0]
         #reducing the ingredient stock by the quantity of the ingredient batch
@@ -194,3 +195,32 @@ class Restaurant():
         for i in range(0, len(checkproducts)):
             self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
         self._ingredientbatches.batches_delete_ingredientbatch(ingid, expirydate)
+
+    def restaurant_delete_outofdate_ingredients(self):
+        batches = self._ingredientbatches.batches_select_all_batches()
+        for i in range(0, len(batches)):
+            expirydatestr = batches[i][3]
+            expirydate = datetime.strptime(expirydatestr, "%Y-%m-%d").date()
+            if expirydate < date.today():
+                self.restaurant_delete_ingredientbatch(batches[i][1], expirydatestr)
+
+    def restaurant_check_outofstock_products(self):
+        ings = self._ingredients.ingredients_select_ingredients()
+        ingtobeordered = []
+        for i in range(0, len(ings)):
+            usesofingredients = self._uses.uses_select_uses_from_ingid(ings[i][0])
+            for j in range(0, len(usesofingredients)):
+                case = "x"
+                if ings[i][5] < usesofingredients[j][3]:
+                    ingtobeordered.append(ings[i][1])
+                    case = "break"
+                if case == "break":
+                    break
+        allproducts = self._products.products_return_products()
+        outproducts = []
+        for i in range(0, len(allproducts)):
+            instock = self._products.products_check_quantity_availability(1, allproducts[i][0])
+            if instock == False:
+                outproducts.append(allproducts[i][2])
+
+        return [ingtobeordered, outproducts]

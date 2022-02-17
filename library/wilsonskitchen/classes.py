@@ -382,7 +382,7 @@ class Products(Table):
         prodid = prodidtuple[0]
         return prodid
 
-    def products_check_quantity_availabilty(self, quantity, productid):
+    def products_check_quantity_availability(self, quantity, productid):
         sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
         availabletuple = self.select_dataspecific_fetchone(sql, (productid,))
         available = availabletuple[0]

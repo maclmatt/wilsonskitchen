@@ -39,7 +39,7 @@ choice = input("Please choose an option from the menu above (E to logout): ")
 
 while choice != "E":
 
-    if choice == "1":#reset, TODO add in check for access level
+    if choice == "1" and access == 1:#reset
         check = input("Are you sure you want to reset the Customer table (y/n): ")
         if check == "y":
             wilsonskitchen.customers.reset_customers_table()
@@ -70,6 +70,9 @@ while choice != "E":
         check = input("Are you sure you want to reset the StaffMembers table (y/n): ")
         if check == "y":
             wilsonskitchen.staffmembers.reset_staffmembers_table()
+
+    elif choice == "1" and access != 1:#reset 2.0
+        print("Unfortunately your account does not have access to reset the database.")
         
     elif choice == "2":#customers
         print("\nCustomer Details menu:\n"
@@ -318,7 +321,8 @@ while choice != "E":
             + "   2. Delete product\n"
             + "   3. Update product details\n"
             + "   4. Get all products\n"
-            + "   5. Print current menu")
+            + "   5. Print current menu\n"
+            + "   6. Check for any out of stock products.")
         menuchoice = input("Please choose an option from the menu above (E to exit this menu): ")
 
         if menuchoice == "1":
@@ -397,6 +401,25 @@ while choice != "E":
             for i in range(0, (len(desserts))):
                 print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
 
+        elif menuchoice == "6":
+            outofstock = wilsonskitchen.restaurant_check_outofstock_products()
+
+            ingredients = outofstock[0]
+            if ingredients == []:
+                print("All of the ingredients are stocked.")
+            else:
+                print("These are the ingredients that are out of stock:")
+                for i in range(0, len(ingredients)):
+                    print(ingredients[i])
+
+            products = outofstock[1]
+            if products == []:
+                print("All of the products are in stock.")
+            else:
+                print("These are the products that are out of stock:")
+                for i in range(0, len(products)):
+                    print(products[i])
+
     elif choice == "7":#ingredients
         print("\nIngredient Details menu\n"
             + "   1. Add new ingredient\n"
@@ -446,12 +469,13 @@ while choice != "E":
                         + "\n   Storage Place: " + str(ingredients[i][3])
                         + "\n   Cost per Kilo: " + str(ingredients[i][4]))
                     
-    elif choice == "8":#stock: TODO add in expiry date check and deletion of out of date batches
+    elif choice == "8":#stock
         print("\nStock Details menu\n"
             + "   1. Add new batch of ingredients\n"
             + "   2. Delete batch of ingredients\n"
             + "   3. Update batch of ingredients\n"
-            + "   4. Get run down of all ingredient stock")
+            + "   4. Get run down of all ingredient stock\n"
+            + "   5. Delete out of stock batches.")
         stockchoice = input("Please choose an option from the menu above (E to exit stock menu): ")
 
         if stockchoice == "1":
@@ -488,6 +512,9 @@ while choice != "E":
                         + "\n   Quantity: " + str(batches[i][2])
                         + "\n   Expiry Date: " + str(batches[i][3]))
 
+        elif stockchoice == "5":
+            wilsonskitchen.restaurant_delete_outofdate_ingredients()
+
     elif choice == "9":#login
         print("\nLogin Details menu\n"
             + "   1. Add new member of staff account\n"
@@ -507,8 +534,14 @@ while choice != "E":
                 sname = input("Please enter the surname: ")
                 job = input("Please enter the Job title: ")
                 access = int(input("Please enter the access level: "))
-                password = input("Please enter a secure password: ")
-                #TODO add in check to enter password twice and make sure they are the same
+                passwordcheck = False
+                while passwordcheck == False:
+                    password = input("Please enter a secure password: ")
+                    password1 = input("Please re-enter your password: ")
+                    if password == password1:
+                        passwordcheck = True
+                    else:
+                        print("Your first and second password entries do not match, please re-enter:")
                 newusername = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
                 print("Your username is " + str(newusername))
                 print("The Staff Member has been added to the database.")
@@ -526,7 +559,14 @@ while choice != "E":
             email = input("Please enter your new email: ")
             fname = input("Please enter your new Firstname: ")
             sname = input("Please enter your new surname: ")
-            newpassword = input("Please enter your new secure password: ")
+            passwordcheck = False
+            while passwordcheck == False:
+                password = input("Please enter a new secure password: ")
+                password1 = input("Please re-enter your new password: ")
+                if password == password1:
+                    passwordcheck = True
+                else:
+                    print("Your first and second password entries do not match, please re-enter:")
             wilsonskitchen.staffmembers.staffmembers_update_self(username, email, fname, sname, password)
             print("Your details have been updated.")
 
@@ -540,8 +580,14 @@ while choice != "E":
                 sname = input("Please enter the new surname: ")
                 job = input("Please enter the new job title: ")
                 access = input("Please enter the new access level: ")
-                password = input("Please enter the new password: ")
-                #TODO add in check to enter password twice and make sure they are the same
+                passwordcheck = False
+                while passwordcheck == False:
+                    password = input("Please enter a new secure password: ")
+                    password1 = input("Please re-enter your new password: ")
+                    if password == password1:
+                        passwordcheck = True
+                    else:
+                        print("Your first and second password entries do not match, please re-enter:")
                 wilsonskitchen.staffmembers.staffmembers_update_member(oldemail, email, fname, sname, job, access, password)
                 print("The staff member's details have been updated.")
 
