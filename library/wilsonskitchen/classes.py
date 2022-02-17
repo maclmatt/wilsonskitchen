@@ -556,10 +556,29 @@ class StaffMembers(Table):
         sql = "DELETE FROM StaffMembers WHERE Email=?"
         self.delete_record(sql, (email,))
 
+    def staffmembers_update_self(self, staffid, email, fname, sname, password):
+        values = (email, fname, sname, password, staffid)
+        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, Password=? WHERE StaffID=?"
+        self.update(sql, values)
+
     def staffmembers_update_member(self, oldemail, email, fname, sname, job, access, password):
         values = (email, fname, sname, job, access, password, oldemail)
         sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, JobTitle=?, AccessLevel=?, Password=? WHERE Email=?"
         self.update(sql, values)
 
-
-    
+    def staffmembers_check_login(self, username, password):
+        values = (username, password)
+        sql = "SELECT StaffID FROM StaffMembers WHERE Username=? AND Password=?"
+        staffidtuple = self.select_dataspecific_fetchone(sql, values)
+        if staffidtuple == None:
+            sql = "SELECT Password FROM StaffMembers WHERE Username=?"
+            passwordtuple = self.select_dataspecific_fetchone(sql, (username,))
+            if passwordtuple == None:
+                return [False, "neither"]
+            else:
+                password = passwordtuple[0]
+                return [False, password]
+        else:
+            staffid = staffidtuple[0]
+            return [True, staffid]
+            

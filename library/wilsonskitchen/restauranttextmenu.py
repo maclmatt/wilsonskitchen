@@ -2,10 +2,29 @@ from restaurantmain import Restaurant
 import random
 import sys
 
-#TODO login function, with sys.exit("You have entered too many wrong login details")
-#remember to get and assign staffid for later on
-
 wilsonskitchen = Restaurant()
+
+username = int(input("Please enter your username: "))
+password = input("Please enter your password: ")
+valid = False
+logincount = 1
+while valid == False:
+    if logincount == 3:
+        sys.exit("You have entered the wrong details 3 times and will be blocked from the system.")
+    status = wilsonskitchen.staffmembers.staffmembers_check_login(username, password)
+    if status[0] == False:
+        logincount += 1
+        if status[1] == "neither":
+            print("You have entered the wrong username or wrong username and password, please re-try:")
+            username = int(input("Please enter your username: "))
+            password = input("Please enter your password: ")
+        else:
+            print("You entered the correct username but incorrect password, please re-enter:")
+            password = input("Please enter your password: ")
+    else:
+        print("Welcome!")
+        staffid = status[1]
+        valid = True
 
 print("\nMain menu:\n"
     + "\n   1. Reset database (all data and tables will be lost)\n"
@@ -467,42 +486,59 @@ while choice != "E":
             + "   1. Add new member of staff account\n"
             + "   2. Delete an account\n"
             + "   3. Update account details\n"
-            + "   4. Get list of current employees")
+            + "   4. Update staff members account details\n"
+            + "   5. Get list of current employees")
         loginchoice = input("Please choose an option from the menu above (E to exit login menu): ")
 
         if loginchoice == "1":
-            #TODO add in check of access level
-            print("Please enter the details of the new staff member: ")
-            email = input("Please enter the staff email: ")
-            fname = input("Please enter the Firstname: ")
-            sname = input("Please enter the surname: ")
-            job = input("Please enter the Job title: ")
-            access = int(input("Please enter the access level: "))
-            password = input("Please enter a secure password: ")
-            #TODO add in check to enter password twice and make sure they are the same
-            username = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
-            print("Your username is " + str(username))
-            print("The Staff Member has been added to the database.")
+            if staffid != 1:
+                print("Unfortunately your account does not have access to add a new member.")
+            else:
+                print("Please enter the details of the new staff member: ")
+                email = input("Please enter the staff email: ")
+                fname = input("Please enter the Firstname: ")
+                sname = input("Please enter the surname: ")
+                job = input("Please enter the Job title: ")
+                access = int(input("Please enter the access level: "))
+                password = input("Please enter a secure password: ")
+                #TODO add in check to enter password twice and make sure they are the same
+                username = wilsonskitchen.staffmembers.staffmembers_add_member(email, fname, sname, job, access, password)
+                print("Your username is " + str(username))
+                print("The Staff Member has been added to the database.")
 
         elif loginchoice == "2":
-            #TODO add in check of access level
-            email = input("Please enter the email of the staff member you wish to delete: ")
-            wilsonskitchen.staffmembers.staffmembers_delete_member(email)
-            print("The staff member has been deleted.")
+            if staffid != 1:
+                print("Unfortunately your account does not have access to delete a member.")
+            else:
+                email = input("Please enter the email of the staff member you wish to delete: ")
+                wilsonskitchen.staffmembers.staffmembers_delete_member(email)
+                print("The staff member has been deleted.")
 
         elif loginchoice == "3":
-            oldemail = input("Please enter the original email of the staff member: ")
-            email = input("Please enter the new email: ")
-            fname = input("Please enter the new firstname: ")
-            sname = input("Please enter the new surname: ")
-            job = input("Please enter the new job title: ")
-            access = input("Please enter the new access level: ")
-            password = input("Please enter the new password: ")
-            #TODO add in check to enter password twice and make sure they are the same
-            wilsonskitchen.staffmembers.staffmembers_update_member(oldemail, email, fname, sname, job, access, password)
-            print("The staff member's details have been updated.")
+            print("Please enter your new details, you cannot change your job title, access level or username: ")
+            email = input("Please enter your new email: ")
+            fname = input("Please enter your new Firstname: ")
+            sname = input("Please enter your new surname: ")
+            password = input("Please enter your new secure password: ")
+            wilsonskitchen.staffmembers.staffmembers_update_self(staffid, email, fname, sname, password)
+            print("Your details have been updated.")
 
         elif loginchoice == "4":
+            if staffid != 1:
+                print("Unfortunately your account does not have access to update a member's details.")
+            else:
+                oldemail = input("Please enter the original email of the staff member: ")
+                email = input("Please enter the new email: ")
+                fname = input("Please enter the new firstname: ")
+                sname = input("Please enter the new surname: ")
+                job = input("Please enter the new job title: ")
+                access = input("Please enter the new access level: ")
+                password = input("Please enter the new password: ")
+                #TODO add in check to enter password twice and make sure they are the same
+                wilsonskitchen.staffmembers.staffmembers_update_member(oldemail, email, fname, sname, job, access, password)
+                print("The staff member's details have been updated.")
+
+        elif loginchoice == "5":
             staffmembers = wilsonskitchen.staffmembers.staffmembers_get_all()
             for i in range(0, len(staffmembers)):
                 print("\nStaff Member " + str(staffmembers[i][0]) + " details:"
