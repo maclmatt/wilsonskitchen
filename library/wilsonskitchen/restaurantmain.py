@@ -103,23 +103,19 @@ class Restaurant():
         usesofproduct = self._uses.uses_select_uses_forproduct(productid)
         self._productavailabilitieslist.wipe()
         for i in range(0, len(usesofproduct)):
-            stock = self._ingredients.ingredients_select_ingredient_stock(
-                usesofproduct[i][2])
-            usequantity = self._uses.uses_select_use_quantity(
-                usesofproduct[i][0])
+            stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
+            usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
             available = stock // usequantity
             self._productavailabilitieslist.list_add_item(available)
         lowest = self._productavailabilitieslist.list_return_lowest()
         self._products.products_add_product_quantity(lowest, productid)
 
     def restaurant_make_booking(self, time, date, nopeople, custid):
-        tableid = self._tables.tables_find_table_for_booking(
-            time, date, nopeople)
+        tableid = self._tables.tables_find_table_for_booking(time, date, nopeople)
         if tableid == -1:
             return False
         else:
-            self._bookings.bookings_add_booking(
-                tableid, custid, time, date, nopeople)
+            self._bookings.bookings_add_booking(tableid, custid, time, date, nopeople)
             return True
 
     def restaurant_delete_booking(self, email, time, date):
@@ -133,13 +129,11 @@ class Restaurant():
 
         check = True
         for i in range(0, n):
-            check = self._products.products_check_quantity_availabilty(
-                quantity[i], ids[i])
+            check = self._products.products_check_quantity_availabilty(quantity[i], ids[i])
             if check == False:
                 break
             # update order price
-            self._orderproducts.orderproducts_add_orderproduct(
-                orderid, ids[i], quantity[i])
+            self._orderproducts.orderproducts_add_orderproduct(orderid, ids[i], quantity[i])
             price = self._products.products_get_product_price(ids[i])
             sumprice = price * quantity[i]
             self._orders.orders_add_orderproduct_price(orderid, sumprice)
@@ -153,13 +147,11 @@ class Restaurant():
 
         ordercost = self._orders.orders_get_order_totalprice(orderid)
         bookingid = self._bookings.bookings_select_bookingid(tableid)
-        self._bookings.bookings_increase_booking_billtotal(
-            bookingid, ordercost)
+        self._bookings.bookings_increase_booking_billtotal(bookingid, ordercost)
 
         checkproducts = self._products.products_return_products()
         for i in range(0, len(checkproducts)):
-            self.restaruant_recalculate_quantityavailable_for_product(
-                checkproducts[i][0])
+            self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
 
         if check == False:
             self._orders.orders_delete_order(orderid)
@@ -183,17 +175,13 @@ class Restaurant():
         self.restaruant_recalculate_quantityavailable_for_product(productid)
 
     def restaurant_add_ingredientbatch(self, ingname, quantity, expirydate):
-        ingredientid = self._ingredients.ingredients_select_ingredientid(ingname)[
-            0]
-        self._ingredientbatches.batches_add_ingredientbatch(
-            ingredientid, quantity, expirydate)
-        self._ingredients.ingredients_increase_ingredient_stock(
-            ingredientid, quantity)
+        ingredientid = self._ingredients.ingredients_select_ingredientid(ingname)[0]
+        self._ingredientbatches.batches_add_ingredientbatch(ingredientid, quantity, expirydate)
+        self._ingredients.ingredients_increase_ingredient_stock(ingredientid, quantity)
 
         checkproducts = self._products.products_return_products()
         for i in range(0, len(checkproducts)):
-            self.restaruant_recalculate_quantityavailable_for_product(
-                checkproducts[i][0])
+            self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
 
     def restaurant_delete_ingredient_and_products(self, ingid):
         usesofingredient = self._uses.uses_select_uses_from_ingid(ingid)
@@ -204,8 +192,7 @@ class Restaurant():
 
     def restaurant_delete_ingredientbatch(self, ingid, expirydate):
         # selecting quantity for the ingredient batch
-        quantitytuple = self._ingredientbatches.batches_select_quant(
-            ingid, expirydate)
+        quantitytuple = self._ingredientbatches.batches_select_quant(ingid, expirydate)
         quantity = quantitytuple[0]
         # reducing the ingredient stock by the quantity of the ingredient batch
         self._ingredients.ingredients_reduce_ingredient_stock(ingid, quantity)
@@ -213,10 +200,8 @@ class Restaurant():
         # after this reduction of ingredient stock
         checkproducts = self._products.products_return_products()
         for i in range(0, len(checkproducts)):
-            self.restaruant_recalculate_quantityavailable_for_product(
-                checkproducts[i][0])
-        self._ingredientbatches.batches_delete_ingredientbatch(
-            ingid, expirydate)
+            self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
+        self._ingredientbatches.batches_delete_ingredientbatch(ingid, expirydate)
 
     def restaurant_delete_outofdate_ingredients(self):
         batches = self._ingredientbatches.batches_select_all_batches()
@@ -224,15 +209,13 @@ class Restaurant():
             expirydatestr = batches[i][3]
             expirydate = datetime.strptime(expirydatestr, "%Y-%m-%d").date()
             if expirydate < date.today():
-                self.restaurant_delete_ingredientbatch(
-                    batches[i][1], expirydatestr)
+                self.restaurant_delete_ingredientbatch(batches[i][1], expirydatestr)
 
     def restaurant_check_outofstock_products(self):
         ings = self._ingredients.ingredients_select_ingredients()
         ingtobeordered = []
         for i in range(0, len(ings)):
-            usesofingredients = self._uses.uses_select_uses_from_ingid(
-                ings[i][0])
+            usesofingredients = self._uses.uses_select_uses_from_ingid(ings[i][0])
             for j in range(0, len(usesofingredients)):
                 case = "x"
                 if ings[i][5] < usesofingredients[j][3]:
@@ -243,8 +226,7 @@ class Restaurant():
         allproducts = self._products.products_return_products()
         outproducts = []
         for i in range(0, len(allproducts)):
-            instock = self._products.products_check_quantity_availability(
-                1, allproducts[i][0])
+            instock = self._products.products_check_quantity_availability(1, allproducts[i][0])
             if instock == False:
                 outproducts.append(allproducts[i][2])
 
