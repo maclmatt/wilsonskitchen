@@ -45,42 +45,92 @@ choice = input("Please choose an option from the menu above (E to logout): ")
 
 while choice != "E":
 
-    if choice == "1" and access == 1:  # reset
-        check = input("Are you sure you want to reset the Customer table (y/n): ")
+    if choice == "1" and access == 1:  #reset, exception = done
+        check = input("Are you sure you want to reset the Customers table (y/n): ")
         if check == "y":
-            wilsonskitchen.customers.reset_customers_table()
-        check = input("Are you sure you want to reset the Booking table (y/n): ")
+            if wilsonskitchen.customers.reset_customers_table():
+                print("The Customers table has been recreated.")
+                LOGGER.info("The Customers table has been recreated.")
+            else:
+                print("The Customers table could not be recreated, see log file.")
+                LOGGER.error("The Customers table could not be recreated.")
+        check = input("Are you sure you want to reset the Orderproducts table (y/n): ")
         if check == "y":
-            wilsonskitchen.bookings.reset_bookings_table()
+            if wilsonskitchen.bookings.reset_bookings_table():
+                print("The Bookings table has been recreated.")
+                LOGGER.info("The Bookings table has been recreated.")
+            else:
+                print("The Bookings table could not be recreated, see log file.")
+                LOGGER.error("The Bookings table could not be recreated.")
         check = input("Are you sure you want to reset the Tables table (y/n): ")
         if check == "y":
-            wilsonskitchen.tables.reset_tables_table()
-        check = input("Are you sure you want to reset the Order table (y/n): ")
+            if wilsonskitchen.tables.reset_tables_table():
+                print("The Tables table has been recreated.")
+                LOGGER.info("The Tables table has been recreated.")
+            else:
+                print("The Tables table could not be recreated.")
+                LOGGER.error("The Tables table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Orders table (y/n): ")
         if check == "y":
-            wilsonskitchen.orders.reset_orders_table()
-        check = input("Are you sure you want to reset the Orderproduct table (y/n): ")
+            if wilsonskitchen.orders.reset_orders_table():
+                print("The Orders table has been recreated.")
+                LOGGER.info("The Orders table has been recreated.")
+            else:
+                print("The Orders table could not be recreated.")
+                LOGGER.error("The Orders table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Orderproducts table (y/n): ")
         if check == "y":
-            wilsonskitchen.orderproducts.reset_orderproducts_table()
-        check = input("Are you sure you want to reset the Product table (y/n): ")
+            if wilsonskitchen.orderproducts.reset_orderproducts_table():
+                print("The Orderproducts table has been recreated.")
+                LOGGER.info("The Orderproducts table has been recreated.")
+            else:
+                print("The Orderproducts table could not be recreated.")
+                LOGGER.error("The Orderproducts table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Products table (y/n): ")
         if check == "y":
-            wilsonskitchen.products.reset_products_table()
-        check = input("Are you sure you want to reset the Use table (y/n): ")
+            if wilsonskitchen.products.reset_products_table():
+                print("The Products table has been recreated.")
+                LOGGER.info("The Products table has been recreated.")
+            else:
+                print("The Products table could not be recreated.")
+                LOGGER.error("The Products table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Uses table (y/n): ")
         if check == "y":
-            wilsonskitchen.uses.reset_uses_table()
-        check = input("Are you sure you want to reset the Ingredient table (y/n): ")
+            if wilsonskitchen.uses.reset_uses_table():
+                print("The Uses table has been recreated.")
+                LOGGER.info("The Uses table has been recreated.")
+            else:
+                print("The Uses table could not be recreated.")
+                LOGGER.error("The Uses table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Ingredients table (y/n): ")
         if check == "y":
-            wilsonskitchen.ingredients.reset_ingredients_table()
-        check = input("Are you sure you want to reset the Ingredientbatch table (y/n): ")
+            if wilsonskitchen.ingredients.reset_ingredients_table():
+                print("The Ingredients table has been recreated.")
+                LOGGER.info("The Ingredients table has been recreated.")
+            else:
+                print("The Ingredients table could not be recreated.")
+                LOGGER.error("The Ingredients table could not be recreated, see log file.")
+        check = input("Are you sure you want to reset the Ingredientbatches table (y/n): ")
         if check == "y":
-            wilsonskitchen.ingredientbatches.reset_ingredientbatch_table()
+            if wilsonskitchen.ingredientbatches.reset_ingredientbatch_table():
+                print("The Ingredientbatches table has been recreated.")
+                LOGGER.info("The Ingredientbatches table has been recreated.")
+            else:
+                print("The Ingredientbatches table could not be recreated.")
+                LOGGER.error("The Ingredientbatches table could not be recreated, see log file.")
         check = input("Are you sure you want to reset the StaffMembers table (y/n): ")
         if check == "y":
-            wilsonskitchen.staffmembers.reset_staffmembers_table()
+            if wilsonskitchen.staffmembers.reset_staffmembers_table():
+                print("The StaffMembers table has been recreated.")
+                LOGGER.info("The StaffMembers table has been recreated.")
+            else:
+                print("The StaffMembers table could not be recreated, see log file.")
+                LOGGER.error("The StaffMembers table could not be recreated.")
 
-    elif choice == "1" and access != 1:  # reset 2.0
+    elif choice == "1" and access != 1:  # reset 2.0, exception = not needed
         print("Unfortunately your account does not have access to reset the database.")
 
-    elif choice == "2":  # customers
+    elif choice == "2":  # customers exception = 1/5
         print("\nCustomer Details menu:\n"
               + "   1. Add new customer\n"
                 + "   2. Delete customer\n"
@@ -102,7 +152,7 @@ while choice != "E":
             else:
                 print("%s %s could not be added to the database, see log file.", 
                     fname, sname)
-                LOGGER.error("%s %s could not be added to the database, see log file.", 
+                LOGGER.error("%s %s could not be added to the database.", 
                     fname, sname)
 
         elif custchoice == "2":
@@ -143,7 +193,7 @@ while choice != "E":
         else:
             print("That is not a valid choice, the main menu will now reload:")
 
-    elif choice == "3":  # bookings
+    elif choice == "3":  # bookings exception = 1/5
         print("\nBooking Details menu:\n"
               + "   1. Add new booking\n"
               + "   2. Delete booking\n"
@@ -173,8 +223,10 @@ while choice != "E":
             booked = wilsonskitchen.restaurant_make_booking(Time, Date, nopeople, custid)
             if booked:
                 print("The Booking has been added to the database.")
+                LOGGER.info("The Booking has been added to the database.")
             else:
-                print("There are no tables available at that time for that number of people.")
+                print("There are no tables available at that time for that number of people, see log file.")
+                LOGGER.info("Booking unable to be booked.")
 
         elif bookchoice == "2":
             print("Please enter the booking details: ")
@@ -254,7 +306,7 @@ while choice != "E":
         else:
             print("That is not a valid choice, the main menu will now reload:")
 
-    elif choice == "4":  # tables
+    elif choice == "4":  # tables exception = 1/4
         print("\nTable Details menu:\n"
               + "   1. Add new table\n"
               + "   2. Delete table\n"
@@ -267,8 +319,12 @@ while choice != "E":
             print("Please enter the details of the table.")
             NoSeats = input("Please enter the number of seats for this table: ")
             Description = input("Please enter the description for this table: ")
-            wilsonskitchen.tables.tables_add_table(NoSeats, Description)
-            print("\nThe Table has been added to the database.")
+            if wilsonskitchen.tables.tables_add_table(NoSeats, Description):
+                print("\nThe Table has been added to the database.")
+                LOGGER.info("Table has been added to the database.")
+            else:
+                print("\nThe Table could not be added to the database, see log file.")
+                LOGGER.error("Table unable to be added to database.")
 
         elif tablechoice == "2":
             tableid = input("Please enter the Table ID of the Table you wish to delete: ")
@@ -301,7 +357,7 @@ while choice != "E":
         else:
             print("That is not a valid choice, the menu will now reload:")
 
-    elif choice == "5":  # orders
+    elif choice == "5":  # orders exception = 1/2
         print("\nOrder Details menu:\n"
               + "   1. Add new order\n"
               + "   2. Get all orders\n")
@@ -321,10 +377,12 @@ while choice != "E":
                     int(input("Please enter the quantity of the item ordered: ")))
             check = wilsonskitchen.restaurant_make_order(TableID, n)
             if check:
-                print("Order has been added to the database.")
+                print("The Order has been added to the database.")
+                LOGGER.info("Order has been added to the database.")
             else:
                 print("This product is out of stock, please re-enter order"
                     + " excluding this item.")
+                LOGGER.info("Order unable to be added, possibly due to out of stock item.")
 
         elif orderchoice == "2":
             type = input("Would you like to see all orders made by a particular table (t)"

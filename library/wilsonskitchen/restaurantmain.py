@@ -30,8 +30,7 @@ class Restaurant():
         self._products = Products(DB_NAME, "Products")
         self._uses = Uses(DB_NAME, "Uses")
         self._ingredients = Ingredients(DB_NAME, "Ingredients")
-        self._ingredientbatches = IngredientBatches(
-            DB_NAME, "IngredientBatches")
+        self._ingredientbatches = IngredientBatches(DB_NAME, "IngredientBatches")
         self._staffmembers = StaffMembers(DB_NAME, "StaffMembers")
         self._productidlist = List()
         self._quantitylist = List()
@@ -115,8 +114,10 @@ class Restaurant():
         if tableid == -1:
             return False
         else:
-            self._bookings.bookings_add_booking(tableid, custid, time, date, nopeople)
-            return True
+            if self._bookings.bookings_add_booking(tableid, custid, time, date, nopeople):
+                return True
+            else:
+                return False
 
     def restaurant_delete_booking(self, email, time, date):
         custid = self._customers.customers_select_custid(email)[0]
@@ -160,6 +161,7 @@ class Restaurant():
             return True
 
     def restaurant_make_product(self, type, name, price, n):
+        
         productid = self._products.products_add_product(type,  name, price)
         ingredientnames = self._ingredientnameslist.return_list()
         ingredientquantities = self._ingredientquantitylist.return_list()

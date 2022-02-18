@@ -1,6 +1,7 @@
 from asyncio.log import logger
 import sqlite3
 from datetime import date, datetime
+from turtle import Turtle
 from constants import LOGGER
 
 
@@ -111,14 +112,19 @@ class Customers(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_customers_table(self):
-        sql = """CREATE TABLE Customers            
-                (CustID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Email TEXT NOT NULL UNIQUE,
-                Firstname TEXT NOT NULL,
-                Surname TEXT,              
-                Contactno TEXT NOT NULL)"""
-        self.recreate_table(sql)
+    def reset_customers_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Customers            
+                    (CustID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Email TEXT NOT NULL UNIQUE,
+                    Firstname TEXT NOT NULL,
+                    Surname TEXT,              
+                    Contactno TEXT NOT NULL)"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def customers_add_customer(self, email, fname, sname, contactno) -> bool:
         try:
@@ -172,26 +178,36 @@ class Bookings(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_bookings_table(self):
-        sql = """CREATE TABLE Bookings
-                (BookingID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Time TEXT,
-                Date TEXT,
-                NoPeople INTEGER,
-                TableID INTEGER,
-                BillTotal REAL,
-                CustID INTEGER,
-                FOREIGN KEY (TableID) REFERENCES Tables(TableID),
-                FOREIGN KEY (CustID) REFERENCES Customer(CustID))"""
-        self.recreate_table(sql)
+    def reset_bookings_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Bookings
+                    (BookingID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Time TEXT,
+                    Date TEXT,
+                    NoPeople INTEGER,
+                    TableID INTEGER,
+                    BillTotal REAL,
+                    CustID INTEGER,
+                    FOREIGN KEY (TableID) REFERENCES Tables(TableID),
+                    FOREIGN KEY (CustID) REFERENCES Customer(CustID))"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def bookings_add_booking(self, TableID, CustID, Time, Date, NoPeople):
-        BillTotal = 0.00
-        values = (Time, Date, NoPeople, TableID, BillTotal, CustID)
-        sql = """INSERT 
-                INTO Bookings (Time, Date, NoPeople, TableID, BillTotal, CustID) 
-                VALUES (?, ?, ?, ?, ?, ?)"""
-        self.insert_record(sql, values)
+    def bookings_add_booking(self, TableID, CustID, Time, Date, NoPeople) -> bool:
+        try:
+            BillTotal = 0.00
+            values = (Time, Date, NoPeople, TableID, BillTotal, CustID)
+            sql = """INSERT 
+                    INTO Bookings (Time, Date, NoPeople, TableID, BillTotal, CustID) 
+                    VALUES (?, ?, ?, ?, ?, ?)"""
+            self.insert_record(sql, values)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def bookings_delete_booking(self, custid, time, date):
         values = (time, date, custid)
@@ -259,14 +275,19 @@ class Tables(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_tables_table(self):
-        sql = """CREATE TABLE Tables
-                (TableID INTEGER PRIMARY KEY AUTOINCREMENT,
-                NoSeats INTEGER,
-                Description TEXT)"""
-        self.recreate_table(sql)
+    def reset_tables_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Tables
+                    (TableID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    NoSeats INTEGER,
+                    Description TEXT)"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def tables_find_table_for_booking(self, Time, Date, nopeople):
+    def tables_find_table_for_booking(self, Time, Date, nopeople) -> int:
         booked = False
         while not booked:
             sql = """SELECT TableID 
@@ -288,12 +309,17 @@ class Tables(Table):
             else:
                 return -1
 
-    def tables_add_table(self, NoSeats, Description):
-        values = (NoSeats, Description)
-        sql = """INSERT 
-                INTO Tables (NoSeats, Description) 
-                VALUES (?, ?)"""
-        self.insert_record(sql, values)
+    def tables_add_table(self, NoSeats, Description) -> bool:
+        try:
+            values = (NoSeats, Description)
+            sql = """INSERT 
+                    INTO Tables (NoSeats, Description) 
+                    VALUES (?, ?)"""
+            self.insert_record(sql, values)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def tables_delete_table(self, tableid):
         sql = """DELETE 
@@ -319,17 +345,22 @@ class Orders(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_orders_table(self):
-        sql = """CREATE TABLE Orders
-                (OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Date TEXT,
-                Time TEXT,
-                TotalPrice REAL,
-                TableID INTEGER,
-                FOREIGN KEY (TableID) REFERENCES Tables(TableID))"""
-        self.recreate_table(sql)
+    def reset_orders_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Orders
+                    (OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Date TEXT,
+                    Time TEXT,
+                    TotalPrice REAL,
+                    TableID INTEGER,
+                    FOREIGN KEY (TableID) REFERENCES Tables(TableID))"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def orders_add_order(self, TableID):
+    def orders_add_order(self, TableID) -> int:
         TotalPrice = 0.00
         today = date.today()
         now = datetime.now()
@@ -389,38 +420,53 @@ class OrderProducts(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_orderproducts_table(self):
-        sql = """CREATE TABLE OrderProducts
-                (OrderProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-                ProductID INTEGER,
-                Quantity INTEGER,
-                OrderID INTEGER,
-                FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
-                FOREIGN KEY (OrderID) REFERENCES OrderTable(OrderID))"""
-        self.recreate_table(sql)
+    def reset_orderproducts_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE OrderProducts
+                    (OrderProductID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProductID INTEGER,
+                    Quantity INTEGER,
+                    OrderID INTEGER,
+                    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+                    FOREIGN KEY (OrderID) REFERENCES OrderTable(OrderID))"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def orderproducts_add_orderproduct(self, OrderID, ProductID, quantity):
-        sql = """INSERT 
-                INTO OrderProducts (ProductID, Quantity, OrderID) 
-                VALUES (?, ?, ?)"""
-        self.insert_record(sql, (ProductID, quantity, OrderID))
+    def orderproducts_add_orderproduct(self, OrderID, ProductID, quantity) -> bool:
+        try:
+            sql = """INSERT 
+                    INTO OrderProducts (ProductID, Quantity, OrderID) 
+                    VALUES (?, ?, ?)"""
+            self.insert_record(sql, (ProductID, quantity, OrderID))
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
 
 class Products(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_products_table(self):
-        sql = """CREATE TABLE Products
-                (ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Type TEXT,
-                Name TEXT,
-                Price REAL,
-                QuantityAvailable INTEGER,
-                CostPerPortion FLOAT)"""
-        self.recreate_table(sql)
+    def reset_products_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Products
+                    (ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Type TEXT,
+                    Name TEXT,
+                    Price REAL,
+                    QuantityAvailable INTEGER,
+                    CostPerPortion FLOAT)"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def products_add_product(self, type, name, price):
+    def products_add_product(self, type, name, price) -> int:
         quantity = 0
         cost = 0.0
         values = (type, name, price, quantity, cost)
@@ -509,21 +555,31 @@ class Uses(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_uses_table(self):
-        sql = """CREATE TABLE Uses
-                (UseID INTEGER PRIMARY KEY AUTOINCREMENT,
-                ProductID INTEGER,
-                IngredientID INTEGER,
-                QuantityInKilos REAL,
-                FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
-                FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
-        self.recreate_table(sql)
+    def reset_uses_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Uses
+                    (UseID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProductID INTEGER,
+                    IngredientID INTEGER,
+                    QuantityInKilos REAL,
+                    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+                    FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def uses_add_use(self, ProductID, IngredientID, Quantity):
-        sql = """INSERT 
-                INTO Uses (ProductID, IngredientID, QuantityInKilos) 
-                VALUES (?, ?, ?)"""
-        self.insert_record(sql, (ProductID, IngredientID, Quantity))
+    def uses_add_use(self, ProductID, IngredientID, Quantity) -> bool:
+        try:
+            sql = """INSERT 
+                    INTO Uses (ProductID, IngredientID, QuantityInKilos) 
+                    VALUES (?, ?, ?)"""
+            self.insert_record(sql, (ProductID, IngredientID, Quantity))
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def uses_delete_use(self, productid):
         sql = """DELETE 
@@ -558,22 +614,32 @@ class Ingredients(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_ingredients_table(self):
-        sql = """CREATE TABLE Ingredients
-                (IngredientID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Name TEXT,
-                Type TEXT,
-                StoragePlace TEXT,
-                CostPerKilo REAL,
-                StockInKilos REAL)"""
-        self.recreate_table(sql)
+    def reset_ingredients_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE Ingredients
+                    (IngredientID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT,
+                    Type TEXT,
+                    StoragePlace TEXT,
+                    CostPerKilo REAL,
+                    StockInKilos REAL)"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def ingredients_add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos):
-        values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
-        sql = """INSERT 
-                INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) 
-                VALUES (?, ?, ?, ?, ?)"""
-        self.insert_record(sql, values)
+    def ingredients_add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos) -> bool:
+        try:
+            values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
+            sql = """INSERT 
+                    INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) 
+                    VALUES (?, ?, ?, ?, ?)"""
+            self.insert_record(sql, values)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def ingredients_delete_ingredient(self, ingid):
         sql = """DELETE 
@@ -647,20 +713,30 @@ class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
-    def reset_ingredientbatch_table(self):
-        sql = """CREATE TABLE IngredientBatches
-                (IngredientBatchID INTEGER PRIMARY KEY AUTOINCREMENT,
-                IngredientID INTEGER,
-                Quantity REAL,
-                ExpiryDate TEXT,
-                FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
-        self.recreate_table(sql)
+    def reset_ingredientbatch_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE IngredientBatches
+                    (IngredientBatchID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    IngredientID INTEGER,
+                    Quantity REAL,
+                    ExpiryDate TEXT,
+                    FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def batches_add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate):
-        sql = """INSERT 
-                INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) 
-                VALUES (?, ?, ?)"""
-        self.insert_record(sql, (IngredientID, Quantity, ExpiryDate))
+    def batches_add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate) -> bool:
+        try:
+            sql = """INSERT 
+                    INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) 
+                    VALUES (?, ?, ?)"""
+            self.insert_record(sql, (IngredientID, Quantity, ExpiryDate))
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
     def batches_delete_ingredientbatch(self, ingid, expirydate):
         sql = """DELETE 
@@ -686,19 +762,24 @@ class StaffMembers(Table):
         super().__init__(dbname, tblname)
         self._username = 1111
 
-    def reset_staffmembers_table(self):
-        sql = """CREATE TABLE StaffMembers
-                (StaffID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Email TEXT,
-                Firstname TEXT,
-                Surname TEXT,
-                JobTitle TEXT,
-                AccessLevel INTEGER,
-                Username INTEGER,
-                Password)"""
-        self.recreate_table(sql)
+    def reset_staffmembers_table(self) -> bool:
+        try:
+            sql = """CREATE TABLE StaffMembers
+                    (StaffID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Email TEXT,
+                    Firstname TEXT,
+                    Surname TEXT,
+                    JobTitle TEXT,
+                    AccessLevel INTEGER,
+                    Username INTEGER,
+                    Password)"""
+            self.recreate_table(sql)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
 
-    def staffmembers_add_member(self, email, fname, sname, job, accesslevel, password):
+    def staffmembers_add_member(self, email, fname, sname, job, accesslevel, password) -> int:
         staffmembers = self.staffmembers_get_all()
         if staffmembers == []:
             username = self._username
