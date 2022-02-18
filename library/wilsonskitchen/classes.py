@@ -1,5 +1,8 @@
+from asyncio.log import logger
 import sqlite3
 from datetime import date, datetime
+from constants import LOGGER
+
 
 class List():
     def __init__(self):
@@ -41,6 +44,7 @@ class List():
         self._list = []
         self.length = 0
 
+
 class Table():
     def __init__(self, dbname, tblname):
         self.dbname = dbname
@@ -49,11 +53,15 @@ class Table():
     def recreate_table(self, sql):
         with sqlite3.connect(self.dbname) as db:
             cursor = db.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE name=?", (self.tblname,))
+            cursor.execute(
+                """SELECT name 
+                    FROM sqlite_master 
+                    WHERE name=?""", (self.tblname,))
             result = cursor.fetchall()
             if len(result) == 1:
-                    cursor.execute("DROP TABLE if exists {0}".format(self.tblname))
-                    db.commit()
+                cursor.execute(
+                    """DROP TABLE if exists {0}""".format(self.tblname))
+                db.commit()
             cursor.execute(sql)
             db.commit()
 
@@ -63,7 +71,7 @@ class Table():
             cursor.execute(sql, values)
             db.commit()
 
-    def delete_record(self, sql, rid): #rid must be in (x,) form
+    def delete_record(self, sql, rid):  # rid must be in (x,) form
         with sqlite3.connect(self.dbname) as db:
             cursor = db.cursor()
             cursor.execute(sql, rid)
@@ -75,15 +83,17 @@ class Table():
             cursor.execute(sql)
             data = cursor.fetchall()
             return data
-    
-    def select_dataspecific_fetchone(self, sql, data): #data must be in (x,) form
+
+    # data must be in (x,) form
+    def select_dataspecific_fetchone(self, sql, data):
         with sqlite3.connect(self.dbname) as db:
             cursor = db.cursor()
             cursor.execute(sql, data)
             data = cursor.fetchone()
             return data
 
-    def select_dataspecific_fetchall(self, sql, data): #data must be in (x,) form
+    # data must be in (x,) form
+    def select_dataspecific_fetchall(self, sql, data):
         with sqlite3.connect(self.dbname) as db:
             cursor = db.cursor()
             cursor.execute(sql, data)
@@ -95,6 +105,7 @@ class Table():
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
+
 
 class Customers(Table):
     def __init__(self, dbname, tblname):
@@ -109,35 +120,53 @@ class Customers(Table):
                 Contactno TEXT NOT NULL)"""
         self.recreate_table(sql)
 
-    def customers_add_customer(self, email, fname, sname, contactno):
-        values = (email, fname, sname, contactno)
-        sql = "INSERT INTO Customers (Email, Firstname, Surname, Contactno) VALUES (?, ?, ?, ?)"
-        self.insert_record(sql, values)
-        
+    def customers_add_customer(self, email, fname, sname, contactno) -> bool:
+        try:
+            values = (email, fname, sname, contactno)
+            sql = """INSERT 
+                    INTO Customers (Email, Firstname, Surname, Contactno) 
+                    VALUES (?, ?, ?, ?)"""
+            self.insert_record(sql, values)
+            return True
+        except BaseException as err:
+            LOGGER.error(err)
+            return False
+
     def customers_delete_customer(self, custid):
-        sql = "DELETE FROM Customers WHERE CustID=?"
+        sql = """DELETE 
+                FROM Customers 
+                WHERE CustID=?"""
         self.delete_record(sql, custid)
-        
+
     def customers_update_customer(self, newemail, fname, sname, contactno, oldemail):
         values = (newemail, fname, sname, contactno, oldemail)
-        sql = "UPDATE Customers SET Email=?, Firstname=?, Surname=?, ContactNo=? WHERE Email=?"
+        sql = """UPDATE Customers 
+                SET Email=?, Firstname=?, Surname=?, ContactNo=? 
+                WHERE Email=?"""
         self.update(sql, values)
-        
+
     def customers_select_custid(self, email):
         with sqlite3.connect(self.dbname) as db:
             cursor = db.cursor()
-            sql = "SELECT CustID FROM Customers WHERE Email=?"
+            sql = """SELECT CustID 
+                    FROM Customers 
+                    WHERE Email=?"""
             cursor.execute(sql, (email,))
             data = cursor.fetchone()
             return data
 
     def customers_select_customer(self, email):
-        sql = "SELECT * FROM Customers WHERE Email=?"
+        sql = """SELECT * 
+                FROM Customers 
+                WHERE Email=?"""
         return self.select_dataspecific_fetchone(sql, (email,))
 
     def customers_select_customers(self):
-        sql = "SELECT * FROM Customers"
+        sql = """SELECT * 
+                FROM Customers
+                ORDER BY Firstname ASC"""
         return self.select(sql)
+
 
 class Bookings(Table):
     def __init__(self, dbname, tblname):
@@ -157,37 +186,51 @@ class Bookings(Table):
         self.recreate_table(sql)
 
     def bookings_add_booking(self, TableID, CustID, Time, Date, NoPeople):
-        BillTotal = "0.00"
+        BillTotal = 0.00
         values = (Time, Date, NoPeople, TableID, BillTotal, CustID)
-        sql = "INSERT INTO Bookings (Time, Date, NoPeople, TableID, BillTotal, CustID) VALUES (?, ?, ?, ?, ?, ?)"
+        sql = """INSERT 
+                INTO Bookings (Time, Date, NoPeople, TableID, BillTotal, CustID) 
+                VALUES (?, ?, ?, ?, ?, ?)"""
         self.insert_record(sql, values)
 
     def bookings_delete_booking(self, custid, time, date):
         values = (time, date, custid)
-        sql = "DELETE FROM Bookings WHERE Time=? AND Date=? AND CustID=?"
+        sql = """DELETE 
+                FROM Bookings 
+                WHERE Time=? AND Date=? AND CustID=?"""
         self.delete_record(sql, values)
-        
+
     def bookings_select_booking_for_date(self, date):
-        sql = "SELECT * FROM Bookings WHERE Date=?"
+        sql = """SELECT * 
+                FROM Bookings 
+                WHERE Date=?"""
         return self.select_dataspecific_fetchall(sql, (date,))
-        
+
     def bookings_select_booking_for_dateandtime(self, date, time):
-        sql = "SELECT * FROM Bookings WHERE Date=? AND Time=?"
+        sql = """SELECT * 
+                FROM Bookings 
+                WHERE Date=? AND Time=?"""
         return self.select_dataspecific_fetchall(sql, (date, time))
 
     def bookings_select_booking_bill(self, tableid, time, date):
         values = (tableid, time, date)
-        sql = "SELECT BillTotal FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
+        sql = """SELECT BillTotal 
+                FROM Bookings 
+                WHERE TableID=? AND Time=? AND Date=?"""
         billtuple = self.select_dataspecific_fetchone(sql, values)
         bill = billtuple[0]
         return bill
 
     def bookings_select_booking_fromtableid(self, tableid):
-        sql = "SELECT * FROM Bookings WHERE TableID=?"
+        sql = """SELECT * 
+                FROM Bookings 
+                WHERE TableID=?"""
         return self.select_dataspecific_fetchone(sql, (tableid,))
 
     def bookings_select_bookingid(self, TableID):
-        sql = "SELECT BookingID FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
+        sql = """SELECT BookingID 
+                FROM Bookings 
+                WHERE TableID=? AND Time=? AND Date=?"""
         now = datetime.now()
         current_hour = now.strftime("%H")
         today = date.today()
@@ -197,16 +240,21 @@ class Bookings(Table):
         return bookingid
 
     def bookings_increase_booking_billtotal(self, bookingid, ordercost):
-        sql = "SELECT BillTotal FROM Bookings WHERE BookingID=?"
+        sql = """SELECT BillTotal 
+                FROM Bookings 
+                WHERE BookingID=?"""
         oldbilltuple = self.select_dataspecific_fetchone(sql, (bookingid,))
         if oldbilltuple == None:
             newbill = ordercost
         else:
             oldbill = oldbilltuple[0]
             newbill = oldbill + ordercost
-        sql = "UPDATE Bookings SET BillTotal=? WHERE BookingID=?"
+        sql = """UPDATE Bookings 
+                SET BillTotal=? 
+                WHERE BookingID=?"""
         self.update(sql, (newbill, bookingid))
-  
+
+
 class Tables(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
@@ -221,13 +269,17 @@ class Tables(Table):
     def tables_find_table_for_booking(self, Time, Date, nopeople):
         booked = False
         while not booked:
-            sql = "SELECT TableID FROM Tables WHERE NoSeats=?"
+            sql = """SELECT TableID 
+                    FROM Tables 
+                    WHERE NoSeats=?"""
             tableids = self.select_dataspecific_fetchall(sql, (nopeople,))
             for i in range(0, len(tableids)):
                 tableid = str(tableids[i])
                 values = (tableid[1], Time, Date)
-                sql = "SELECT * FROM Bookings WHERE TableID=? AND Time=? AND Date=?"
-                booking = self.select_dataspecific_fetchall(sql,values)
+                sql = """SELECT * 
+                        FROM Bookings 
+                        WHERE TableID=? AND Time=? AND Date=?"""
+                booking = self.select_dataspecific_fetchall(sql, values)
                 if booking == []:
                     break
             if booking == []:
@@ -238,21 +290,30 @@ class Tables(Table):
 
     def tables_add_table(self, NoSeats, Description):
         values = (NoSeats, Description)
-        sql = "INSERT INTO Tables (NoSeats, Description) VALUES (?, ?)"
+        sql = """INSERT 
+                INTO Tables (NoSeats, Description) 
+                VALUES (?, ?)"""
         self.insert_record(sql, values)
-        
+
     def tables_delete_table(self, tableid):
-        sql = "DELETE FROM Tables WHERE TableID=?"
+        sql = """DELETE 
+                FROM Tables 
+                WHERE TableID=?"""
         self.delete_record(sql, (tableid,))
 
     def tables_update_table(self, oldtableid, noseats, description):
         values = (noseats, description, oldtableid)
-        sql = "UPDATE Tables SET NoSeats=?, Description=? WHERE TableID=?"
+        sql = """UPDATE Tables 
+                SET NoSeats=?, Description=? 
+                WHERE TableID=?"""
         self.update(sql, values)
 
     def print_all_tables(self):
-        sql = "SELECT * FROM Tables ORDER BY NoSeats ASC"
+        sql = """SELECT * 
+                FROM Tables 
+                ORDER BY NoSeats ASC"""
         return self.select(sql)
+
 
 class Orders(Table):
     def __init__(self, dbname, tblname):
@@ -274,38 +335,55 @@ class Orders(Table):
         now = datetime.now()
         time = now.strftime("%H:%M:%S")
         values = (today, time, TotalPrice, TableID)
-        sql = "INSERT INTO Orders (Date, Time, TotalPrice, TableID) VALUES (?, ?, ?, ?)"
+        sql = """INSERT 
+                INTO Orders (Date, Time, TotalPrice, TableID) 
+                VALUES (?, ?, ?, ?)"""
         self.insert_record(sql, values)
-        sql = "SELECT OrderID FROM Orders WHERE Date=? AND Time=? AND TotalPrice=? AND TableID=?"
+        sql = """SELECT OrderID 
+                FROM Orders 
+                WHERE Date=? AND Time=? AND TotalPrice=? AND TableID=?"""
         orderidtuple = self.select_dataspecific_fetchone(sql, values)
         orderid = orderidtuple[0]
         return orderid
 
     def orders_delete_order(self, orderid):
-        sql = "DELETE FROM Orders WHERE OrderID=?"
+        sql = """DELETE 
+                FROM Orders 
+                WHERE OrderID=?"""
         self.delete_record(sql, (orderid,))
 
     def orders_add_orderproduct_price(self, orderid, price):
-        sql = "SELECT TotalPrice FROM Orders WHERE OrderID=?"
+        sql = """SELECT TotalPrice 
+                FROM Orders 
+                WHERE OrderID=?"""
         oldpricetuple = self.select_dataspecific_fetchone(sql, (orderid,))
         oldprice = oldpricetuple[0]
         newprice = oldprice + price
-        sql = "UPDATE Orders SET TotalPrice=? WHERE OrderID=?"
+        sql = """UPDATE Orders 
+                SET TotalPrice=? 
+                WHERE OrderID=?"""
         self.update(sql, (newprice, orderid))
 
     def orders_get_order_totalprice(self, orderid):
-        sql = "SELECT TotalPrice FROM Orders WHERE OrderID=?"
+        sql = """SELECT TotalPrice 
+                FROM Orders 
+                WHERE OrderID=?"""
         pricetuple = self.select_dataspecific_fetchone(sql, (orderid,))
         price = pricetuple[0]
         return price
 
     def orders_select_orders_for_table(self, tableid):
-        sql = "SELECT * FROM Orders WHERE TableID=?"
+        sql = """SELECT * 
+                FROM Orders 
+                WHERE TableID=?"""
         orders = self.select_dataspecific_fetchall(sql, (tableid,))
 
     def orders_select_orders_for_date(self, date):
-        sql = "SELECT * FROM Orders WHERE Date=?"
+        sql = """SELECT * 
+                FROM Orders 
+                WHERE Date=?"""
         orders = self.select_dataspecific_fetchall(sql, (date,))
+
 
 class OrderProducts(Table):
     def __init__(self, dbname, tblname):
@@ -322,8 +400,11 @@ class OrderProducts(Table):
         self.recreate_table(sql)
 
     def orderproducts_add_orderproduct(self, OrderID, ProductID, quantity):
-        sql = "INSERT INTO OrderProducts (ProductID, Quantity, OrderID) VALUES (?, ?, ?)"
+        sql = """INSERT 
+                INTO OrderProducts (ProductID, Quantity, OrderID) 
+                VALUES (?, ?, ?)"""
         self.insert_record(sql, (ProductID, quantity, OrderID))
+
 
 class Products(Table):
     def __init__(self, dbname, tblname):
@@ -343,47 +424,65 @@ class Products(Table):
         quantity = 0
         cost = 0.0
         values = (type, name, price, quantity, cost)
-        sql = "INSERT INTO Products (Type, Name, Price, QuantityAvailable, CostPerPortion) VALUES (?, ?, ?, ?, ?)"
+        sql = """INSERT 
+                INTO Products (Type, Name, Price, QuantityAvailable, CostPerPortion) 
+                VALUES (?, ?, ?, ?, ?)"""
         self.insert_record(sql, values)
-        sql = "SELECT ProductID FROM Products WHERE Name=? AND Price=?"
+        sql = """SELECT ProductID 
+                FROM Products 
+                WHERE Name=? AND Price=?"""
         idtuple = self.select_dataspecific_fetchone(sql, (name, price))
         id = idtuple[0]
         return id
 
     def products_increase_cost(self, productid, cost):
-        sql = "SELECT CostPerPortion FROM Products WHERE ProductID=?"
+        sql = """SELECT CostPerPortion 
+                FROM Products 
+                WHERE ProductID=?"""
         oldcosttuple = self.select_dataspecific_fetchone(sql, (productid,))
         oldcost = oldcosttuple[0]
-        newcost = oldcost + cost 
+        newcost = oldcost + cost
         values = (newcost, productid)
-        sql = "UPDATE Products SET CostPerPortion=? WHERE ProductID=?"
+        sql = """UPDATE Products 
+                SET CostPerPortion=? 
+                WHERE ProductID=?"""
         self.update(sql, values)
 
     def products_delete_product(self, productid):
-        sql = "DELETE FROM Products WHERE ProductID=?"
+        sql = """DELETE 
+                FROM Products 
+                WHERE ProductID=?"""
         self.delete_record(sql, (productid,))
 
     def products_return_products(self):
-        sql = "SELECT * FROM Products ORDER BY Type ASC"
+        sql = """SELECT * 
+                FROM Products 
+                ORDER BY Type ASC"""
         products = self.select(sql)
         return products
 
     def products_print_menu(self):
-        sql = "SELECT * FROM Products WHERE Type=?"
+        sql = """SELECT * 
+                FROM Products 
+                WHERE Type=?"""
         starters = self.select_dataspecific_fetchall(sql, ("Starter",))
         mains = self.select_dataspecific_fetchall(sql, ("Main",))
         sides = self.select_dataspecific_fetchall(sql, ("Side",))
         desserts = self.select_dataspecific_fetchall(sql, ("Dessert",))
         return [starters, mains, sides, desserts]
-        
+
     def products_select_productid(self, name):
-        sql = "SELECT ProductID FROM Products WHERE Name=?"
+        sql = """SELECT ProductID 
+                FROM Products 
+                WHERE Name=?"""
         prodidtuple = self.select_dataspecific_fetchone(sql, (name,))
         prodid = prodidtuple[0]
         return prodid
 
     def products_check_quantity_availability(self, quantity, productid):
-        sql = "SELECT QuantityAvailable FROM Products WHERE ProductID=?"
+        sql = """SELECT QuantityAvailable 
+                FROM Products 
+                WHERE ProductID=?"""
         availabletuple = self.select_dataspecific_fetchone(sql, (productid,))
         available = availabletuple[0]
         if available < quantity:
@@ -392,14 +491,19 @@ class Products(Table):
             return True
 
     def products_get_product_price(self, productid):
-        sql = "SELECT Price FROM Products WHERE ProductID=?"
+        sql = """SELECT Price 
+                FROM Products 
+                WHERE ProductID=?"""
         price = self.select_dataspecific_fetchone(sql, (productid,))[0]
         return price
 
     def products_add_product_quantity(self, quantity, productid):
-        sql = "UPDATE Products SET QuantityAvailable=? WHERE ProductID=?"
+        sql = """UPDATE Products 
+                SET QuantityAvailable=? 
+                WHERE ProductID=?"""
         values = (quantity, productid)
         self.update(sql, values)
+
 
 class Uses(Table):
     def __init__(self, dbname, tblname):
@@ -414,30 +518,41 @@ class Uses(Table):
                 FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
                 FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID))"""
         self.recreate_table(sql)
-        
+
     def uses_add_use(self, ProductID, IngredientID, Quantity):
-        sql = "INSERT INTO Uses (ProductID, IngredientID, QuantityInKilos) VALUES (?, ?, ?)"
+        sql = """INSERT 
+                INTO Uses (ProductID, IngredientID, QuantityInKilos) 
+                VALUES (?, ?, ?)"""
         self.insert_record(sql, (ProductID, IngredientID, Quantity))
 
     def uses_delete_use(self, productid):
-        sql = "DELETE FROM Uses WHERE ProductID=?"
+        sql = """DELETE 
+                FROM Uses 
+                WHERE ProductID=?"""
         self.delete_record(sql, (productid,))
 
     def uses_select_uses_forproduct(self, productid):
-        sql = "SELECT * FROM Uses WHERE ProductID=?"
+        sql = """SELECT * 
+                FROM Uses 
+                WHERE ProductID=?"""
         uses = self.select_dataspecific_fetchall(sql, (productid,))
         return uses
 
     def uses_select_use_quantity(self, useid):
-        sql = "SELECT QuantityInKilos FROM Uses WHERE UseID=?"
+        sql = """SELECT QuantityInKilos 
+                FROM Uses 
+                WHERE UseID=?"""
         quantitytuple = self.select_dataspecific_fetchone(sql, (useid,))
         quantity = quantitytuple[0]
         return quantity
 
     def uses_select_uses_from_ingid(self, ingid):
-        sql = "SELECT * FROM Uses WHERE IngredientID=?"
+        sql = """SELECT * 
+                FROM Uses 
+                WHERE IngredientID=?"""
         uses = self.select_dataspecific_fetchall(sql, (ingid,))
         return uses
+
 
 class Ingredients(Table):
     def __init__(self, dbname, tblname):
@@ -455,56 +570,78 @@ class Ingredients(Table):
 
     def ingredients_add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos):
         values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
-        sql = "INSERT INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) VALUES (?, ?, ?, ?, ?)"
+        sql = """INSERT 
+                INTO Ingredients (Name, Type, StoragePlace, CostPerKilo, StockInKilos) 
+                VALUES (?, ?, ?, ?, ?)"""
         self.insert_record(sql, values)
 
     def ingredients_delete_ingredient(self, ingid):
-        sql = "DELETE FROM Ingredients WHERE IngredientID=?"
+        sql = """DELETE 
+                FROM Ingredients 
+                WHERE IngredientID=?"""
         self.delete_record(sql, (ingid,))
 
     def ingredients_reduce_ingredient_stock(self, ingredientid, quantity):
-        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
+        sql = """SELECT StockInKilos 
+                FROM Ingredients 
+                WHERE IngredientID=?"""
         oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         oldstock = oldstocktuple[0]
         newstock = oldstock - quantity
         values = (newstock, ingredientid)
-        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
+        sql = """UPDATE Ingredients 
+                SET StockInKilos=? 
+                WHERE IngredientID=?"""
         self.update(sql, values)
 
     def ingredients_increase_ingredient_stock(self, ingredientid, quantity):
-        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
+        sql = """SELECT StockInKilos 
+                FROM Ingredients 
+                WHERE IngredientID=?"""
         oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         oldstock = oldstocktuple[0]
         newstock = oldstock + quantity
         values = (newstock, ingredientid)
-        sql = "UPDATE Ingredients SET StockInKilos=? WHERE IngredientID=?"
+        sql = """UPDATE Ingredients 
+                SET StockInKilos=? 
+                WHERE IngredientID=?"""
         self.update(sql, values)
 
     def ingredients_select_ingredient_stock(self, ingredientid):
-        sql = "SELECT StockInKilos FROM Ingredients WHERE IngredientID=?"
+        sql = """SELECT StockInKilos 
+                FROM Ingredients 
+                WHERE IngredientID=?"""
         stocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
         stock = stocktuple[0]
         return stock
 
     def ingredients_select_ingredientid(self, name):
-        sql = "SELECT IngredientID FROM Ingredients WHERE Name=?"
+        sql = """SELECT IngredientID 
+                FROM Ingredients 
+                WHERE Name=?"""
         idtuple = self.select_dataspecific_fetchone(sql, (name,))
         return idtuple
 
     def ingredients_select_cost(self, ingid):
-        sql = "SELECT CostPerKilo FROM Ingredients WHERE IngredientID=?"
+        sql = """SELECT CostPerKilo 
+                FROM Ingredients 
+                WHERE IngredientID=?"""
         costtuple = self.select_dataspecific_fetchone(sql, (ingid,))
         cost = costtuple[0]
         return cost
 
     def ingredients_update_ingredient(self, name, newtype, newstorageplace, newcost):
         values = (newtype, newstorageplace, newcost, name)
-        sql = "UPDATE Ingredients SET Type=?, StoragePlace=?, CostPerKilo=? WHERE Name=?"
+        sql = """UPDATE Ingredients 
+                SET Type=?, StoragePlace=?, CostPerKilo=? 
+                WHERE Name=?"""
         self.update(sql, values)
 
     def ingredients_select_ingredients(self):
-        sql = "SELECT * FROM Ingredients"
+        sql = """SELECT * 
+                FROM Ingredients"""
         return self.select(sql)
+
 
 class IngredientBatches(Table):
     def __init__(self, dbname, tblname):
@@ -520,27 +657,35 @@ class IngredientBatches(Table):
         self.recreate_table(sql)
 
     def batches_add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate):
-        sql = "INSERT INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) VALUES (?, ?, ?)"
+        sql = """INSERT 
+                INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) 
+                VALUES (?, ?, ?)"""
         self.insert_record(sql, (IngredientID, Quantity, ExpiryDate))
 
     def batches_delete_ingredientbatch(self, ingid, expirydate):
-        sql = "DELETE FROM IngredientBatches WHERE IngredientID=? AND ExpiryDate=?"
-        self.delete_record(sql, (ingid,expirydate))
+        sql = """DELETE 
+                FROM IngredientBatches 
+                WHERE IngredientID=? AND ExpiryDate=?"""
+        self.delete_record(sql, (ingid, expirydate))
 
     def batches_select_quant(self, ingid, expirydate):
         values = (ingid, expirydate)
-        sql = "SELECT Quantity FROM IngredientBatches WHERE IngredientID=? AND ExpiryDate=?"
+        sql = """SELECT Quantity 
+                FROM IngredientBatches 
+                WHERE IngredientID=? AND ExpiryDate=?"""
         return self.select_dataspecific_fetchone(sql, values)
 
     def batches_select_all_batches(self):
-        sql = "SELECT * FROM IngredientBatches"
+        sql = """SELECT * 
+                FROM IngredientBatches"""
         return self.select(sql)
+
 
 class StaffMembers(Table):
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
         self._username = 1111
-    
+
     def reset_staffmembers_table(self):
         sql = """CREATE TABLE StaffMembers
                 (StaffID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -561,34 +706,48 @@ class StaffMembers(Table):
             prevusername = staffmembers[len(staffmembers)-1][6]
             username = prevusername + 1
         values = (email, fname, sname, job, accesslevel, username, password)
-        sql = "INSERT INTO StaffMembers (Email, Firstname, Surname, JobTitle, AccessLevel, Username, Password) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        sql = """INSERT 
+                INTO StaffMembers 
+                (Email, Firstname, Surname, JobTitle, AccessLevel, Username, Password) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)"""
         self.insert_record(sql, values)
         return username
 
     def staffmembers_get_all(self):
-        sql = "SELECT * FROM StaffMembers"
+        sql = """SELECT * 
+                FROM StaffMembers"""
         return self.select(sql)
 
     def staffmembers_delete_member(self, email):
-        sql = "DELETE FROM StaffMembers WHERE Email=?"
+        sql = """DELETE 
+                FROM StaffMembers 
+                WHERE Email=?"""
         self.delete_record(sql, (email,))
 
     def staffmembers_update_self(self, username, email, fname, sname, password):
         values = (email, fname, sname, password, username)
-        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, Password=? WHERE Username=?"
+        sql = """UPDATE StaffMembers 
+                SET Email=?, Firstname=?, Surname=?, Password=? 
+                WHERE Username=?"""
         self.update(sql, values)
 
     def staffmembers_update_member(self, oldemail, email, fname, sname, job, access, password):
         values = (email, fname, sname, job, access, password, oldemail)
-        sql = "UPDATE StaffMembers SET Email=?, Firstname=?, Surname=?, JobTitle=?, AccessLevel=?, Password=? WHERE Email=?"
+        sql = """UPDATE StaffMembers 
+                SET Email=?, Firstname=?, Surname=?, JobTitle=?, AccessLevel=?, Password=? 
+                WHERE Email=?"""
         self.update(sql, values)
 
     def staffmembers_check_login(self, username, password):
         values = (username, password)
-        sql = "SELECT AccessLevel FROM StaffMembers WHERE Username=? AND Password=?"
+        sql = """SELECT AccessLevel 
+                FROM StaffMembers 
+                WHERE Username=? AND Password=?"""
         accesstuple = self.select_dataspecific_fetchone(sql, values)
         if accesstuple == None:
-            sql = "SELECT Password FROM StaffMembers WHERE Username=?"
+            sql = """SELECT Password 
+                    FROM StaffMembers 
+                    WHERE Username=?"""
             passwordtuple = self.select_dataspecific_fetchone(sql, (username,))
             if passwordtuple == None:
                 return [False, "neither"]
@@ -598,4 +757,3 @@ class StaffMembers(Table):
         else:
             access = accesstuple[0]
             return [True, access]
-            
