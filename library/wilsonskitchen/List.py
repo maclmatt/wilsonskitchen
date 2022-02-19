@@ -11,10 +11,10 @@ class List():
     def add_item(self, item) -> None:
         try:
             list = self._list
-            list.append(item)
+            list.append(item)   # adds item to end of list
             self.length += 1
         except BaseException as err:
-            LOGGER.error(err)
+            LOGGER.error(err)   #logs error in log file
             raise RuntimeError("Item could not be added to list.") from err
 
     def sort_switch(self, numbers, low, high) -> Index:
