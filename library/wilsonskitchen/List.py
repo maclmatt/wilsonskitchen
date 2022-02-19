@@ -1,7 +1,4 @@
 from constants import LOGGER
-from ast import Index
-from multiprocessing.dummy import Value
-
 
 class List():
     def __init__(self):
@@ -20,13 +17,13 @@ class List():
             LOGGER.error(err)
             raise RuntimeError("Item could not be added to list.") from err
 
-    def sort_switch(self, numbers, low, high) -> Index:
+    def sort_switch(self, numbers, low, high) -> int:
         try:
-            # moves items infront or behind the pivot
-            # depending on whether it is larger or smaller
             pivot = numbers[high]
             item = low - 1
             for i in range(low, high):
+                # moves item around the pivot
+                # depending on whether it is larger or smaller
                 if numbers[i] <= pivot:
                     item = item + 1
                     (numbers[item], numbers[i]) = (numbers[i], numbers[item])
@@ -41,13 +38,13 @@ class List():
     def quick_sort(self, numbers, low, high) -> None:
         try:
             # checks that low is less than high
-            # gets pivot and calls sort_switch to move items around the pivot
-            # calls quick_sort function to get next pivot
-            # stops recursion when all items have been made pivot
             if low < high:
+                # calls sort_switch to get pivot and move items around the pivot
                 pivot = self.sort_switch(numbers, low, high)
+                # calls quick_sort function to get next pivots
                 self.quick_sort(numbers, low, pivot-1)
                 self.quick_sort(numbers, pivot + 1, high)
+            # stops recursion when all items have been made pivot
         except BaseException as err:
             # logs error in log file
             # raises error to next level
@@ -73,7 +70,7 @@ class List():
             LOGGER.error(err)
             raise RuntimeError("List could not be returned.") from err
 
-    def return_lowest(self) -> Value:
+    def return_lowest(self) -> str or int:
         try:
             # calls sort_list
             # returns first item on list

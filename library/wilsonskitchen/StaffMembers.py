@@ -1,6 +1,5 @@
 from Table import Table
 from constants import LOGGER
-from ast import Tuple
 
 
 class StaffMembers(Table):
@@ -10,6 +9,8 @@ class StaffMembers(Table):
 
     def reset_staffmembers_table(self) -> None:
         try:
+            # calls recreate_table 
+            # to execute sql
             sql = """CREATE TABLE StaffMembers
                     (StaffID INTEGER PRIMARY KEY AUTOINCREMENT,
                     Email TEXT,
@@ -21,11 +22,17 @@ class StaffMembers(Table):
                     Password)"""
             self.recreate_table(sql)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("StaffMembers table could not be reset.") from err
 
     def add_member(self, email, fname, sname, job, accesslevel, password) -> int:
         try:
+            # generates new username
+            # calls insert_record 
+            # to execute sql with values
+            # returns username
             staffmembers = self.get_staffmembers()
             if staffmembers == []:
                 username = self._username
@@ -40,47 +47,66 @@ class StaffMembers(Table):
             self.insert_record(sql, values)
             return username
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be added.") from err
 
-    def get_staffmembers(self) -> Tuple:
+    def get_staffmembers(self) -> tuple:
         try:
+            # calls select
+            # to execute sql
+            # returns records
             sql = """SELECT * 
                     FROM StaffMembers"""
             return self.select(sql)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff members could not be found.") from err
 
     def delete_member(self, email) -> None:
-        try: 
+        try:
+            # calls delete_record
+            # to execute sql with email
             sql = """DELETE 
                     FROM StaffMembers 
                     WHERE Email=?"""
             self.delete_record(sql, (email,))
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be deleted.") from err
 
     def update_ownaccount(self, username, email, fname, sname, password) -> None:
         try:
+            # calls update
+            # to execute sql with values
             values = (email, fname, sname, password, username)
             sql = """UPDATE StaffMembers 
                     SET Email=?, Firstname=?, Surname=?, Password=? 
                     WHERE Username=?"""
             self.update(sql, values)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be updated.") from err
 
     def update_member(self, oldemail, email, fname, sname, job, access, password) -> None:
         try:
+            # calls update
+            # to execute sql with values
             values = (email, fname, sname, job, access, password, oldemail)
             sql = """UPDATE StaffMembers 
                     SET Email=?, Firstname=?, Surname=?, JobTitle=?, AccessLevel=?, Password=? 
                     WHERE Email=?"""
             self.update(sql, values)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be updated.") from err
 
@@ -105,5 +131,7 @@ class StaffMembers(Table):
                 access = accesstuple[0]
                 return [True, access]
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Staff member login could not be checked.") from err
