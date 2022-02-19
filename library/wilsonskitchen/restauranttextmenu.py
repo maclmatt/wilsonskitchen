@@ -17,7 +17,7 @@ try:
             logincount += 1
             if logincount == 4:
                 # if invalid login details are entered 3 times:
-                    # user is exited
+                    # exits user
                 sys.exit("You have entered the wrong details 3 times and"
                         + " will be blocked from the system.")
             if status[1] == "neither":
@@ -37,6 +37,7 @@ try:
 
 except BaseException as err:
     LOGGER.error(err)
+    # exits user from system if error has occured
     sys.exit("Something went wrong: " + err)
     
 try:
@@ -334,17 +335,17 @@ try:
                 print("Please enter the details of the table.")
                 NoSeats = input("Please enter the number of seats for this table: ")
                 Description = input("Please enter the description for this table: ")
-                if wilsonskitchen.tables.add_table(NoSeats, Description):
-                    print("\nThe Table has been added to the database.")
-                    LOGGER.info("Table has been added to the database.")
-                else:
-                    print("\nThe Table could not be added to the database, see log file.")
-                    LOGGER.error("Table unable to be added to database.")
+                # adds table record
+                wilsonskitchen.tables.add_table(NoSeats, Description)
+                print("\nThe Table has been added to the database.")
+                LOGGER.info("Table has been added to the database.")
 
             elif tablechoice == "2":
                 tableid = input("Please enter the Table ID of the Table you wish to delete: ")
+                # checks if bookings are made to the table
                 check = wilsonskitchen.bookings.select_bookings_fromtableid(tableid)
                 if check == None:
+                    # deletes table
                     wilsonskitchen.tables.delete_table(tableid)
                     print("\nThe Table has been deleted from the database.")
                     LOGGER.info("Table %s has been deleted.", tableid)
@@ -354,11 +355,13 @@ try:
 
             elif tablechoice == "3":
                 tableid = input("Please enter the Table ID of the Table you wish to update: ")
+                # checks if bookings are made to the table
                 check = wilsonskitchen.bookings.select_bookings_fromtableid(tableid)
                 if check == None:
                     print("Please enter the new details of the table:")
                     noseats = input("Number of Seats: ")
                     description = input("Description: ")
+                    # updates table details
                     wilsonskitchen.tables.update_table(tableid, noseats, description)
                     print("The details of the table have been updated.")
                     LOGGER.info("Details of table %s has been updated", tableid)
@@ -367,6 +370,7 @@ try:
                     LOGGER.info("Table %s could not be updated as there are bookings made for it.", tableid)
 
             elif tablechoice == "4":
+                # selects all table records
                 tables = wilsonskitchen.tables.print_all_tables()
                 for i in range(0, (len(tables))):
                     print("\nTable " + str(tables[i][0]) + " details:"
@@ -377,7 +381,7 @@ try:
             else:
                 print("That is not a valid choice, the menu will now reload:")
 
-        elif choice == "5":  # orders exception = 1/2
+        elif choice == "5":  # orders
             print("\nOrder Details menu:\n"
                 + "   1. Add new order\n"
                 + "   2. Get all orders\n")
@@ -387,14 +391,19 @@ try:
             if orderchoice == "1":
                 TableID = input("Please enter which table the order is for: ")
                 n = int(input("Please enter the number of different items on the order: "))
+                # empties productid list and quantity list
                 wilsonskitchen.productidlist.wipe()
                 wilsonskitchen.quantitylist.wipe()
                 for i in range(0, n):
+                    # for each item on the order
                     newproductname = input("Please enter the product name: ")
+                    # adds item to productid list
                     wilsonskitchen.productidlist.add_item(
                         wilsonskitchen.products.select_productid(newproductname))
+                    # adds item to quantity list
                     wilsonskitchen.quantitylist.add_item(
                         int(input("Please enter the quantity of the item ordered: ")))
+                # makes order
                 check = wilsonskitchen.make_order(TableID, n)
                 if check:
                     print("The Order has been added to the database.")
@@ -409,6 +418,7 @@ try:
                             + " or a particular date (d): ")
                 if type == "t":
                     tableid = input("Please enter the table of the orders you would like to see: ")
+                    # selects details of all orders for table
                     orders = wilsonskitchen.orders.select_orders_for_table(tableid)
                     for i in range(0, (len(orders))):
                         print("\nOrder " + str(orders[i][0]) + " details:"
@@ -420,6 +430,7 @@ try:
                 elif type == "d":
                     chosendate = input("Please enter the date of the orders you would like to see"
                                     + " (YYYY-MM-DD): ")
+                    # selects details of all orders for date
                     orders = wilsonskitchen.orders.select_orders_for_date(date)
                     for i in range(0, (len(orders))):
                         print("\nOrder " + str(orders[i][0]) + " details:"
@@ -444,28 +455,36 @@ try:
                 name = input("Please enter the name of the product: ")
                 price = input("Please enter the price of the product: ")
                 n = int(input("Please enter the number of ingredients needed for this product: "))
+                # empties ingredientname list and ingredientquantity
                 wilsonskitchen.ingredientnameslist.wipe()
                 wilsonskitchen.ingredientquantitylist.wipe()
                 for i in range(0, n):
+                    # for each ingredient in the product
                     ingredientname = input("Please enter the name of an ingredient"
                                         + " for this product: ")
+                    # selects ingriedent id
                     check = wilsonskitchen.ingredients.select_ingredientid(
                         ingredientname)
                     if check == None:
+                        # if ingredient does not exist on database
                         print("The Ingredient does not exist on the database,"
                             + " please enter its details: ")
                         ingtype = input("Please enter the type of ingredient: ")
                         StoragePlace = input("Please enter the storage place of the ingredient: ")
                         cost = float(input("Please enter the cost of the ingredient per kilo: "))
                         stock = 0
+                        # adds ingredient to database
                         wilsonskitchen.ingredients.add_ingredient(
                             ingredientname, ingtype, StoragePlace, cost, stock)
                         print("The Ingredient has been added to the database")
                         LOGGER.info("Ingredient %s has been added.", ingredientname)
+                    # adds ingredient to ingredientname list
                     wilsonskitchen.ingredientnameslist.add_item(ingredientname)
                     quantity = float(input("Please enter the amount in kilos needed of this"
                                         + " ingredient for the product: "))
+                    # adds ingredient quantity to ingredientquantity list
                     wilsonskitchen.ingredientquantitylist.add_item(quantity)
+                # makes product
                 wilsonskitchen.make_product(type, name, price, n)
                 print("\nThe Product has been added to the database.")
                 LOGGER.info("Product %s has been added.", name)
@@ -473,7 +492,9 @@ try:
             elif menuchoice == "2":
                 productid = input("Please enter the product id of the product you"
                                 + " wish to delete: ")
+                # deletes product
                 wilsonskitchen.products.delete_product(productid)
+                # deletes all uses linked to product
                 wilsonskitchen.uses.delete_use(productid)
                 print("The product has been deleted from the database")
                 LOGGER.info("Product %s has been deleted.", productid)
@@ -481,27 +502,49 @@ try:
             elif menuchoice == "3":
                 productid = input("Please enter the product id of the product you"
                                 + " wish to update: ")
+                # deletes product
                 wilsonskitchen.products.delete_product(productid)
+                # deletes all uses linked to product
                 wilsonskitchen.uses.delete_use(productid)
                 print("Please enter the new product details: ")
                 type = input("Please enter the type of product: ")
                 name = input("Please enter the name of the product: ")
                 price = input("Please enter the price of the product: ")
                 n = int(input("Please enter the number of ingredients needed for this product: "))
+                # empties ingredientname list and ingredientquantity
                 wilsonskitchen.ingredientnameslist.wipe()
                 wilsonskitchen.ingredientquantitylist.wipe()
                 for i in range(1, n):
                     ingredientname = input("Please enter the name of an ingredient"
                                         + " for this product: ")
+                    # selects ingriedent id
+                    check = wilsonskitchen.ingredients.select_ingredientid(
+                        ingredientname)
+                    if check == None:
+                        # if ingredient does not exist on database
+                        print("The Ingredient does not exist on the database,"
+                            + " please enter its details: ")
+                        ingtype = input("Please enter the type of ingredient: ")
+                        StoragePlace = input("Please enter the storage place of the ingredient: ")
+                        cost = float(input("Please enter the cost of the ingredient per kilo: "))
+                        stock = 0
+                        # adds ingredient to database
+                        wilsonskitchen.ingredients.add_ingredient(
+                            ingredientname, ingtype, StoragePlace, cost, stock)
+                        print("The Ingredient has been added to the database")
+                        LOGGER.info("Ingredient %s has been added.", ingredientname)
+                    # adds ingredient to ingredientname list
                     wilsonskitchen.ingredientnameslist.add_item(ingredientname)
                     quantity = float(input("Please enter the amount in kilos needed of this"
                                         + " ingredient for the product: "))
+                    # adds ingredient quantity to ingredientquantity list
                     wilsonskitchen.ingredientquantitylist.add_item(quantity)
                 wilsonskitchen.make_product(type, name, price, n)
                 print("\nThe Product has been updated.")
                 LOGGER.info("Product %s has been updated.", name)
 
             elif menuchoice == "4":
+                # selects all product records
                 products = wilsonskitchen.products.return_products()
                 for i in range(0, (len(products))):
                     print("\nProduct " + str(products[i][0]) + " details:"
@@ -513,6 +556,7 @@ try:
                 LOGGER.info("Products have been outputted")
 
             elif menuchoice == "5":
+                # selects all products on the menu, grouped by type
                 menu = wilsonskitchen.products.print_menu()
                 starters = menu[0]
                 print("\nStarters:")
@@ -533,6 +577,7 @@ try:
                 LOGGER.info("Products in form of menu have been outputted.")
 
             elif menuchoice == "6":
+                # gets list of ingredients to be ordered and out of stock products
                 outofstock = wilsonskitchen.check_outofstock_products()
 
                 ingredients = outofstock[0]
@@ -568,6 +613,7 @@ try:
                 StoragePlace = input("Please enter the storage place of the ingredient: ")
                 cost = float(input("Please enter the cost of the ingredient per kilo: "))
                 stock = 0
+                # adds ingredient
                 wilsonskitchen.ingredients.add_ingredient(
                     name, type, StoragePlace, cost, stock)
                 print("The Ingredient has been added to the database")
@@ -575,9 +621,12 @@ try:
 
             elif ingredientchoice == "2":
                 ingname = input("Please enter the name of the ingredient you wish to delete: ")
+                # selects ingredient id
                 ingid = wilsonskitchen.ingredients.select_ingredientid(ingname)[0]
+                # selects all uses of the ingredient
                 uses = wilsonskitchen.uses.select_uses_from_ingid(ingid)
                 if uses == []:
+                    # deletes ingredient
                     wilsonskitchen._ingredients.delete_ingredient(ingid)
                     print("\nThe Ingredient has been deleted from the database.")
                     LOGGER.info("Ingredient %s has been deleted.", ingname)
@@ -588,6 +637,7 @@ try:
                     if check == "c":
                         print("The deletion of the ingredient has been cancelled.")
                     elif check == "d":
+                        # deletes ingredient, products the ingredient is used for and the uses records
                         wilsonskitchen.delete_ingredient_and_products(ingid)
                         print("\nThe Ingredient has been deleted from the database.")
                         LOGGER.info("Ingredient %s and all of its uses have been deleted.", ingname)
@@ -597,12 +647,14 @@ try:
                 type = input("Please enter the new type: ")
                 storageplace = input("Please enter the new storage place: ")
                 cost = float(input("Please enter the new cost per kilo: "))
+                # updates ingredient details
                 wilsonskitchen.ingredients.update_ingredient(
                     name, type, storageplace, cost)
                 print("The ingredient has been updated.")
                 LOGGER.info("Ingredient %s has been updated.", name)
 
             elif ingredientchoice == "4":
+                # selects all ingredients
                 ingredients = wilsonskitchen.ingredients.select_ingredients()
                 for i in range(0, len(ingredients)):
                     print("\nIngredient " + str(ingredients[i][0]) + " details:"
@@ -626,32 +678,39 @@ try:
                 ingname = input("Please enter the name of the ingredient: ")
                 quantity = int(input("Please enter the quantity of the ingredient in kilos: "))
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+                # makes ingredient batch
                 wilsonskitchen.make_ingredientbatch(ingname, quantity, expirydate)
                 print("The Batch has been added to the database.")
                 LOGGER.info("Batch of ingredient %s has been added.", ingname)
 
             elif stockchoice == "2":
                 ingname = input("Please enter the name of the ingredient: ")
+                # selects ingredient id
                 ingid = wilsonskitchen.ingredients.select_ingredientid(ingname)[0]
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+                # deletes ingredient batch
                 wilsonskitchen.delete_ingredientbatch(ingid, expirydate)
                 print("The Batch has been deleted from the database.")
                 LOGGER.info("Batch of ingredient %s has been deleted.", ingname)
 
             elif stockchoice == "3":
                 ingname = input("Please enter the name of the ingredient: ")
+                # selects ingredient id
                 ingid = wilsonskitchen.ingredients.select_ingredientid(ingname)[0]
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+                # deletes ingredient batch
                 wilsonskitchen.delete_ingredientbatch(ingid, expirydate)
                 print("\nPlease enter below the new details of the ingredient batch: ")
                 ingname = input("Please enter the name of the ingredient: ")
                 quantity = int(input("Please enter the quantity of the ingredient in kilos: "))
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
+                # makes ingredient batch
                 wilsonskitchen.make_ingredientbatch(ingname, quantity, expirydate)
                 print("The Batch has been updated.")
                 LOGGER.info("Batch of ingredient %s has been updated.", ingname)
 
             elif stockchoice == "4":
+                # selects all ingredient batches
                 batches = wilsonskitchen.ingredientbatches.select_batches()
                 for i in range(0, len(batches)):
                     print("\nIngredient Batch " + str(batches[i][0]) + " details:"
@@ -661,6 +720,7 @@ try:
                 LOGGER.info("Batches has been outputted.")
 
             elif stockchoice == "5":
+                # deletes all out of date ingredient batches
                 wilsonskitchen.delete_outofdate_ingredients()
                 print("All out of stock ingredient batches have been deleted.")
                 LOGGER.info("Out of date ingredient batches have been deleted.")
@@ -685,6 +745,7 @@ try:
                     sname = input("Please enter the surname: ")
                     job = input("Please enter the Job title: ")
                     access = int(input("Please enter the access level: "))
+                    # checks that passwords inputted are the same
                     passwordcheck = False
                     while passwordcheck == False:
                         password = input("Please enter a secure password: ")
@@ -695,6 +756,7 @@ try:
                             print(
                                 "Your first and second password entries do not match,"
                                 + " please re-enter:")
+                    # adds new member of staff to database
                     newusername = wilsonskitchen.staffmembers.add_member(
                         email, fname, sname, job, access, password)
                     print("Your username is " + str(newusername))
@@ -707,6 +769,7 @@ try:
                 else:
                     email = input("Please enter the email of the staff member you"
                                 + " wish to delete: ")
+                    # deletes member of staff from database
                     wilsonskitchen.staffmembers.delete_member(email)
                     print("The staff member has been deleted.")
                     LOGGER.info("Staff Member %s has been deleted.", email)
@@ -717,6 +780,7 @@ try:
                 email = input("Please enter your new email: ")
                 fname = input("Please enter your new Firstname: ")
                 sname = input("Please enter your new surname: ")
+                # checks that passwords inputted are the same
                 passwordcheck = False
                 while passwordcheck == False:
                     password = input("Please enter a new secure password: ")
@@ -726,6 +790,7 @@ try:
                     else:
                         print("Your first and second password entries do not match,"
                             + " please re-enter:")
+                # updates staff member record
                 wilsonskitchen.staffmembers.update_ownaccount(
                     username, email, fname, sname, password)
                 print("Your details have been updated.")
@@ -742,6 +807,7 @@ try:
                     sname = input("Please enter the new surname: ")
                     job = input("Please enter the new job title: ")
                     access = input("Please enter the new access level: ")
+                    # checks that passwords inputted are the same
                     passwordcheck = False
                     while passwordcheck == False:
                         password = input("Please enter a new secure password: ")
@@ -751,12 +817,14 @@ try:
                         else:
                             print("Your first and second password entries do not match,"
                                 + " please re-enter:")
+                    # updates staff member record
                     wilsonskitchen.staffmembers.update_member(
                         oldemail, email, fname, sname, job, access, password)
                     print("The staff member's details have been updated.")
                     LOGGER.info("Account details of %s %s have been updated.", fname, sname)
 
             elif loginchoice == "5":
+                # selects all staff members from database
                 staffmembers = wilsonskitchen.staffmembers.get_staffmembers()
                 for i in range(0, len(staffmembers)):
                     print("\nStaff Member " + str(staffmembers[i][0]) + " details:"
@@ -784,4 +852,5 @@ try:
 
 except BaseException as err:
     LOGGER.error(err)
+    # exits user from system if error has occured
     sys.exit("Something went wrong: " + err)
