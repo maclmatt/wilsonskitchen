@@ -98,75 +98,75 @@ class Restaurant():
     def ingredientquantitylist(self):
         return self._ingredientquantitylist
 
-    def restaruant_recalculate_quantityavailable_for_product(self, productid) -> None:
+    def recalculate_quantityavailable_for_product(self, productid) -> None:
         try:
-            usesofproduct = self._uses.uses_select_uses_forproduct(productid)
+            usesofproduct = self._uses.select_uses_forproduct(productid)
             self._productavailabilitieslist.wipe()
             for i in range(0, len(usesofproduct)):
-                stock = self._ingredients.ingredients_select_ingredient_stock(usesofproduct[i][2])
-                usequantity = self._uses.uses_select_use_quantity(usesofproduct[i][0])
+                stock = self._ingredients.select_ingredient_stock(usesofproduct[i][2])
+                usequantity = self._uses.select_use_quantity(usesofproduct[i][0])
                 available = stock // usequantity
-                self._productavailabilitieslist.list_add_item(available)
-            lowest = self._productavailabilitieslist.list_return_lowest()
-            self._products.products_add_product_quantity(lowest, productid)
+                self._productavailabilitieslist.add_item(available)
+            lowest = self._productavailabilitieslist.return_lowest()
+            self._products.add_product_quantity(lowest, productid)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_make_booking(self, time, date, nopeople, custid) -> bool:
+    def make_booking(self, time, date, nopeople, custid) -> bool:
         try:
-            tableid = self._tables.tables_find_table_for_booking(time, date, nopeople)
+            tableid = self._tables.find_table_for_booking(time, date, nopeople)
             if tableid == -1:
                 return False
             else:
-                self._bookings.bookings_add_booking(tableid, custid, time, date, nopeople)
+                self._bookings.add_booking(tableid, custid, time, date, nopeople)
                 return True
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_delete_booking(self, email, time, date) -> None:
+    def delete_booking(self, email, time, date) -> None:
         try:
-            custid = self._customers.customers_select_custid(email)[0]
-            self._bookings.bookings_delete_booking(custid, time, date)
+            custid = self._customers.select_custid(email)[0]
+            self._bookings.delete_booking_record(custid, time, date)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_make_order(self, tableid, n) -> bool:
+    def make_order(self, tableid, n) -> bool:
         try:
-            orderid = self._orders.orders_add_order(tableid)
+            orderid = self._orders.add_order(tableid)
             ids = self._productidlist.return_list()
             quantity = self._quantitylist.return_list()
 
             check = True
             for i in range(0, n):
-                check = self._products.products_check_quantity_availabilty(quantity[i], ids[i])
+                check = self._products.check_quantity_availability(quantity[i], ids[i])
                 if check == False:
                     break
                 # update order price
-                self._orderproducts.orderproducts_add_orderproduct(orderid, ids[i], quantity[i])
-                price = self._products.products_get_product_price(ids[i])
+                self._orderproducts.add_orderproduct(orderid, ids[i], quantity[i])
+                price = self._products.get_product_price(ids[i])
                 sumprice = price * quantity[i]
-                self._orders.orders_add_orderproduct_price(orderid, sumprice)
+                self._orders.add_orderproduct_price(orderid, sumprice)
                 # update ingredient stock
-                usesofproduct = self._uses.uses_select_uses_forproduct(ids[i])
+                usesofproduct = self._uses.select_uses_forproduct(ids[i])
                 quantityofproduct = quantity[i]
                 for i in range(0, len(usesofproduct)):
                     usequantity = quantityofproduct * usesofproduct[i][3]
-                    self._ingredients.ingredients_reduce_ingredient_stock(
+                    self._ingredients.reduce_ingredient_stock(
                         usesofproduct[i][2], usequantity)
 
-            ordercost = self._orders.orders_get_order_totalprice(orderid)
-            bookingid = self._bookings.bookings_select_bookingid(tableid)
-            self._bookings.bookings_increase_booking_billtotal(bookingid, ordercost)
+            ordercost = self._orders.get_order_totalprice(orderid)
+            bookingid = self._bookings.select_bookingid(tableid)
+            self._bookings.increase_booking_billtotal(bookingid, ordercost)
 
-            checkproducts = self._products.products_return_products()
+            checkproducts = self._products.return_products()
             for i in range(0, len(checkproducts)):
-                self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
+                self.recalculate_quantityavailable_for_product(checkproducts[i][0])
 
             if check == False:
-                self._orders.orders_delete_order(orderid)
+                self._orders.delete_order(orderid)
                 return False
             else:
                 return True
@@ -174,84 +174,84 @@ class Restaurant():
             LOGGER.error(err)
             raise
 
-    def restaurant_make_product(self, type, name, price, n) -> None:
+    def make_product(self, type, name, price, n) -> None:
         try:
-            productid = self._products.products_add_product(type,  name, price)
+            productid = self._products.add_product(type,  name, price)
             ingredientnames = self._ingredientnameslist.return_list()
             ingredientquantities = self._ingredientquantitylist.return_list()
             for i in range(0, n):
-                ingredientid = self._ingredients.ingredients_select_ingredientid(
+                ingredientid = self._ingredients.select_ingredientid(
                     ingredientnames[i])[0]
-                self._uses.uses_add_use(
+                self._uses.add_use(
                     productid, ingredientid, ingredientquantities[i])
-                costofingredient = self._ingredients.ingredients_select_cost(
+                costofingredient = self._ingredients.select_cost(
                     ingredientid)
                 costofproduct = costofingredient * ingredientquantities[i]
-                self._products.products_increase_cost(productid, costofproduct)
-            self.restaruant_recalculate_quantityavailable_for_product(productid)
+                self._products.increase_cost(productid, costofproduct)
+            self.recalculate_quantityavailable_for_product(productid)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_add_ingredientbatch(self, ingname, quantity, expirydate) -> None:
+    def make_ingredientbatch(self, ingname, quantity, expirydate) -> None:
         try:
-            ingredientid = self._ingredients.ingredients_select_ingredientid(ingname)[0]
-            self._ingredientbatches.batches_add_ingredientbatch(ingredientid, quantity, expirydate)
-            self._ingredients.ingredients_increase_ingredient_stock(ingredientid, quantity)
+            ingredientid = self._ingredients.select_ingredientid(ingname)[0]
+            self._ingredientbatches.add_ingredientbatch(ingredientid, quantity, expirydate)
+            self._ingredients.increase_ingredient_stock(ingredientid, quantity)
 
-            checkproducts = self._products.products_return_products()
+            checkproducts = self._products.return_products()
             for i in range(0, len(checkproducts)):
-                self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
+                self.recalculate_quantityavailable_for_product(checkproducts[i][0])
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_delete_ingredient_and_products(self, ingid) -> None:
+    def delete_ingredient_and_products(self, ingid) -> None:
         try:
-            usesofingredient = self._uses.uses_select_uses_from_ingid(ingid)
+            usesofingredient = self._uses.select_uses_from_ingid(ingid)
             for i in range(0, len(usesofingredient)):
-                self._products.products_delete_product(usesofingredient[i][1])
-                self._uses.uses_delete_use(usesofingredient[i][1])
-            self._ingredients.ingredients_delete_ingredient(ingid)
+                self._products.delete_product(usesofingredient[i][1])
+                self._uses.delete_use(usesofingredient[i][1])
+            self._ingredients.delete_ingredient(ingid)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_delete_ingredientbatch(self, ingid, expirydate) -> None:
+    def delete_ingredientbatch(self, ingid, expirydate) -> None:
         try:
             # selecting quantity for the ingredient batch
-            quantitytuple = self._ingredientbatches.batches_select_quant(ingid, expirydate)
+            quantitytuple = self._ingredientbatches.select_quantity(ingid, expirydate)
             quantity = quantitytuple[0]
             # reducing the ingredient stock by the quantity of the ingredient batch
-            self._ingredients.ingredients_reduce_ingredient_stock(ingid, quantity)
+            self._ingredients.reduce_ingredient_stock(ingid, quantity)
             # retrieving all products, to calculate the new quantity available
             # after this reduction of ingredient stock
-            checkproducts = self._products.products_return_products()
+            checkproducts = self._products.return_products()
             for i in range(0, len(checkproducts)):
-                self.restaruant_recalculate_quantityavailable_for_product(checkproducts[i][0])
-            self._ingredientbatches.batches_delete_ingredientbatch(ingid, expirydate)
+                self.recalculate_quantityavailable_for_product(checkproducts[i][0])
+            self._ingredientbatches.delete_batch(ingid, expirydate)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_delete_outofdate_ingredients(self) -> None:
+    def delete_outofdate_ingredients(self) -> None:
         try:
-            batches = self._ingredientbatches.batches_select_all_batches()
+            batches = self._ingredientbatches.select_batches()
             for i in range(0, len(batches)):
                 expirydatestr = batches[i][3]
                 expirydate = datetime.strptime(expirydatestr, "%Y-%m-%d").date()
                 if expirydate < date.today():
-                    self.restaurant_delete_ingredientbatch(batches[i][1], expirydatestr)
+                    self.delete_ingredientbatch(batches[i][1], expirydatestr)
         except BaseException as err:
             LOGGER.error(err)
             raise
 
-    def restaurant_check_outofstock_products(self) -> List:
+    def check_outofstock_products(self) -> List:
         try:
-            ings = self._ingredients.ingredients_select_ingredients()
+            ings = self._ingredients.select_ingredients()
             ingtobeordered = []
             for i in range(0, len(ings)):
-                usesofingredients = self._uses.uses_select_uses_from_ingid(ings[i][0])
+                usesofingredients = self._uses.select_uses_from_ingid(ings[i][0])
                 for j in range(0, len(usesofingredients)):
                     case = "x"
                     if ings[i][5] < usesofingredients[j][3]:
@@ -259,10 +259,10 @@ class Restaurant():
                         case = "break"
                     if case == "break":
                         break
-            allproducts = self._products.products_return_products()
+            allproducts = self._products.return_products()
             outproducts = []
             for i in range(0, len(allproducts)):
-                instock = self._products.products_check_quantity_availability(1, allproducts[i][0])
+                instock = self._products.check_quantity_availability(1, allproducts[i][0])
                 if instock == False:
                     outproducts.append(allproducts[i][2])
 

@@ -10,7 +10,7 @@ class List():
         self._list = []
         self.length = 0
 
-    def list_add_item(self, item) -> None:
+    def add_item(self, item) -> None:
         try:
             list = self._list
             list.append(item)
@@ -19,7 +19,7 @@ class List():
             LOGGER.error(err)
             raise RuntimeError("Item could not be added to list.") from err
 
-    def list_sort_switch(self, numbers, low, high) -> Index:
+    def sort_switch(self, numbers, low, high) -> Index:
         try:
             pivot = numbers[high]
             item = low - 1
@@ -33,7 +33,7 @@ class List():
             LOGGER.error(err)
             raise RuntimeError("Switch of items could not be performed.") from err
 
-    def list_quick_sort(self, numbers, low, high) -> None:
+    def quick_sort(self, numbers, low, high) -> None:
         try:
             if low < high:
                 pivot = self.list_sort_switch(numbers, low, high)
@@ -57,7 +57,7 @@ class List():
             LOGGER.error(err)
             raise RuntimeError("List could not be returned.") from err
 
-    def list_return_lowest(self) -> Value:
+    def return_lowest(self) -> Value:
         try:
             self.sort_list()
             return self._list[0]
@@ -153,7 +153,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer Table could not be reset.") from err
 
-    def customers_add_customer(self, email, fname, sname, contactno) -> None:
+    def add_customer(self, email, fname, sname, contactno) -> None:
         try:
             values = (email, fname, sname, contactno)
             sql = """INSERT 
@@ -164,7 +164,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer could not be added.") from err
 
-    def customers_delete_customer(self, custid) -> None:
+    def delete_customer(self, custid) -> None:
         try:
             sql = """DELETE 
                     FROM Customers 
@@ -174,7 +174,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer could not be deleted.") from err
 
-    def customers_update_customer(self, newemail, fname, sname, contactno, oldemail) -> None:
+    def update_customer(self, newemail, fname, sname, contactno, oldemail) -> None:
         try:
             values = (newemail, fname, sname, contactno, oldemail)
             sql = """UPDATE Customers 
@@ -185,7 +185,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer could not be updated.") from err
 
-    def customers_select_custid(self, email) -> int:
+    def select_custid(self, email) -> int:
         try:
             sql = """SELECT CustID 
                     FROM Customers 
@@ -196,7 +196,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer ID could not be found.") from err
 
-    def customers_select_customer(self, email) -> Tuple:
+    def select_customer(self, email) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Customers 
@@ -206,7 +206,7 @@ class Customers(Table):
             LOGGER.error(err)
             raise RuntimeError("Customer could not be found.") from err
 
-    def customers_select_customers(self) -> Tuple:
+    def select_customers(self) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Customers
@@ -238,7 +238,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Booking Table could not be reset.") from err
 
-    def bookings_add_booking(self, TableID, CustID, Time, Date, NoPeople) -> None:
+    def add_booking(self, TableID, CustID, Time, Date, NoPeople) -> None:
         try:
             BillTotal = 0.00
             values = (Time, Date, NoPeople, TableID, BillTotal, CustID)
@@ -250,7 +250,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Booking could not be added.") from err
 
-    def bookings_delete_booking(self, custid, time, date) -> None:
+    def delete_booking_record(self, custid, time, date) -> None:
         try:
             values = (time, date, custid)
             sql = """DELETE 
@@ -261,7 +261,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Booking could not be deleted.") from err
 
-    def bookings_select_booking_for_date(self, date) -> Tuple:
+    def select_bookings_for_date(self, date) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Bookings 
@@ -271,7 +271,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Bookings for date could not be found.") from err
 
-    def bookings_select_booking_for_dateandtime(self, date, time) -> Tuple:
+    def select_bookings_for_dateandtime(self, date, time) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Bookings 
@@ -281,7 +281,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Bookings for date and time could not be found.") from err
 
-    def bookings_select_booking_bill(self, tableid, time, date) -> float:
+    def select_booking_bill(self, tableid, time, date) -> float:
         try:
             values = (tableid, time, date)
             sql = """SELECT BillTotal 
@@ -294,7 +294,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Bill could not be found.") from err
 
-    def bookings_select_booking_fromtableid(self, tableid) -> Tuple:
+    def select_bookings_fromtableid(self, tableid) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Bookings 
@@ -304,7 +304,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Bookings for the table could not be found.") from err
 
-    def bookings_select_bookingid(self, TableID) -> int:
+    def select_bookingid(self, TableID) -> int:
         try:
             sql = """SELECT BookingID 
                     FROM Bookings 
@@ -320,7 +320,7 @@ class Bookings(Table):
             LOGGER.error(err)
             raise RuntimeError("Booking ID could not be found.") from err
 
-    def bookings_increase_booking_billtotal(self, bookingid, ordercost) -> None:
+    def increase_booking_billtotal(self, bookingid, ordercost) -> None:
         try:
             sql = """SELECT BillTotal 
                     FROM Bookings 
@@ -355,7 +355,7 @@ class Tables(Table):
             LOGGER.error(err)
             raise RuntimeError("Tables Table could not be reset.") from err
 
-    def tables_find_table_for_booking(self, Time, Date, nopeople) -> int:
+    def find_table_for_booking(self, Time, Date, nopeople) -> int:
         try:
             booked = False
             while not booked:
@@ -381,7 +381,7 @@ class Tables(Table):
             LOGGER.error(err)
             raise RuntimeError("Table could not be found.") from err
 
-    def tables_add_table(self, NoSeats, Description) -> None:
+    def add_table(self, NoSeats, Description) -> None:
         try:
             values = (NoSeats, Description)
             sql = """INSERT 
@@ -392,7 +392,7 @@ class Tables(Table):
             LOGGER.error(err)
             raise RuntimeError("Table could not be added.") from err
 
-    def tables_delete_table(self, tableid) -> None:
+    def delete_table(self, tableid) -> None:
         try:
             sql = """DELETE 
                     FROM Tables 
@@ -402,7 +402,7 @@ class Tables(Table):
             LOGGER.error(err)
             raise RuntimeError("Table could not be deleted.") from err
 
-    def tables_update_table(self, oldtableid, noseats, description) -> None:
+    def update_table(self, oldtableid, noseats, description) -> None:
         try:
             values = (noseats, description, oldtableid)
             sql = """UPDATE Tables 
@@ -442,7 +442,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Orders table could not be reset.") from err
 
-    def orders_add_order(self, TableID) -> int:
+    def add_order(self, TableID) -> int:
         try:
             TotalPrice = 0.00
             today = date.today()
@@ -463,7 +463,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Order could not be added.") from err
 
-    def orders_delete_order(self, orderid) -> None:
+    def delete_order(self, orderid) -> None:
         try:
             sql = """DELETE 
                     FROM Orders 
@@ -473,7 +473,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Order could not be deleted.") from err
 
-    def orders_add_orderproduct_price(self, orderid, price) -> None:
+    def add_orderproduct_price(self, orderid, price) -> None:
         try:
             sql = """SELECT TotalPrice 
                     FROM Orders 
@@ -489,7 +489,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Order could not be updated.") from err
 
-    def orders_get_order_totalprice(self, orderid) -> float:
+    def get_order_totalprice(self, orderid) -> float:
         try:
             sql = """SELECT TotalPrice 
                     FROM Orders 
@@ -501,7 +501,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Order total price could not be found.") from err
 
-    def orders_select_orders_for_table(self, tableid) -> Tuple:
+    def select_orders_for_table(self, tableid) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Orders 
@@ -512,7 +512,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Orders for table could not be found.") from err
 
-    def orders_select_orders_for_date(self, date) -> Tuple:
+    def select_orders_for_date(self, date) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Orders 
@@ -541,7 +541,7 @@ class OrderProducts(Table):
             LOGGER.error(err)
             raise RuntimeError("Orderproducts table could not be reset.") from err
 
-    def orderproducts_add_orderproduct(self, OrderID, ProductID, quantity) -> None:
+    def add_orderproduct(self, OrderID, ProductID, quantity) -> None:
         try:
             sql = """INSERT 
                     INTO OrderProducts (ProductID, Quantity, OrderID) 
@@ -570,7 +570,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product table could not be reset.") from err
 
-    def products_add_product(self, type, name, price) -> int:
+    def add_product(self, type, name, price) -> int:
         try:
             quantity = 0
             cost = 0.0
@@ -589,7 +589,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product could not be added.") from err
 
-    def products_increase_cost(self, productid, cost) -> None:
+    def increase_cost(self, productid, cost) -> None:
         try:
             sql = """SELECT CostPerPortion 
                     FROM Products 
@@ -606,7 +606,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product cost could not be increased.") from err
 
-    def products_delete_product(self, productid) -> None:
+    def delete_product(self, productid) -> None:
         try:
             sql = """DELETE 
                     FROM Products 
@@ -616,7 +616,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product could not be deleted.") from err
 
-    def products_return_products(self) -> Tuple:
+    def return_products(self) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Products 
@@ -627,7 +627,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Products could not be found.") from err
 
-    def products_print_menu(self) -> List:
+    def print_menu(self) -> List:
         try:
             sql = """SELECT * 
                     FROM Products 
@@ -641,7 +641,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Products could not be found.") from err
 
-    def products_select_productid(self, name) -> int:
+    def select_productid(self, name) -> int:
         try:
             sql = """SELECT ProductID 
                     FROM Products 
@@ -653,7 +653,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product ID could not be found.") from err
 
-    def products_check_quantity_availability(self, quantity, productid) -> bool:
+    def check_quantity_availability(self, quantity, productid) -> bool:
         try:
             sql = """SELECT QuantityAvailable 
                     FROM Products 
@@ -668,7 +668,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Quantity Available could not be checked.") from err
 
-    def products_get_product_price(self, productid) -> int:
+    def get_product_price(self, productid) -> int:
         try:
             sql = """SELECT Price 
                     FROM Products 
@@ -679,7 +679,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Product price could not be found.") from err
 
-    def products_add_product_quantity(self, quantity, productid) -> None:
+    def add_product_quantity(self, quantity, productid) -> None:
         try:
             sql = """UPDATE Products 
                     SET QuantityAvailable=? 
@@ -709,7 +709,7 @@ class Uses(Table):
             LOGGER.error(err)
             raise RuntimeError("Uses table could not be reset.") from err
 
-    def uses_add_use(self, ProductID, IngredientID, Quantity) -> None:
+    def add_use(self, ProductID, IngredientID, Quantity) -> None:
         try:
             sql = """INSERT 
                     INTO Uses (ProductID, IngredientID, QuantityInKilos) 
@@ -719,7 +719,7 @@ class Uses(Table):
             LOGGER.error(err)
             raise RuntimeError("Use of ingredient could not be added.") from err
 
-    def uses_delete_use(self, productid) -> None:
+    def delete_use(self, productid) -> None:
         try:
             sql = """DELETE 
                     FROM Uses 
@@ -729,7 +729,7 @@ class Uses(Table):
             LOGGER.error(err)
             raise RuntimeError("Use of ingredient could not be deleted.") from err
 
-    def uses_select_uses_forproduct(self, productid) -> Tuple:
+    def select_uses_forproduct(self, productid) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Uses 
@@ -740,7 +740,7 @@ class Uses(Table):
             LOGGER.error(err)
             raise RuntimeError("Use of ingredient for the product could not be found.") from err
 
-    def uses_select_use_quantity(self, useid) -> float:
+    def select_use_quantity(self, useid) -> float:
         try:
             sql = """SELECT QuantityInKilos 
                     FROM Uses 
@@ -752,7 +752,7 @@ class Uses(Table):
             LOGGER.error(err)
             raise RuntimeError("Use of ingredient quantity could not be found.") from err
 
-    def uses_select_uses_from_ingid(self, ingid) -> Tuple:
+    def select_uses_from_ingid(self, ingid) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Uses 
@@ -782,7 +782,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient table could not be reset.") from err
 
-    def ingredients_add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos) -> None:
+    def add_ingredient(self, Name, Type, StoragePlace, CostPerKilo, StockInKilos) -> None:
         try:
             values = (Name, Type, StoragePlace, CostPerKilo, StockInKilos)
             sql = """INSERT 
@@ -793,7 +793,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient could not be added.") from err
 
-    def ingredients_delete_ingredient(self, ingid) -> None:
+    def delete_ingredient(self, ingid) -> None:
         try:
             sql = """DELETE 
                     FROM Ingredients 
@@ -803,7 +803,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient could not be deleted.") from err
 
-    def ingredients_reduce_ingredient_stock(self, ingredientid, quantity) -> None:
+    def reduce_ingredient_stock(self, ingredientid, quantity) -> None:
         try:
             sql = """SELECT StockInKilos 
                     FROM Ingredients 
@@ -820,7 +820,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient stock could not be reduced.") from err
 
-    def ingredients_increase_ingredient_stock(self, ingredientid, quantity) -> None:
+    def increase_ingredient_stock(self, ingredientid, quantity) -> None:
         try:
             sql = """SELECT StockInKilos 
                     FROM Ingredients 
@@ -837,7 +837,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient stock could not be increased.") from err
 
-    def ingredients_select_ingredient_stock(self, ingredientid) -> float:
+    def select_ingredient_stock(self, ingredientid) -> float:
         try:
             sql = """SELECT StockInKilos 
                     FROM Ingredients 
@@ -849,7 +849,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient stock could not be found.") from err
 
-    def ingredients_select_ingredientid(self, name) -> Tuple:
+    def select_ingredientid(self, name) -> Tuple:
         try:
             sql = """SELECT IngredientID 
                     FROM Ingredients 
@@ -860,7 +860,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient ID could not be found.") from err
 
-    def ingredients_select_cost(self, ingid) -> float:
+    def select_cost(self, ingid) -> float:
         try:
             sql = """SELECT CostPerKilo 
                     FROM Ingredients 
@@ -872,7 +872,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient cost could not be found.") from err
 
-    def ingredients_update_ingredient(self, name, newtype, newstorageplace, newcost) -> None:
+    def update_ingredient(self, name, newtype, newstorageplace, newcost) -> None:
         try:
             values = (newtype, newstorageplace, newcost, name)
             sql = """UPDATE Ingredients 
@@ -883,7 +883,7 @@ class Ingredients(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredient could not be updated.") from err
 
-    def ingredients_select_ingredients(self) -> Tuple:
+    def select_ingredients(self) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM Ingredients"""
@@ -910,7 +910,7 @@ class IngredientBatches(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredientbatches table could not be reset.") from err
 
-    def batches_add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate) -> None:
+    def add_ingredientbatch(self, IngredientID, Quantity, ExpiryDate) -> None:
         try:
             sql = """INSERT 
                     INTO IngredientBatches (IngredientID, Quantity, ExpiryDate) 
@@ -920,7 +920,7 @@ class IngredientBatches(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredientbatch could not be added.") from err
 
-    def batches_delete_ingredientbatch(self, ingid, expirydate) -> None:
+    def delete_batch(self, ingid, expirydate) -> None:
         try:
             sql = """DELETE 
                     FROM IngredientBatches 
@@ -930,7 +930,7 @@ class IngredientBatches(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredientbatch could not be deleted.") from err
 
-    def batches_select_quant(self, ingid, expirydate) -> Tuple:
+    def select_quantity(self, ingid, expirydate) -> Tuple:
         try:
             values = (ingid, expirydate)
             sql = """SELECT Quantity 
@@ -941,7 +941,7 @@ class IngredientBatches(Table):
             LOGGER.error(err)
             raise RuntimeError("Ingredientbatch quantity could not be found.") from err
 
-    def batches_select_all_batches(self) -> Tuple:
+    def select_batches(self) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM IngredientBatches"""
@@ -972,9 +972,9 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("StaffMembers table could not be reset.") from err
 
-    def staffmembers_add_member(self, email, fname, sname, job, accesslevel, password) -> int:
+    def add_member(self, email, fname, sname, job, accesslevel, password) -> int:
         try:
-            staffmembers = self.staffmembers_get_all()
+            staffmembers = self.get_staffmembers()
             if staffmembers == []:
                 username = self._username
             else:
@@ -991,7 +991,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be added.") from err
 
-    def staffmembers_get_all(self) -> Tuple:
+    def get_staffmembers(self) -> Tuple:
         try:
             sql = """SELECT * 
                     FROM StaffMembers"""
@@ -1000,7 +1000,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff members could not be found.") from err
 
-    def staffmembers_delete_member(self, email) -> None:
+    def delete_member(self, email) -> None:
         try: 
             sql = """DELETE 
                     FROM StaffMembers 
@@ -1010,7 +1010,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be deleted.") from err
 
-    def staffmembers_update_self(self, username, email, fname, sname, password) -> None:
+    def update_ownaccount(self, username, email, fname, sname, password) -> None:
         try:
             values = (email, fname, sname, password, username)
             sql = """UPDATE StaffMembers 
@@ -1021,7 +1021,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be updated.") from err
 
-    def staffmembers_update_member(self, oldemail, email, fname, sname, job, access, password) -> None:
+    def update_member(self, oldemail, email, fname, sname, job, access, password) -> None:
         try:
             values = (email, fname, sname, job, access, password, oldemail)
             sql = """UPDATE StaffMembers 
@@ -1032,7 +1032,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be updated.") from err
 
-    def staffmembers_check_login(self, username, password) -> List:
+    def check_login(self, username, password) -> List:
         try:
             values = (username, password)
             sql = """SELECT AccessLevel 
