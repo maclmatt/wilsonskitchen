@@ -22,6 +22,8 @@ class Bookings(Table):
                     FOREIGN KEY (CustID) REFERENCES Customer(CustID))"""
             self.recreate_table(sql)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Booking Table could not be reset.") from err
 
@@ -34,6 +36,8 @@ class Bookings(Table):
                     VALUES (?, ?, ?, ?, ?, ?)"""
             self.insert_record(sql, values)
         except BaseException as err:
+            # logs error in log file
+            # raises error to next level
             LOGGER.error(err)
             raise RuntimeError("Booking could not be added.") from err
 
