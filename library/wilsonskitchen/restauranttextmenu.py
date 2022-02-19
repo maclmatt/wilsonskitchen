@@ -11,11 +11,13 @@ try:
     valid = False
     logincount = 1
     while valid == False and logincount <= 3:
-        status = wilsonskitchen.staffmembers.check_login(
-            username, password)
+        # checks login details
+        status = wilsonskitchen.staffmembers.check_login(username, password)
         if status[0] == False:
             logincount += 1
             if logincount == 4:
+                # if invalid login details are entered 3 times:
+                    # user is exited
                 sys.exit("You have entered the wrong details 3 times and"
                         + " will be blocked from the system.")
             if status[1] == "neither":
@@ -32,6 +34,7 @@ try:
             LOGGER.info("%s has logged in.", username)
             access = status[1]
             valid = True
+
 except BaseException as err:
     LOGGER.error(err)
     sys.exit("Something went wrong: " + err)
@@ -57,46 +60,55 @@ try:
                 wilsonskitchen.customers.reset_customers_table()
                 print("The Customers table has been reset.")
                 LOGGER.info("The Customers table has been reset.")
+
             check = input("Are you sure you want to reset the Orderproducts table (y/n): ")
             if check == "y":
                 wilsonskitchen.bookings.reset_bookings_table()
                 print("The Bookings table has been reset.")
                 LOGGER.info("The Bookings table has been reset.")
+
             check = input("Are you sure you want to reset the Tables table (y/n): ")
             if check == "y":
                 wilsonskitchen.tables.reset_tables_table()
                 print("The Tables table has been reset.")
                 LOGGER.info("The Tables table has been reset.")
+
             check = input("Are you sure you want to reset the Orders table (y/n): ")
             if check == "y":
                 wilsonskitchen.orders.reset_orders_table()
                 print("The Orders table has been reset.")
                 LOGGER.info("The Orders table has been reset.")
+
             check = input("Are you sure you want to reset the Orderproducts table (y/n): ")
             if check == "y":
                 wilsonskitchen.orderproducts.reset_orderproducts_table()
                 print("The Orderproducts table has been reset.")
                 LOGGER.info("The Orderproducts table has been reset.")
+
             check = input("Are you sure you want to reset the Products table (y/n): ")
             if check == "y":
                 wilsonskitchen.products.reset_products_table()
                 print("The Products table has been reset.")
                 LOGGER.info("The Products table has been reset.")
+
             check = input("Are you sure you want to reset the Uses table (y/n): ")
             if check == "y":
                 wilsonskitchen.uses.reset_uses_table()
                 print("The Uses table has been reset.")
                 LOGGER.info("The Uses table has been reset.")
+
             check = input("Are you sure you want to reset the Ingredients table (y/n): ")
             if check == "y":
                 wilsonskitchen.ingredients.reset_ingredients_table()
                 print("The Ingredients table has been reset.")
                 LOGGER.info("The Ingredients table has been reset.")
+
             check = input("Are you sure you want to reset the Ingredientbatches table (y/n): ")
             if check == "y":
                 wilsonskitchen.ingredientbatches.reset_ingredientbatch_table()
                 print("The Ingredientbatches table has been reset.")
                 LOGGER.info("The Ingredientbatches table has been reset.")
+
             check = input("Are you sure you want to reset the StaffMembers table (y/n): ")
             if check == "y":
                 wilsonskitchen.staffmembers.reset_staffmembers_table()
@@ -122,13 +134,16 @@ try:
                     fname = input("Firstname: ")
                     sname = input("Surname: ")
                     contactno = input("Phone number: ")
+                    # add customer record
                     wilsonskitchen.customers.add_customer(email, fname, sname, contactno)
                     print("\n%s %s has been added to the database.", fname, sname)
                     LOGGER.info("%s %s has been added to the database.", fname, sname)
 
                 elif custchoice == "2":
                     email = input("\nPlease enter the email of the customer: ")
+                    # selects customer id
                     custid = wilsonskitchen.customers.select_custid(email)
+                    # deletes customer record
                     wilsonskitchen.customers.delete_customer(custid)
                     print("\nThe customer has been deleted from the database.")
                     LOGGER.info("Customer %s has been deleted from the database.", email)
@@ -140,6 +155,7 @@ try:
                     fname = input("Firstname :")
                     sname = input("Surname :")
                     contactno = input("Phone number: ")
+                    # updates customer's details
                     wilsonskitchen.customers.update_customer(
                         newemail, fname, sname, contactno, oldemail)
                     print("\nThe customer's details have been updated.")
@@ -147,6 +163,7 @@ try:
 
                 elif custchoice == "4":
                     email = input("\nPlease enter the email of the customer: ")
+                    # selects customer's details
                     details = wilsonskitchen.customers.select_customer(email)
                     print("\nCustomer details:"
                         + "\n   Customer ID: " + str(details[0])
@@ -156,6 +173,7 @@ try:
                     LOGGER.info("Customer's details have been outputted.")
 
                 elif custchoice == "5":
+                    # selects customers' details
                     customers = wilsonskitchen.customers.select_customers()
                     for i in range(0, (len(customers))):
                         print("\nCustomer " + str(customers[i][0]) + "'s details:"
@@ -167,7 +185,7 @@ try:
                 else:
                     print("That is not a valid choice, the main menu will now reload:")
 
-        elif choice == "3":  # bookings TODO add in print of all items on bill
+        elif choice == "3":
             print("\nBooking Details menu:\n"
                 + "   1. Add new booking\n"
                 + "   2. Delete booking\n"
@@ -183,18 +201,23 @@ try:
                 Date = input("Date (YYYY-MM-DD): ")
                 nopeople = input("Number of people: ")
                 email = input("Email of customer: ")
+                # selects cust ID
                 custid = wilsonskitchen.customers.select_custid(email)
                 if custid == None:
+                    # if the customer doesn't exist on the database
                     print("The Customer does not exist on the database,"
                         + " please enter their details: ")
                     fname = input("Firstname: ")
                     sname = input("Surname: ")
                     contactno = input("Phone number: ")
+                    # adds customer record
                     wilsonskitchen.customers.add_customer(email, fname, sname, contactno)
+                    # selects cust ID
                     custid = wilsonskitchen.customers.select_custid(email)
                     print("\n" + fname, sname, "has been added to the database.")
                     LOGGER.info("%s %s has been added to the database.", fname, sname)
                 custid = custid[0]
+                # makes booking
                 booked = wilsonskitchen.make_booking(Time, Date, nopeople, custid)
                 if booked:
                     print("\nThe Booking has been added to the database.")
@@ -208,6 +231,7 @@ try:
                 email = input("Email of customer: ")
                 time = input("Time: ")
                 date = input("Date: ")
+                # deletes booking record
                 wilsonskitchen.delete_booking(email, time, date)
                 print("\nThe Booking has been deleted.")
                 LOGGER.info("Booking at %s %s has been deleted.", time, date)
@@ -217,6 +241,7 @@ try:
                 email = input("Email of customer: ")
                 time = input("Time (HH) - 24hr clock times: ")
                 date = input("Date (YYYY-MM-DD): ")
+                # deletes booking record
                 wilsonskitchen.delete_booking(email, time, date)
 
                 print("Please enter the new details of the booking:")
@@ -224,17 +249,21 @@ try:
                 Date = input("Date (YYYY-MM-DD): ")
                 nopeople = input("Number of people: ")
                 email = input("Email of customer: ")
+                # selects cust ID
                 custid = wilsonskitchen.customers.select_custid(email)[0]
                 if custid == None:
+                    # if customer doesn't exist on database
                     print("The Customer does not exist on the database,"
                         + " please enter their details: ")
                     email = input("Email: ")
                     fname = input("Firstname: ")
                     sname = input("Surname: ")
                     contactno = input("Phone number: ")
+                    # adds customer record
                     wilsonskitchen.customers.add_customer(email, fname, sname, contactno)
                     print("\n" + fname, sname, "has been added to the database.")
                     LOGGER.info("%s %s has been added to the database.", fname, sname)
+                # makes booking
                 booked = wilsonskitchen.make_booking(Time, Date, nopeople, custid)
                 if booked:
                     print("\nThe Booking has been updated.")
@@ -249,6 +278,7 @@ try:
                 if type == "d":
                     date = input("Please enter the date you would like to see the bookings for"
                                 + " (YYYY-MM-DD): ")
+                    # selects details of bookings
                     bookings = wilsonskitchen.bookings.select_bookings_for_date(date)
                     for i in range(0, (len(bookings))):
                         print("\nBooking " + str(bookings[i][0]) + " details:"
@@ -264,6 +294,7 @@ try:
                                 + " (YYYY-MM-DD): ")
                     time = input("Please enter the time you would like to see the bookings"
                                 + " for (HH) 24 hr clock times: ")
+                    # selects details of bookings
                     bookings = wilsonskitchen.bookings.select_bookings_for_dateandtime(
                         date, time)
                     for i in range(0, (len(bookings))):
@@ -281,6 +312,7 @@ try:
                 time = input("Please enter the time of the booking of the bill you would like: ")
                 date = input("Please enter the date of the booking of the bill you would like"
                             + " (YYYY-MM-DD): ")
+                # selects bill for booking
                 bill = wilsonskitchen.bookings.select_booking_bill(tableid, time, date)
                 print("The current bill for table " +
                     str(tableid) + " is: £" + str(bill))
