@@ -5,7 +5,7 @@ from datetime import date, datetime
 from constants import LOGGER
 
 
-class List():
+class List(): # transferred
     def __init__(self):
         self._list = []
         self.length = 0
@@ -74,7 +74,7 @@ class List():
             raise RuntimeError("List could not be wiped.") from err
 
 
-class Table():
+class Table(): # transferred
     def __init__(self, dbname, tblname):
         self.dbname = dbname
         self.tblname = tblname
@@ -136,7 +136,7 @@ class Table():
             db.commit()
 
 
-class Customers(Table):
+class Customers(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -217,7 +217,7 @@ class Customers(Table):
             raise RuntimeError("Customers could not be found.") from err
 
 
-class Bookings(Table):
+class Bookings(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -340,7 +340,7 @@ class Bookings(Table):
             raise RuntimeError("Bill could not be increased.") from err
 
 
-class Tables(Table):
+class TablesofRestaurant(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -424,7 +424,7 @@ class Tables(Table):
             raise RuntimeError("Tables could not be found.") from err
 
 
-class Orders(Table):
+class Orders(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -523,7 +523,7 @@ class Orders(Table):
             LOGGER.error(err)
             raise RuntimeError("Orders for date could not be found.") from err
 
-class OrderProducts(Table):
+class OrderProducts(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -552,7 +552,7 @@ class OrderProducts(Table):
             raise RuntimeError("Orderproduct could not be added.") from err
 
 
-class Products(Table):
+class Products(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -627,7 +627,7 @@ class Products(Table):
             LOGGER.error(err)
             raise RuntimeError("Products could not be found.") from err
 
-    def print_menu(self) -> List:
+    def print_menu(self) -> list:
         try:
             sql = """SELECT * 
                     FROM Products 
@@ -691,7 +691,7 @@ class Products(Table):
             raise RuntimeError("Product could not be updated.") from err
 
 
-class Uses(Table):
+class Uses(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -764,7 +764,7 @@ class Uses(Table):
             raise RuntimeError("Uses of ingredient could not be found.") from err
 
 
-class Ingredients(Table):
+class Ingredients(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -893,7 +893,7 @@ class Ingredients(Table):
             raise RuntimeError("Ingredients could not be found.") from err
 
 
-class IngredientBatches(Table):
+class IngredientBatches(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
 
@@ -951,7 +951,7 @@ class IngredientBatches(Table):
             raise RuntimeError("Ingredientbatches could not be found.") from err
 
 
-class StaffMembers(Table):
+class StaffMembers(Table): # transferred
     def __init__(self, dbname, tblname):
         super().__init__(dbname, tblname)
         self._username = 1111
@@ -1032,7 +1032,7 @@ class StaffMembers(Table):
             LOGGER.error(err)
             raise RuntimeError("Staff member could not be updated.") from err
 
-    def check_login(self, username, password) -> List:
+    def check_login(self, username, password) -> list:
         try:
             values = (username, password)
             sql = """SELECT AccessLevel 

@@ -1,5 +1,14 @@
-from classes import List, Customers, Bookings, Tables, Orders, OrderProducts
-from classes import Products, Uses, Ingredients, IngredientBatches, StaffMembers
+from List import List
+from Customers import Customers
+from Bookings import Bookings
+from TablesofRestaurant import TablesofRestaurant
+from Orders import Orders
+from OrderProducts import OrderProducts
+from Products import Products
+from Uses import Uses
+from Ingredients import Ingredients
+from IngredientBatches import IngredientBatches
+from StaffMembers import StaffMembers
 from datetime import date, datetime
 from constants import LOGGER, DB_NAME
 
@@ -24,7 +33,7 @@ class Restaurant():
     def __init__(self):
         self._customers = Customers(DB_NAME, "Customers")
         self._bookings = Bookings(DB_NAME, "Bookings")
-        self._tables = Tables(DB_NAME, "Tables")
+        self._tables = TablesofRestaurant(DB_NAME, "Tables")
         self._orders = Orders(DB_NAME, "Orders")
         self._orderproducts = OrderProducts(DB_NAME, "OrderProducts")
         self._products = Products(DB_NAME, "Products")
