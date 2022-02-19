@@ -382,6 +382,8 @@ try:
                             + "\n   Date and Time: " + str(orders[i][1])
                             + "\n   Total Price: " + str(orders[i][2])
                             + "\n   Table ID: " + str(orders[i][3]))
+                        LOGGER.info("Orders for table %s has been outputted.", tableid)
+
                 elif type == "d":
                     chosendate = input("Please enter the date of the orders you would like to see"
                                     + " (YYYY-MM-DD): ")
@@ -391,6 +393,7 @@ try:
                             + "\n   Date and Time: " + str(orders[i][1])
                             + "\n   Total Price: " + str(orders[i][2])
                             + "\n   Table ID: " + str(orders[i][3]))
+                    LOGGER.info("Orders for date %s have been outputted.", chosendate)
 
         elif choice == "6":  # menu/prodcuts
             print("\nMenu Details menu:\n"
@@ -425,11 +428,14 @@ try:
                         wilsonskitchen.ingredients.ingredients_add_ingredient(
                             ingredientname, ingtype, StoragePlace, cost, stock)
                         print("The Ingredient has been added to the database")
+                        LOGGER.info("Ingredient %s has been added.", ingredientname)
                     wilsonskitchen.ingredientnameslist.list_add_item(ingredientname)
                     quantity = float(input("Please enter the amount in kilos needed of this"
                                         + " ingredient for the product: "))
                     wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
                 wilsonskitchen.restaurant_make_product(type, name, price, n)
+                print("\nThe Product has been added to the database.")
+                LOGGER.info("Product %s has been added.", name)
 
             elif menuchoice == "2":
                 productid = input("Please enter the product id of the product you"
@@ -437,6 +443,7 @@ try:
                 wilsonskitchen.products.products_delete_product(productid)
                 wilsonskitchen.uses.uses_delete_use(productid)
                 print("The product has been deleted from the database")
+                LOGGER.info("Product %s has been deleted.", productid)
 
             elif menuchoice == "3":
                 productid = input("Please enter the product id of the product you"
@@ -458,6 +465,8 @@ try:
                                         + " ingredient for the product: "))
                     wilsonskitchen.ingredientquantitylist.list_add_item(quantity)
                 wilsonskitchen.restaurant_make_product(type, name, price, n)
+                print("\nThe Product has been updated.")
+                LOGGER.info("Product %s has been updated.", name)
 
             elif menuchoice == "4":
                 products = wilsonskitchen.products.products_return_products()
@@ -468,6 +477,7 @@ try:
                             + "\n   Price: " + str(products[i][3])
                             + "\n   Quantity Available: " + str(products[i][4])
                             + "\n   Cost per portion: " + str(products[i][5]))
+                LOGGER.info("Products have been outputted")
 
             elif menuchoice == "5":
                 menu = wilsonskitchen.products.products_print_menu()
@@ -487,6 +497,7 @@ try:
                 print("\nDesserts:")
                 for i in range(0, (len(desserts))):
                     print("\n   " + str(desserts[i][2]) + " - " + str(desserts[i][3]))
+                LOGGER.info("Products in form of menu have been outputted.")
 
             elif menuchoice == "6":
                 outofstock = wilsonskitchen.restaurant_check_outofstock_products()
@@ -498,6 +509,7 @@ try:
                     print("These are the ingredients that are out of stock:")
                     for i in range(0, len(ingredients)):
                         print(ingredients[i])
+                LOGGER.info("Out of stock ingredients have been outputted.")
 
                 products = outofstock[1]
                 if products == []:
@@ -506,6 +518,7 @@ try:
                     print("These are the products that are out of stock:")
                     for i in range(0, len(products)):
                         print(products[i])
+                LOGGER.info("Out of stock products have been outputted.")
 
         elif choice == "7":  # ingredients
             print("\nIngredient Details menu\n"
@@ -525,6 +538,7 @@ try:
                 wilsonskitchen.ingredients.ingredients_add_ingredient(
                     name, type, StoragePlace, cost, stock)
                 print("The Ingredient has been added to the database")
+                LOGGER.info("The ingredient %s has been added", name)
 
             elif ingredientchoice == "2":
                 ingname = input("Please enter the name of the ingredient you wish to delete: ")
@@ -533,6 +547,7 @@ try:
                 if uses == []:
                     wilsonskitchen._ingredients.ingredients_delete_ingredient(ingid)
                     print("\nThe Ingredient has been deleted from the database.")
+                    LOGGER.info("Ingredient %s has been deleted.", ingname)
                 else:
                     check = input("This ingredient is being used for products on the menu,"
                                 + " would you like to cancel (c) or delete those products"
@@ -542,6 +557,7 @@ try:
                     elif check == "d":
                         wilsonskitchen.restaurant_delete_ingredient_and_products(ingid)
                         print("\nThe Ingredient has been deleted from the database.")
+                        LOGGER.info("Ingredient %s and all of its uses have been deleted.", ingname)
 
             elif ingredientchoice == "3":
                 name = input("Please enter the name of the ingredient you wish to update: ")
@@ -551,6 +567,7 @@ try:
                 wilsonskitchen.ingredients.ingredients_update_ingredient(
                     name, type, storageplace, cost)
                 print("The ingredient has been updated.")
+                LOGGER.info("Ingredient %s has been updated.", name)
 
             elif ingredientchoice == "4":
                 ingredients = wilsonskitchen.ingredients.ingredients_select_ingredients()
@@ -560,6 +577,7 @@ try:
                             + "\n   Type: " + str(ingredients[i][2])
                             + "\n   Storage Place: " + str(ingredients[i][3])
                             + "\n   Cost per Kilo: " + str(ingredients[i][4]))
+                LOGGER.info("Ingredients have been outputted.")
 
         elif choice == "8":  # stock
             print("\nStock Details menu\n"
@@ -577,6 +595,7 @@ try:
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
                 wilsonskitchen.restaurant_add_ingredientbatch(ingname, quantity, expirydate)
                 print("The Batch has been added to the database.")
+                LOGGER.info("Batch of ingredient %s has been added.", ingname)
 
             elif stockchoice == "2":
                 ingname = input("Please enter the name of the ingredient: ")
@@ -584,6 +603,7 @@ try:
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
                 wilsonskitchen.restaurant_delete_ingredientbatch(ingid, expirydate)
                 print("The Batch has been deleted from the database.")
+                LOGGER.info("Batch of ingredient %s has been deleted.", ingname)
 
             elif stockchoice == "3":
                 ingname = input("Please enter the name of the ingredient: ")
@@ -596,6 +616,7 @@ try:
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
                 wilsonskitchen.restaurant_add_ingredientbatch(ingname, quantity, expirydate)
                 print("The Batch has been updated.")
+                LOGGER.info("Batch of ingredient %s has been updated.", ingname)
 
             elif stockchoice == "4":
                 batches = wilsonskitchen.ingredientbatches.batches_select_all_batches()
@@ -604,9 +625,12 @@ try:
                         + "\n   Ingredient ID: " + str(batches[i][1])
                             + "\n   Quantity: " + str(batches[i][2])
                             + "\n   Expiry Date: " + str(batches[i][3]))
+                LOGGER.info("Batches has been outputted.")
 
             elif stockchoice == "5":
                 wilsonskitchen.restaurant_delete_outofdate_ingredients()
+                print("All out of stock ingredient batches have been deleted.")
+                LOGGER.info("Out of date ingredient batches have been deleted.")
 
         elif choice == "9":  # login
             print("\nLogin Details menu\n"
@@ -642,6 +666,7 @@ try:
                         email, fname, sname, job, access, password)
                     print("Your username is " + str(newusername))
                     print("The Staff Member has been added to the database.")
+                    LOGGER.info("Staff Member %s has been added.", fname, sname)
 
             elif loginchoice == "2":
                 if access != 1:
@@ -651,6 +676,7 @@ try:
                                 + " wish to delete: ")
                     wilsonskitchen.staffmembers.staffmembers_delete_member(email)
                     print("The staff member has been deleted.")
+                    LOGGER.info("Staff Member %s has been deleted.", email)
 
             elif loginchoice == "3":
                 print("Please enter your new details, you cannot change your job title,"
@@ -670,6 +696,7 @@ try:
                 wilsonskitchen.staffmembers.staffmembers_update_self(
                     username, email, fname, sname, password)
                 print("Your details have been updated.")
+                LOGGER.info("Account details of %s %s have been updated.", fname, sname)
 
             elif loginchoice == "4":
                 if access != 1:
@@ -694,6 +721,7 @@ try:
                     wilsonskitchen.staffmembers.staffmembers_update_member(
                         oldemail, email, fname, sname, job, access, password)
                     print("The staff member's details have been updated.")
+                    LOGGER.info("Account details of %s %s have been updated.", fname, sname)
 
             elif loginchoice == "5":
                 staffmembers = wilsonskitchen.staffmembers.staffmembers_get_all()
@@ -705,6 +733,7 @@ try:
                             + "\n   Job Title: " + str(staffmembers[i][4])
                             + "\n   Access Level: " + str(staffmembers[i][5])
                             + "\n   Username: " + str(staffmembers[i][6]))
+                LOGGER.info("Staff Members have been outputted.")
 
         print("\nMain menu:\n"
             + "\n   1. Reload Main menu\n"
