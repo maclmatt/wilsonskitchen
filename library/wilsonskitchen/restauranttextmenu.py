@@ -131,69 +131,68 @@ while choice != "E":
         print("Unfortunately your account does not have access to reset the database.")
 
     elif choice == "2":  # customers exception = 1/5
-        print("\nCustomer Details menu:\n"
-              + "   1. Add new customer\n"
-                + "   2. Delete customer\n"
-                + "   3. Update customer's details\n"
-                + "   4. Get customer's details\n"
-                + "   5. Get list of all customers\n")
-        custchoice = input("Please choose an option from the menu above"
-                        + " (E to exit customer menu):")
+        try:
+            print("\nCustomer Details menu:\n"
+                + "   1. Add new customer\n"
+                    + "   2. Delete customer\n"
+                    + "   3. Update customer's details\n"
+                    + "   4. Get customer's details\n"
+                    + "   5. Get list of all customers\n")
+            custchoice = input("Please choose an option from the menu above"
+                            + " (E to exit customer menu):")
 
-        if custchoice == "1":
-            print("\nPlease enter the details of the new customer:")
-            email = input("Email: ")
-            fname = input("Firstname: ")
-            sname = input("Surname: ")
-            contactno = input("Phone number: ")
-            if wilsonskitchen.customers.customers_add_customer(email, fname, sname, contactno):
+            if custchoice == "1":
+                print("\nPlease enter the details of the new customer:")
+                email = input("Email: ")
+                fname = input("Firstname: ")
+                sname = input("Surname: ")
+                contactno = input("Phone number: ")
+                wilsonskitchen.customers.customers_add_customer(email, fname, sname, contactno)
                 print("\n" + fname, sname, "has been added to the database.")
-                LOGGER.info("has been added to the database. %s %s", fname, sname)
+
+            elif custchoice == "2":
+                email = input("\nPlease enter the email of the customer: ")
+                custid = wilsonskitchen.customers.customers_select_custid(email)
+                wilsonskitchen.customers.customers_delete_customer(custid)
+                print("\nThe customer has been deleted from the database.")
+
+            elif custchoice == "3":
+                oldemail = input("\nPlease enter the email of the customer: ")
+                print("Please enter the new details of the customer:")
+                newemail = input("Email :")
+                fname = input("Firstname :")
+                sname = input("Surname :")
+                contactno = input("Phone number: ")
+                wilsonskitchen.customers.customers_update_customer(
+                    newemail, fname, sname, contactno, oldemail)
+                print("The Customer's details have been updated.")
+
+            elif custchoice == "4":
+                email = input("\nPlease enter the email of the customer: ")
+                details = wilsonskitchen.customers.customers_select_customer(email)
+                print("\nCustomer details:"
+                    + "\n   Customer ID: " + str(details[0])
+                    + "\n   Customer Email: " + str(details[1])
+                    + "\n   Customer Name: " + str(details[2]), str(details[3])
+                    + "\n   Customer Phone number: " + str(details[4]))
+
+            elif custchoice == "5":
+                customers = wilsonskitchen.customers.customers_select_customers()
+                for i in range(0, (len(customers))):
+                    print("\nCustomer " + str(customers[i][0]) + "'s details:"
+                        + "\n   Customer Email: " + str(customers[i][1])
+                        + "\n   Customer Name: " +
+                        str(customers[i][2]), str(customers[i][3])
+                        + "\n   Customer Phone number: " + str(customers[i][4]))
+
             else:
-                print("%s %s could not be added to the database, see log file.", 
-                    fname, sname)
-                LOGGER.error("%s %s could not be added to the database.", 
-                    fname, sname)
+                print("That is not a valid choice, the main menu will now reload:")
+        
+        except BaseException as err:
+            LOGGER.error(err)
+            print("something went wrong" + err)
 
-        elif custchoice == "2":
-            email = input("\nPlease enter the email of the customer: ")
-            custid = wilsonskitchen.customers.customers_select_custid(email)
-            wilsonskitchen.customers.customers_delete_customer(custid)
-            print("\nThe customer has been deleted from the database.")
-
-        elif custchoice == "3":
-            oldemail = input("\nPlease enter the email of the customer: ")
-            print("Please enter the new details of the customer:")
-            newemail = input("Email :")
-            fname = input("Firstname :")
-            sname = input("Surname :")
-            contactno = input("Phone number: ")
-            wilsonskitchen.customers.customers_update_customer(
-                newemail, fname, sname, contactno, oldemail)
-            print("The Customer's details have been updated.")
-
-        elif custchoice == "4":
-            email = input("\nPlease enter the email of the customer: ")
-            details = wilsonskitchen.customers.customers_select_customer(email)
-            print("\nCustomer details:"
-                  + "\n   Customer ID: " + str(details[0])
-                  + "\n   Customer Email: " + str(details[1])
-                  + "\n   Customer Name: " + str(details[2]), str(details[3])
-                  + "\n   Customer Phone number: " + str(details[4]))
-
-        elif custchoice == "5":
-            customers = wilsonskitchen.customers.customers_select_customers()
-            for i in range(0, (len(customers))):
-                print("\nCustomer " + str(customers[i][0]) + "'s details:"
-                      + "\n   Customer Email: " + str(customers[i][1])
-                      + "\n   Customer Name: " +
-                      str(customers[i][2]), str(customers[i][3])
-                      + "\n   Customer Phone number: " + str(customers[i][4]))
-
-        else:
-            print("That is not a valid choice, the main menu will now reload:")
-
-    elif choice == "3":  # bookings exception = 1/5
+    elif choice == "3":  # bookings TODO add in print of all items on bill, exception = 1/5
         print("\nBooking Details menu:\n"
               + "   1. Add new booking\n"
               + "   2. Delete booking\n"
