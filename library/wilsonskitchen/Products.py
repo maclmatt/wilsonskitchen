@@ -52,9 +52,12 @@ class Products(Table):
 
     def increase_cost(self, productid, cost) -> None:
         try:
+            # increases costperportion by cost
             sql = """SELECT CostPerPortion 
                     FROM Products 
                     WHERE ProductID=?"""
+            # calls select_dataspecific_fetchone
+            # to execute sql with productid
             oldcosttuple = self.select_dataspecific_fetchone(sql, (productid,))
             oldcost = oldcosttuple[0]
             newcost = oldcost + cost
@@ -62,6 +65,8 @@ class Products(Table):
             sql = """UPDATE Products 
                     SET CostPerPortion=? 
                     WHERE ProductID=?"""
+            # calls update
+            # to execute sql with values
             self.update(sql, values)
         except BaseException as err:
             # logs error in log file

@@ -55,9 +55,12 @@ class Ingredients(Table):
 
     def reduce_ingredient_stock(self, ingredientid, quantity) -> None:
         try:
+            # reduces ingredient stock by quantity
             sql = """SELECT StockInKilos 
                     FROM Ingredients 
                     WHERE IngredientID=?"""
+            # calls select_dataspecific_fetchone
+            # to execute sql with ingredientid
             oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
             oldstock = oldstocktuple[0]
             newstock = oldstock - quantity
@@ -65,6 +68,8 @@ class Ingredients(Table):
             sql = """UPDATE Ingredients 
                     SET StockInKilos=? 
                     WHERE IngredientID=?"""
+            # calls update
+            # to execute sql with values
             self.update(sql, values)
         except BaseException as err:
             # logs error in log file
@@ -74,9 +79,12 @@ class Ingredients(Table):
 
     def increase_ingredient_stock(self, ingredientid, quantity) -> None:
         try:
+            # increases ingredient stock by quantity
             sql = """SELECT StockInKilos 
                     FROM Ingredients 
                     WHERE IngredientID=?"""
+            # calls select_dataspecific_fetchone
+            # to execute sql with ingredientid
             oldstocktuple = self.select_dataspecific_fetchone(sql, (ingredientid,))
             oldstock = oldstocktuple[0]
             newstock = oldstock + quantity
@@ -84,6 +92,8 @@ class Ingredients(Table):
             sql = """UPDATE Ingredients 
                     SET StockInKilos=? 
                     WHERE IngredientID=?"""
+            # calls update
+            # to execute sql with values
             self.update(sql, values)
         except BaseException as err:
             # logs error in log file

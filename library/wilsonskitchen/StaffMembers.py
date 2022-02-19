@@ -112,16 +112,24 @@ class StaffMembers(Table):
 
     def check_login(self, username, password) -> list:
         try:
+            # checks if username and password exist and match
             values = (username, password)
             sql = """SELECT AccessLevel 
                     FROM StaffMembers 
                     WHERE Username=? AND Password=?"""
+            # calls select_dataspecific_fetchone
+            # to execute sql with values
             accesstuple = self.select_dataspecific_fetchone(sql, values)
             if accesstuple == None:
                 sql = """SELECT Password 
                         FROM StaffMembers 
                         WHERE Username=?"""
+                # calls select_dataspecific_fetchone
+                # to execute sql with username
                 passwordtuple = self.select_dataspecific_fetchone(sql, (username,))
+            # return list [a, b]:
+                # where a = whether the login details are valid or not 
+                # and b = status of the invalid login or access level of the valid login
                 if passwordtuple == None:
                     return [False, "neither"]
                 else:
