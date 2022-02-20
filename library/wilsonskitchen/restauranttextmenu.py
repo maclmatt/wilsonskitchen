@@ -224,7 +224,7 @@ try:
                     print("\nThe Booking has been added to the database.")
                     LOGGER.info("The Booking has been added to the database.")
                 else:
-                    print("\nThere are no tables available at that time for that number of people, see log file.")
+                    print("\nThere are no tables available at that time for that number of people.")
                     LOGGER.info("Booking unable to be booked.")
 
             elif bookchoice == "2":
@@ -317,7 +317,7 @@ try:
                 bill = wilsonskitchen.bookings.select_booking_bill(tableid, time, date)
                 print("The current bill for table " +
                     str(tableid) + " is: £" + str(bill))
-                LOGGER.info("Bill for booking of table %s at %s %s has been outputted.", tableid, time, date)
+                LOGGER.info("Bill for booking of table %s has been outputted.", tableid)
 
             else:
                 print("That is not a valid choice, the main menu will now reload:")
@@ -351,7 +351,7 @@ try:
                     LOGGER.info("Table %s has been deleted.", tableid)
                 else:
                     print("You cannot delete this table as there are bookings made for it.")
-                    LOGGER.info("Table %s could not be deleted as there are bookings made for it.")
+                    LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.")
 
             elif tablechoice == "3":
                 tableid = input("Please enter the Table ID of the Table you wish to update: ")
@@ -367,7 +367,7 @@ try:
                     LOGGER.info("Details of table %s has been updated", tableid)
                 else:
                     print("You cannot update this table as there are bookings made for it.")
-                    LOGGER.info("Table %s could not be updated as there are bookings made for it.", tableid)
+                    LOGGER.info("Table %s coudn't be updated, due to bookings made for it.", tableid)
 
             elif tablechoice == "4":
                 # selects all table records

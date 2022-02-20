@@ -42,7 +42,7 @@ class List():
                 # calls sort_switch to get pivot and move items around the pivot
                 pivot = self.sort_switch(numbers, low, high)
                 # calls quick_sort function to get next pivots
-                self.quick_sort(numbers, low, pivot-1)
+                self.quick_sort(numbers, low, pivot - 1)
                 self.quick_sort(numbers, pivot + 1, high)
             # stops recursion when all items have been made pivot
         except BaseException as err:
