@@ -38,7 +38,7 @@ try:
 except BaseException as err:
     LOGGER.error(err)
     # exits user from system if error has occured
-    sys.exit("Something went wrong: " + err)
+    sys.exit("Something went wrong: " + str(err))
     
 try:
     print("\nMain menu:\n"
@@ -761,7 +761,7 @@ try:
                         email, fname, sname, job, access, password)
                     print("Your username is " + str(newusername))
                     print("The Staff Member has been added to the database.")
-                    LOGGER.info("Staff Member %s has been added.", fname, sname)
+                    LOGGER.info("Staff Member %s %s has been added.", fname, sname)
 
             elif loginchoice == "2":
                 if access != 1:
@@ -853,4 +853,4 @@ try:
 except BaseException as err:
     LOGGER.error(err)
     # exits user from system if error has occured
-    sys.exit("Something went wrong: " + err)
+    sys.exit("Something went wrong: " + str(err))
