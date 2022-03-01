@@ -334,9 +334,8 @@ try:
             if tablechoice == "1":
                 print("Please enter the details of the table.")
                 NoSeats = input("Please enter the number of seats for this table: ")
-                Description = input("Please enter the description for this table: ")
                 # adds table record
-                wilsonskitchen.tables.add_table(NoSeats, Description)
+                wilsonskitchen.tables.add_table(NoSeats)
                 print("\nThe Table has been added to the database.")
                 LOGGER.info("Table has been added to the database.")
 
@@ -360,9 +359,8 @@ try:
                 if check == None:
                     print("Please enter the new details of the table:")
                     noseats = input("Number of Seats: ")
-                    description = input("Description: ")
                     # updates table details
-                    wilsonskitchen.tables.update_table(tableid, noseats, description)
+                    wilsonskitchen.tables.update_table(tableid, noseats)
                     print("The details of the table have been updated.")
                     LOGGER.info("Details of table %s has been updated", tableid)
                 else:

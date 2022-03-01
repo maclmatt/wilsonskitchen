@@ -11,8 +11,7 @@ class TablesofRestaurant(Table):
             # to execute sql
             sql = """CREATE TABLE Tables
                     (TableID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    NoSeats INTEGER,
-                    Description TEXT)"""
+                    NoSeats INTEGER)"""
             self.recreate_table(sql)
         except BaseException as err:
             # logs error in log file
@@ -55,14 +54,14 @@ class TablesofRestaurant(Table):
             LOGGER.error(err)
             raise RuntimeError("Table could not be found.") from err
 
-    def add_table(self, NoSeats, Description) -> None:
+    def add_table(self, NoSeats) -> None:
         try:
             # calls insert_record 
             # to execute sql with values
-            values = (NoSeats, Description)
+            values = (NoSeats)
             sql = """INSERT 
-                    INTO Tables (NoSeats, Description) 
-                    VALUES (?, ?)"""
+                    INTO Tables (NoSeats) 
+                    VALUES (?)"""
             self.insert_record(sql, values)
         except BaseException as err:
             # logs error in log file
@@ -84,13 +83,13 @@ class TablesofRestaurant(Table):
             LOGGER.error(err)
             raise RuntimeError("Table could not be deleted.") from err
 
-    def update_table(self, oldtableid, noseats, description) -> None:
+    def update_table(self, oldtableid, noseats) -> None:
         try:
             # calls update
             # to execute sql with values
-            values = (noseats, description, oldtableid)
+            values = (noseats, oldtableid)
             sql = """UPDATE Tables 
-                    SET NoSeats=?, Description=? 
+                    SET NoSeats=?
                     WHERE TableID=?"""
             self.update(sql, values)
         except BaseException as err:

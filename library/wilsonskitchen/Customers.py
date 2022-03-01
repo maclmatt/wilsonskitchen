@@ -105,7 +105,7 @@ class Customers(Table):
             # returns records
             sql = """SELECT * 
                     FROM Customers
-                    ORDER BY Firstname ASC"""
+                    ORDER BY CustID ASC"""
             return self.select(sql)
         except BaseException as err:
             # logs error in log file
