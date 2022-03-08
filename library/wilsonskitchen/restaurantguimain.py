@@ -14,9 +14,6 @@ class CustomersMenu():
         self.frame = fr_main
     
     def show_add_new_customer(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
@@ -56,9 +53,6 @@ class CustomersMenu():
         self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def show_delete_customer(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
@@ -81,9 +75,6 @@ class CustomersMenu():
         self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def show_update_customer(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
@@ -129,9 +120,6 @@ class CustomersMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_customer(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
@@ -148,9 +136,6 @@ class CustomersMenu():
         self.see_customer_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_customers(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         self.count += 1
@@ -168,9 +153,6 @@ class BookingsMenu():
         self.frame = fr_main
 
     def show_add_booking(self):
-        if self.count != 0:
-            self.lbl.destroy()
-        self.frame.destroy()
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
@@ -198,10 +180,10 @@ class BookingsMenu():
         self.email = tk.Entry(self.frame)
         self.email.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
         
-        self.add_new_booking_button = tk.Button(self.frame, text="Add Booking", command=self.add_new_customer)
+        self.add_new_booking_button = tk.Button(self.frame, text="Add Booking", command=self.add_new_booking)
         self.add_new_booking_button.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
-    def add_new_customer(self):
+    def add_new_booking(self):
         # selects cust ID
         custid = wilsonskitchen.customers.select_custid(self.email.get())
         custid = custid[0]
@@ -219,7 +201,35 @@ class BookingsMenu():
             self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Booking unable to be added")
 
+    def show_delete_booking(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
 
+        self.count += 1
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.emaillbl = tk.Label(self.frame, text = "Email:")
+        self.emaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custemail = tk.Entry(self.frame)
+        self.custemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
+
+        self.delete_customer_button = tk.Button(self.frame, text="Delete Customer", command=self.delete_a_booking)
+        self.delete_customer_button.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def delete_a_booking(self):
+        #TODO
+        self.frame = tk.Frame(window, bg = "Lightsteelblue", width = 200)
 
 
 
