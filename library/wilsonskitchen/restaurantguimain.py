@@ -1,6 +1,8 @@
 import tkinter as tk
+from functools import partial
 from turtle import st
 from restaurantmain import Restaurant
+from constants import LOGGER
 import sys
 
 wilsonskitchen = Restaurant()
@@ -130,7 +132,7 @@ class CustomersMenu():
         if self.count != 0:
             self.lbl.destroy()
         self.frame.destroy()
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.count += 1
@@ -160,81 +162,151 @@ class CustomersMenu():
         self.lbl.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
 class BookingsMenu():
-    def __init__(self):
+    def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
+        self.frame = fr_main
+
+    def show_add_booking(self):
+        if self.count != 0:
+            self.lbl.destroy()
+        self.frame.destroy()
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.count += 1
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of People:")
+        self.peoplelbl.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
+
+        self.emaillbl = tk.Label(self.frame, text = "Email:")
+        self.emaillbl.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+        self.email = tk.Entry(self.frame)
+        self.email.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
+        
+        self.add_new_booking_button = tk.Button(self.frame, text="Add Booking", command=self.add_new_customer)
+        self.add_new_booking_button.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_new_customer(self):
+        # selects cust ID
+        custid = wilsonskitchen.customers.select_custid(self.email.get())
+        custid = custid[0]
+        # makes booking
+        booked = wilsonskitchen.make_booking(self.time.get(),
+                                            self.date.get(),
+                                            self.people.get(),
+                                            custid)
+        if booked:
+            self.lbl = tk.Label(self.frame, text= "This booking has been added.")
+            self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("The Booking has been added to the database.")
+        else:
+            self.lbl = tk.Label(self.frame, text= "This are no tables available for this time and date")
+            self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("Booking unable to be added")
+
+
+
+
+
 class TablesMenu():
-    def __init__(self):
+    def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
+        self.frame = fr_main
 class MenuandOrdersMenu():
-    def __init__(self):
+    def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
+        self.frame = fr_main
 class IngredientsMenu():
-    def __init__(self):
+    def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
+        self.frame = fr_main
 class StaffMenu():
-    def __init__(self):
+    def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
+        self.frame = fr_main
 
 def open_customers_menu():
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
     custmenu = CustomersMenu(fr_main)
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+    
     btn_add_customer = tk.Button(fr_submenu, text="Add new customer", command=custmenu.show_add_new_customer)
     btn_delete_customer = tk.Button(fr_submenu, text="Delete customer", command=custmenu.show_delete_customer)
     btn_update_customer = tk.Button(fr_submenu, text="Update customer", command=custmenu.show_update_customer)
     btn_see_customer = tk.Button(fr_submenu, text="See Customer", command=custmenu.see_customer)
     btn_see_customers = tk.Button(fr_submenu, text="See Customers", command=custmenu.see_customers)
     
-    btn_add_customer.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
-    btn_delete_customer.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
-    btn_update_customer.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
-    btn_see_customer.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
-    btn_see_customers.grid(row=4, column=1, sticky="ew", padx=10, pady=10)
+    btn_add_customer.grid(row=0, column=1, sticky="ew", padx=20, pady=10)
+    btn_delete_customer.grid(row=1, column=1, sticky="ew", padx=20, pady=10)
+    btn_update_customer.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
+    btn_see_customer.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
+    btn_see_customers.grid(row=4, column=1, sticky="ew", padx=20, pady=10)
     
     fr_submenu.grid(row=0, column=1, sticky="ns")
     fr_main.grid(row=0, column=2, sticky='nsew')
 
 def open_bookings_menu():
-    bookmenu = BookingsMenu()
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
-    btn_add_booking = tk.Button(fr_submenu, text="Add new booking")
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    bookmenu = BookingsMenu(fr_main)
+
+    btn_add_booking = tk.Button(fr_submenu, text="Add new booking", command=bookmenu.show_add_booking)
     btn_delete_booking = tk.Button(fr_submenu, text="Delete booking")
     btn_update_booking = tk.Button(fr_submenu, text="Update booking")
     btn_see_bookings = tk.Button(fr_submenu, text="See bookings")
     btn_see_bill = tk.Button(fr_submenu, text="See Bill")
 
-    btn_add_booking.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
-    btn_delete_booking.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
-    btn_update_booking.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
-    btn_see_bookings.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
-    btn_see_bill.grid(row=4, column=1, sticky="ew", padx=10, pady=10)
+    btn_add_booking.grid(row=0, column=1, sticky="ew", padx=20, pady=10)
+    btn_delete_booking.grid(row=1, column=1, sticky="ew", padx=20, pady=10)
+    btn_update_booking.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
+    btn_see_bookings.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
+    btn_see_bill.grid(row=4, column=1, sticky="ew", padx=20, pady=10)
 
     fr_submenu.grid(row=0, column=1, sticky="ns")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_tables_menu():
-    tablemenu = TablesMenu()
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    tablemenu = TablesMenu(fr_main)
+
     btn_add_table = tk.Button(fr_submenu, text="Add new table")
     btn_delete_table = tk.Button(fr_submenu, text="Delete table")
     btn_update_table = tk.Button(fr_submenu, text="Update table")
     btn_see_tables = tk.Button(fr_submenu, text="See tables")
 
-    btn_add_table.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
-    btn_delete_table.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
-    btn_update_table.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
-    btn_see_tables.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
+    btn_add_table.grid(row=0, column=1, sticky="ew", padx=30, pady=10)
+    btn_delete_table.grid(row=1, column=1, sticky="ew", padx=30, pady=10)
+    btn_update_table.grid(row=2, column=1, sticky="ew", padx=30, pady=10)
+    btn_see_tables.grid(row=3, column=1, sticky="ew", padx=30, pady=10)
 
     fr_submenu.grid(row=0, column=1, sticky="ns")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_menu_order_menu():
-    menuorder = MenuandOrdersMenu()
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    menuorder = MenuandOrdersMenu(fr_main)
+
     btn_add_order = tk.Button(fr_submenu, text="Add new order")
     btn_see_orders = tk.Button(fr_submenu, text="See orders")
     btn_add_product = tk.Button(fr_submenu, text="Add new product")
@@ -242,7 +314,7 @@ def open_menu_order_menu():
     btn_update_product = tk.Button(fr_submenu, text="Update product")
     btn_see_products = tk.Button(fr_submenu, text="See products")
     btn_print_menu = tk.Button(fr_submenu, text="Print menu")
-    btn_check_products = tk.Button(fr_submenu, text="Check for any out of stock products.")
+    btn_check_products = tk.Button(fr_submenu, text="Check stock of products")
 
     btn_add_order.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
     btn_see_orders.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -257,8 +329,10 @@ def open_menu_order_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_ingredients_menu():
-    ingmenu = IngredientsMenu()
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    ingmenu = IngredientsMenu(fr_main)
+
     btn_add_ingredient = tk.Button(fr_submenu, text="Add new ingredient")
     btn_delete_ingredient = tk.Button(fr_submenu, text="Delete ingredient")
     btn_update_ingredient = tk.Button(fr_submenu, text="Update ingredient")
@@ -267,7 +341,7 @@ def open_ingredients_menu():
     btn_delete_batch = tk.Button(fr_submenu, text="Delete batch")
     btn_update_batch = tk.Button(fr_submenu, text="Update batch")
     btn_see_batches = tk.Button(fr_submenu, text="See batches")
-    btn_delete_batches = tk.Button(fr_submenu, text="Delete out of stock batches")
+    btn_delete_batches = tk.Button(fr_submenu, text="Delete expired batches")
 
     btn_add_ingredient.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
     btn_delete_ingredient.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -283,10 +357,10 @@ def open_ingredients_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_staff_menu():
-    staffmenu = StaffMenu()
-    #fr_submenu.destroy()
-    #fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 100)
-    window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width=200)
+    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    staffmenu = StaffMenu(fr_main)
+
     btn_add_staff = tk.Button(fr_submenu, text="Add new employee")
     btn_delete_staff = tk.Button(fr_submenu, text="Delete an employee")
     btn_update_self = tk.Button(fr_submenu, text="Update account details")
@@ -307,15 +381,15 @@ window = tk.Tk()
 window.title("Wilson's Kitchen")
 
 window.rowconfigure(0, minsize=500, weight=1)
-window.columnconfigure([0, 1], minsize=100, weight=1)
+window.columnconfigure([0, 1, 2], minsize=100, weight=1)
 
 
-fr_main = tk.Frame(window, bg = "lightsteelblue", width = 300)
-fr_mainmenu = tk.Frame(window, bg = "navy", width = 100)
-fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 100)
+fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+fr_mainmenu = tk.Frame(window, bg = "navy", width=100)
+fr_submenu = tk.Frame(window, bg = "cornflowerblue", width=200)
 
 fr_mainmenu.grid(row=0, column=0, sticky="nsew")
-fr_main.grid(row=0, column=1, sticky="nsew")
+fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
 btn_customers = tk.Button(fr_mainmenu, text="Customers", command=open_customers_menu)
 btn_bookings = tk.Button(fr_mainmenu, text="Bookings", command=open_bookings_menu)
