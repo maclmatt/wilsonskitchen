@@ -134,14 +134,12 @@ class CustomersMenu():
         self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         customers = wilsonskitchen.customers.select_customers()
-        self.lbl = tk.Listbox(self.frame)
         for i in range(0, (len(customers))):
             self.lbl = tk.Label(self.frame, text= f"Customer {customers[i][0]}'s details:"
                                                 + f"\nCustomer Email: {customers[i][1]}"
                                                 + f"\nCustomer Name: {customers[i][2]} {customers[i][3]}"
                                                 + f"\nPhone number: {customers[i][4]}")
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
-        self.lbl.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
 class BookingsMenu():
     def __init__(self, fr_main):
@@ -339,7 +337,6 @@ class BookingsMenu():
                     padx=5,
                     pady=5)
         bookings = wilsonskitchen.bookings.select_bookings_for_date(self.date.get())
-        self.lbl = tk.Listbox(self.frame)
         for i in range(0, (len(bookings))):
             self.lbl = tk.Label(self.frame, text= f"Booking {bookings[i][0]}'s details:"
                                                 + f"\nTime: {bookings[i][1]}"
@@ -349,7 +346,6 @@ class BookingsMenu():
                                                 + f"\nCurrent bill: {bookings[i][5]}"
                                                 + f"\nCustomer ID: {bookings[i][6]}")
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
-        self.lbl.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
     def show_see_bill(self):
         self.frame = tk.Frame(window,
@@ -424,41 +420,554 @@ class TablesMenu():
         self.people = tk.Entry(self.frame)
         self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.add_new_booking_button = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
-        self.add_new_booking_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def add_new_table(self):
         wilsonskitchen.tables.add_table(self.people.get())
-        self.lbl = tk.Label(self.frame, text= "This booking has been added.")
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
         self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         LOGGER.info("Table has been added to the database.")
 
-    #def show_delete_table(self):
+    def show_delete_table(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
 
-    #def delete_a_table(self):
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
-    #def show_update_table(self):
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-    #def update_a_table(self):
+        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
-    #def see_tables(self):
+    def delete_a_table(self):
+        check = wilsonskitchen.bookings.select_bookings_fromtableid(self.table.get())
+        if check == None:
+            # deletes table
+            wilsonskitchen.tables.delete_table(self.table.get())
+            self.lbl = tk.Label(self.frame, text= "The Table has been deleted from the database.")
+            self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("Table %s has been deleted.", self.table.get())
+        else:
+            self.lbl = tk.Label(self.frame, text= "You cannot delete this table as there are bookings made for it.")
+            self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.", self.table.get())
 
-    
+    def show_update_table(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "New number of seats:")
+        self.peoplelbl.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Update Table", command=self.update_a_table)
+        self.btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_a_table(self):
+        # checks if bookings are made to the table
+        check = wilsonskitchen.bookings.select_bookings_fromtableid(self.table.get())
+        if check == None:
+            # updates table details
+            wilsonskitchen.tables.update_table(self.table.get(), self.people.get())
+            self.lbl = tk.Label(self.frame, text= "The details of the table have been updated.")
+            self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("Details of table %s has been updated", self.table.get())
+        else:
+            self.lbl = tk.Label(self.frame, text= "You cannot update this table as there are bookings made for it.")
+            self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            LOGGER.info("Table %s coudn't be updated, due to bookings made for it.", self.table.get())
+
+    def see_tables(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
 class MenuandOrdersMenu():
     def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
         self.frame = fr_main
+
+    def show_add_order(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
+        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_a_order(self):
+        wilsonskitchen.tables.add_table(self.people.get())
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Table has been added to the database.")
+
+    def show_see_orders(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+    def see_orders(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
+    def show_add_product(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
+        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_a_product(self):
+        wilsonskitchen.tables.add_table(self.people.get())
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Table has been added to the database.")
+
+    def show_delete_product(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def delete_a_product(self):
+        wilsonskitchen.delete_booking(self.custemail.get(),
+                                    self.time.get(),
+                                    self.date.get())
+        self.lbl = tk.Label(self.frame, text= "This booking has been deleted.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
+
+    def show_update_product(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
+        self.oldemaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custoldemail = tk.Entry(self.frame)
+        self.custoldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+
+        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_a_product(self):
+        wilsonskitchen.customers.update_customer(self.custemail.get(),
+                                                self.customerfname.get(),
+                                                self.customersname.get(),
+                                                self.custnumber.get(),
+                                                self.custoldemail.get())
+        self.lbl = tk.Label(self.frame, text= "This customer has been updated.")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def see_products(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
+    def see_menu(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
+    def check_out_of_stock(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
 class IngredientsMenu():
     def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
         self.frame = fr_main
+
+    def show_add_ingredient(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
+        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_a_ingredient(self):
+        wilsonskitchen.tables.add_table(self.people.get())
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Table has been added to the database.")
+
+    def show_delete_ingredient(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def delete_a_ingredient(self):
+        wilsonskitchen.delete_booking(self.custemail.get(),
+                                    self.time.get(),
+                                    self.date.get())
+        self.lbl = tk.Label(self.frame, text= "This booking has been deleted.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
+
+    def show_update_ingredient(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
+        self.oldemaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custoldemail = tk.Entry(self.frame)
+        self.custoldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+
+        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_a_ingredient(self):
+        wilsonskitchen.customers.update_customer(self.custemail.get(),
+                                                self.customerfname.get(),
+                                                self.customersname.get(),
+                                                self.custnumber.get(),
+                                                self.custoldemail.get())
+        self.lbl = tk.Label(self.frame, text= "This customer has been updated.")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def see_ingredients(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
+    def show_add_batch(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
+        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_a_batch(self):
+        wilsonskitchen.tables.add_table(self.people.get())
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Table has been added to the database.")
+
+    def show_delete_batch(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def delete_a_batch(self):
+        wilsonskitchen.delete_booking(self.custemail.get(),
+                                    self.time.get(),
+                                    self.date.get())
+        self.lbl = tk.Label(self.frame, text= "This booking has been deleted.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
+
+    def show_update_batch(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
+        self.oldemaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custoldemail = tk.Entry(self.frame)
+        self.custoldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+
+        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_a_batch(self):
+        wilsonskitchen.customers.update_customer(self.custemail.get(),
+                                                self.customerfname.get(),
+                                                self.customersname.get(),
+                                                self.custnumber.get(),
+                                                self.custoldemail.get())
+        self.lbl = tk.Label(self.frame, text= "This customer has been updated.")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def see_batches(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+
+    def show_delete_expired(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+    def delete_expired(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
 class StaffMenu():
     def __init__(self, fr_main):
         self.count = 0
         self.lbl = None
         self.frame = fr_main
+
+    def show_add_member(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
+        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.people = tk.Entry(self.frame)
+        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def add_a_member(self):
+        wilsonskitchen.tables.add_table(self.people.get())
+        self.lbl = tk.Label(self.frame, text= "This table has been added.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Table has been added to the database.")
+
+    def show_delete_member(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.tablelbl = tk.Label(self.frame, text = "Table ID:")
+        self.tablelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.table = tk.Entry(self.frame)
+        self.table.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_table)
+        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def delete_a_member(self):
+        wilsonskitchen.delete_booking(self.custemail.get(),
+                                    self.time.get(),
+                                    self.date.get())
+        self.lbl = tk.Label(self.frame, text= "This booking has been deleted.")
+        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
+
+    def show_update_account(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
+        self.oldemaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custoldemail = tk.Entry(self.frame)
+        self.custoldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+
+        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_account(self):
+        wilsonskitchen.customers.update_customer(self.custemail.get(),
+                                                self.customerfname.get(),
+                                                self.customersname.get(),
+                                                self.custnumber.get(),
+                                                self.custoldemail.get())
+        self.lbl = tk.Label(self.frame, text= "This customer has been updated.")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def show_update_member(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
+        self.oldemaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.custoldemail = tk.Entry(self.frame)
+        self.custoldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.timelbl = tk.Label(self.frame, text = "Time:")
+        self.timelbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.time = tk.Entry(self.frame)
+        self.time.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+        self.datelbl = tk.Label(self.frame, text = "Date:")
+        self.datelbl.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        self.date = tk.Entry(self.frame)
+        self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+
+        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def update_member(self):
+        wilsonskitchen.customers.update_customer(self.custemail.get(),
+                                                self.customerfname.get(),
+                                                self.customersname.get(),
+                                                self.custnumber.get(),
+                                                self.custoldemail.get())
+        self.lbl = tk.Label(self.frame, text= "This customer has been updated.")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def see_employees(self):
+        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame.grid(row=0, column=2, sticky="nsew")
+        tables = wilsonskitchen.tables.print_all_tables()
+        for i in range(0, (len(tables))):
+            self.lbl = tk.Label(self.frame, text= f"Customer {tables[i][0]}'s details:"
+                                                + f"\nNumber of seats: {tables[i][1]}")
+            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
 def open_customers_menu():
     fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
@@ -523,14 +1032,14 @@ def open_menu_order_menu():
     fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
     menuorder = MenuandOrdersMenu(fr_main)
 
-    btn_add_order = tk.Button(fr_submenu, text="Add new order")
-    btn_see_orders = tk.Button(fr_submenu, text="See orders")
-    btn_add_product = tk.Button(fr_submenu, text="Add new product")
-    btn_delete_product = tk.Button(fr_submenu, text="Delete product")
-    btn_update_product = tk.Button(fr_submenu, text="Update product")
-    btn_see_products = tk.Button(fr_submenu, text="See products")
-    btn_print_menu = tk.Button(fr_submenu, text="Print menu")
-    btn_check_products = tk.Button(fr_submenu, text="Check stock of products")
+    btn_add_order = tk.Button(fr_submenu, text="Add new order", command=menuorder.show_add_order)
+    btn_see_orders = tk.Button(fr_submenu, text="See orders", command=menuorder.show_see_orders)
+    btn_add_product = tk.Button(fr_submenu, text="Add new product", command=menuorder.show_add_product)
+    btn_delete_product = tk.Button(fr_submenu, text="Delete product", command=menuorder.show_delete_product)
+    btn_update_product = tk.Button(fr_submenu, text="Update product", command=menuorder.show_update_product)
+    btn_see_products = tk.Button(fr_submenu, text="See products", command=menuorder.see_products)
+    btn_print_menu = tk.Button(fr_submenu, text="Print menu", command=menuorder.see_menu)
+    btn_check_products = tk.Button(fr_submenu, text="Check stock of products", command=menuorder.check_out_of_stock)
 
     btn_add_order.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
     btn_see_orders.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -549,15 +1058,15 @@ def open_ingredients_menu():
     fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
     ingmenu = IngredientsMenu(fr_main)
 
-    btn_add_ingredient = tk.Button(fr_submenu, text="Add new ingredient")
-    btn_delete_ingredient = tk.Button(fr_submenu, text="Delete ingredient")
-    btn_update_ingredient = tk.Button(fr_submenu, text="Update ingredient")
-    btn_see_ingredients = tk.Button(fr_submenu, text="See ingredients")
-    btn_add_batch = tk.Button(fr_submenu, text="Add new batch")
-    btn_delete_batch = tk.Button(fr_submenu, text="Delete batch")
-    btn_update_batch = tk.Button(fr_submenu, text="Update batch")
-    btn_see_batches = tk.Button(fr_submenu, text="See batches")
-    btn_delete_batches = tk.Button(fr_submenu, text="Delete expired batches")
+    btn_add_ingredient = tk.Button(fr_submenu, text="Add new ingredient", command=ingmenu.show_add_ingredient)
+    btn_delete_ingredient = tk.Button(fr_submenu, text="Delete ingredient", command=ingmenu.show_delete_ingredient)
+    btn_update_ingredient = tk.Button(fr_submenu, text="Update ingredient", command=ingmenu.show_delete_ingredient)
+    btn_see_ingredients = tk.Button(fr_submenu, text="See ingredients", command=ingmenu.see_ingredients)
+    btn_add_batch = tk.Button(fr_submenu, text="Add new batch", command=ingmenu.show_add_batch)
+    btn_delete_batch = tk.Button(fr_submenu, text="Delete batch", command=ingmenu.show_delete_batch)
+    btn_update_batch = tk.Button(fr_submenu, text="Update batch", command=ingmenu.show_update_batch)
+    btn_see_batches = tk.Button(fr_submenu, text="See batches", command=ingmenu.see_batches)
+    btn_delete_batches = tk.Button(fr_submenu, text="Delete expired batches", command=ingmenu.show_delete_expired)
 
     btn_add_ingredient.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
     btn_delete_ingredient.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -577,11 +1086,11 @@ def open_staff_menu():
     fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
     staffmenu = StaffMenu(fr_main)
 
-    btn_add_staff = tk.Button(fr_submenu, text="Add new employee")
-    btn_delete_staff = tk.Button(fr_submenu, text="Delete an employee")
-    btn_update_self = tk.Button(fr_submenu, text="Update account details")
-    btn_update_staff = tk.Button(fr_submenu, text="Update an employee")
-    btn_see_staffs = tk.Button(fr_submenu, text="See employees")
+    btn_add_staff = tk.Button(fr_submenu, text="Add new employee", command=staffmenu.show_add_member)
+    btn_delete_staff = tk.Button(fr_submenu, text="Delete an employee", command=staffmenu.show_delete_member)
+    btn_update_self = tk.Button(fr_submenu, text="Update account details", command=staffmenu.show_update_account)
+    btn_update_staff = tk.Button(fr_submenu, text="Update an employee", command=staffmenu.show_update_member)
+    btn_see_staffs = tk.Button(fr_submenu, text="See employees", command=staffmenu.see_employees)
 
     btn_add_staff.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
     btn_delete_staff.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -606,20 +1115,56 @@ fr_mainmenu = tk.Frame(window, bg = "navy", width=100)
 fr_mainmenu.grid(row=0, column=0, sticky="nsew")
 fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
-btn_customers = tk.Button(fr_mainmenu, text="Customers", command=open_customers_menu)
-btn_bookings = tk.Button(fr_mainmenu, text="Bookings", command=open_bookings_menu)
-btn_tables = tk.Button(fr_mainmenu, text="Tables", command=open_tables_menu)
-btn_menu_order = tk.Button(fr_mainmenu, text="Menu and Orders", command=open_menu_order_menu)
-btn_ingredients = tk.Button(fr_mainmenu, text="Ingredients", command=open_ingredients_menu)
-btn_staff = tk.Button(fr_mainmenu, text="Employees", command=open_staff_menu)
+btn_customers = tk.Button(fr_mainmenu,
+                          text="Customers",
+                          command=open_customers_menu)
+btn_bookings = tk.Button(fr_mainmenu,
+                         text="Bookings",
+                         command=open_bookings_menu)
+btn_tables = tk.Button(fr_mainmenu,
+                       text="Tables",
+                       command=open_tables_menu)
+btn_menu_order = tk.Button(fr_mainmenu,
+                           text="Menu and Orders",
+                           command=open_menu_order_menu)
+btn_ingredients = tk.Button(fr_mainmenu,
+                            text="Ingredients",
+                            command=open_ingredients_menu)
+btn_staff = tk.Button(fr_mainmenu,
+                      text="Employees",
+                      command=open_staff_menu)
 
 
-btn_customers.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
-btn_bookings.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
-btn_tables.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
-btn_menu_order.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
-btn_ingredients.grid(row=4, column=0, sticky="ew", padx=10, pady=10)
-btn_staff.grid(row=5, column=0, sticky="ew", padx=10, pady=10)
+btn_customers.grid(row=0,
+                   column=0,
+                   sticky="ew",
+                   padx=10,
+                   pady=10)
+btn_bookings.grid(row=1,
+                  column=0,
+                  sticky="ew",
+                  padx=10,
+                  pady=10)
+btn_tables.grid(row=2,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=10)
+btn_menu_order.grid(row=3,
+                    column=0,
+                    sticky="ew",
+                    padx=10,
+                    pady=10)
+btn_ingredients.grid(row=4,
+                     column=0,
+                     sticky="ew",
+                     padx=10,
+                     pady=10)
+btn_staff.grid(row=5,
+               column=0,
+               sticky="ew",
+               padx=10,
+               pady=10)
 
 
 window.mainloop()

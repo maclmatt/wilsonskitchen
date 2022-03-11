@@ -352,7 +352,7 @@ try:
                     LOGGER.info("Table %s has been deleted.", tableid)
                 else:
                     print("You cannot delete this table as there are bookings made for it.")
-                    LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.")
+                    LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.", tableid)
 
             elif tablechoice == "3":
                 tableid = input("Please enter the Table ID of the Table you wish to update: ")
