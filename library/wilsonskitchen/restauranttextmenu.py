@@ -62,7 +62,7 @@ try:
                 print("The Customers table has been reset.")
                 LOGGER.info("The Customers table has been reset.")
 
-            check = input("Are you sure you want to reset the Orderproducts table (y/n): ")
+            check = input("Are you sure you want to reset the Bookingss table (y/n): ")
             if check == "y":
                 wilsonskitchen.bookings.reset_bookings_table()
                 print("The Bookings table has been reset.")
@@ -176,6 +176,7 @@ try:
                 elif custchoice == "5":
                     # selects customers' details
                     customers = wilsonskitchen.customers.select_customers()
+                    print(customers)
                     for i in range(0, (len(customers))):
                         print("\nCustomer " + str(customers[i][0]) + "'s details:"
                             + "\n   Customer Email: " + str(customers[i][1])
@@ -262,6 +263,7 @@ try:
                     contactno = input("Phone number: ")
                     # adds customer record
                     wilsonskitchen.customers.add_customer(email, fname, sname, contactno)
+                    custid = wilsonskitchen.customers.select_custid(email)[0]
                     print("\n" + fname, sname, "has been added to the database.")
                     LOGGER.info("%s %s has been added to the database.", fname, sname)
                 # makes booking
