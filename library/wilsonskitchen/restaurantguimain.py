@@ -1,7 +1,5 @@
 import tkinter as tk
-import time
 from functools import partial
-from turtle import st
 from restaurantmain import Restaurant
 from constants import LOGGER
 import sys
@@ -991,14 +989,10 @@ class StaffMenu():
 
 
 def loginfunc(username_lbl, password_lbl):
-    username = username_lbl.get()
-    password = password_lbl.get()
-    print(username, password)
     status  = wilsonskitchen.staffmembers.check_login(username_lbl.get(), password_lbl.get())
     attempts = userlogin.attempts
-    print(attempts)
     if status[0] == True:
-        LOGGER.info("%s has logged in.", username)
+        LOGGER.info("%s has logged in.", username_lbl.get())
         userlogin.set_access(status[1])
         window_login.destroy()
     elif attempts >= 3:
@@ -1008,12 +1002,12 @@ def loginfunc(username_lbl, password_lbl):
         frame_login.grid(row=0, column=0, sticky="nsew")
         lbl = tk.Label(frame_login,
                        bg="AliceBlue",
+                       font=("lucida 20 bold italic", 15),
                        text="You have entered the wrong"
                             + "\ndetails 3 times so will now be"
                             + "\nlocked out")
         lbl.grid(row=0, column=0, padx=20, pady=20)
-        window_login.after(2000, sys.exit)
-
+        window_login.after(3000, sys.exit)
     else:
         userlogin.new_attempt()
         
@@ -1022,16 +1016,13 @@ def loginfunc(username_lbl, password_lbl):
             frame_login.grid(row=0, column=0, sticky="nsew")
 
             lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered incorrect details.")
-            lbl.grid(row=0, column=0, padx=10, pady=10)
-            window_login.after(2000, lbl.destroy)
+            lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         else:
             frame_login = tk.Frame(window_login, bg="LightSteelBlue")
             frame_login.grid(row=0, column=0, sticky="nsew")
 
-            lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered the incorrect password for your username.")
-            lbl.grid(row=0, column=0, padx=20, pady=20)
-            window_login.after(2000, lbl.destroy)
-        
+            lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered the incorrect password.")
+            lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
         lbl = tk.Label(frame_login, bg="AliceBlue", text="Please re-enter your details:")
         lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
@@ -1048,7 +1039,6 @@ def loginfunc(username_lbl, password_lbl):
 
         login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
         login_btn.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-
 
 
 def open_customers_menu():
@@ -1072,7 +1062,7 @@ def open_customers_menu():
     fr_main.grid(row=0, column=2, sticky='nsew')
 
 def open_bookings_menu():
-    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     bookmenu = BookingsMenu(fr_main)
 
@@ -1092,7 +1082,7 @@ def open_bookings_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_tables_menu():
-    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     tablemenu = TablesMenu(fr_main)
 
@@ -1110,7 +1100,7 @@ def open_tables_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_menu_order_menu():
-    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     menuorder = MenuandOrdersMenu(fr_main)
 
@@ -1136,7 +1126,7 @@ def open_menu_order_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_ingredients_menu():
-    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     ingmenu = IngredientsMenu(fr_main)
 
@@ -1164,7 +1154,7 @@ def open_ingredients_menu():
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_staff_menu():
-    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width=200)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width=200)
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     staffmenu = StaffMenu(fr_main)
 
@@ -1223,7 +1213,7 @@ window_main.columnconfigure([0, 1, 2], minsize=100, weight=1)
 
 #main
 fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
-fr_mainmenu = tk.Frame(window_main, bg = "navy", width=100)
+fr_mainmenu = tk.Frame(window_main, bg = "darkblue", width=100)
 
 fr_mainmenu.grid(row=0, column=0, sticky="nsew")
 fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
