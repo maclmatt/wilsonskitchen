@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from functools import partial
 from turtle import st
 from restaurantmain import Restaurant
@@ -7,13 +8,32 @@ import sys
 
 wilsonskitchen = Restaurant()
 
+class Login():
+    def __init__(self):
+        self._attempts = 1
+        self._access = None
+
+    @property
+    def attempts(self):
+        return self._attempts
+
+    @property
+    def access(self):
+        return self._access
+
+    def new_attempt(self):
+        self._attempts += 1
+
+    def set_access(self, useraccess):
+        self._access = useraccess
+
 class CustomersMenu():
     def __init__(self, fr_main):
         self.lbl = None
         self.frame = fr_main
     
     def show_add_new_customer(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new customer: ")
@@ -51,7 +71,7 @@ class CustomersMenu():
         self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def show_delete_customer(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer you want to delete: ")
@@ -72,7 +92,7 @@ class CustomersMenu():
         self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def show_update_customer(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer: ")
@@ -116,7 +136,7 @@ class CustomersMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_customer(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 250)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer: ")
@@ -131,7 +151,7 @@ class CustomersMenu():
         self.see_customer_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_customers(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         customers = wilsonskitchen.customers.select_customers()
         for i in range(0, (len(customers))):
@@ -147,7 +167,7 @@ class BookingsMenu():
         self.frame = fr_main
 
     def show_add_booking(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new booking: ")
@@ -199,7 +219,7 @@ class BookingsMenu():
             LOGGER.info("Booking unable to be added")
 
     def show_delete_booking(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking you want to delete: ")
@@ -232,7 +252,7 @@ class BookingsMenu():
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_booking(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -303,7 +323,7 @@ class BookingsMenu():
             LOGGER.info("Booking unable to be added")
 
     def show_see_bookings(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 250)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please add the date of the bookings you would like to see.")
@@ -325,7 +345,7 @@ class BookingsMenu():
                                 pady=10)
 
     def see_bookings(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 250)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame,
@@ -348,7 +368,7 @@ class BookingsMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def show_see_bill(self):
-        self.frame = tk.Frame(window,
+        self.frame = tk.Frame(window_main,
                             bg = "lightsteelblue",
                             width = 250)
         self.frame.grid(row=0,
@@ -409,7 +429,7 @@ class TablesMenu():
         self.frame = fr_main
 
     def show_add_table(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -430,7 +450,7 @@ class TablesMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_delete_table(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
@@ -458,7 +478,7 @@ class TablesMenu():
             LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.", self.table.get())
 
     def show_update_table(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table: ")
@@ -492,7 +512,7 @@ class TablesMenu():
             LOGGER.info("Table %s coudn't be updated, due to bookings made for it.", self.table.get())
 
     def see_tables(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -507,7 +527,7 @@ class MenuandOrdersMenu():
         self.frame = fr_main
 
     def show_add_order(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -528,11 +548,11 @@ class MenuandOrdersMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_see_orders(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
     def see_orders(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -541,7 +561,7 @@ class MenuandOrdersMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def show_add_product(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -562,7 +582,7 @@ class MenuandOrdersMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_delete_product(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
@@ -585,7 +605,7 @@ class MenuandOrdersMenu():
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_product(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -622,7 +642,7 @@ class MenuandOrdersMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_products(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -631,7 +651,7 @@ class MenuandOrdersMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def see_menu(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -640,7 +660,7 @@ class MenuandOrdersMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def check_out_of_stock(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
 class IngredientsMenu():
@@ -650,7 +670,7 @@ class IngredientsMenu():
         self.frame = fr_main
 
     def show_add_ingredient(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -671,7 +691,7 @@ class IngredientsMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_delete_ingredient(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
@@ -694,7 +714,7 @@ class IngredientsMenu():
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_ingredient(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -731,7 +751,7 @@ class IngredientsMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_ingredients(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -740,7 +760,7 @@ class IngredientsMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def show_add_batch(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -761,7 +781,7 @@ class IngredientsMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_delete_batch(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
@@ -784,7 +804,7 @@ class IngredientsMenu():
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_batch(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -821,7 +841,7 @@ class IngredientsMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_batches(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -830,11 +850,11 @@ class IngredientsMenu():
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
     def show_delete_expired(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
     def delete_expired(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 class StaffMenu():
     def __init__(self, fr_main):
@@ -843,7 +863,7 @@ class StaffMenu():
         self.frame = fr_main
 
     def show_add_member(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
@@ -864,7 +884,7 @@ class StaffMenu():
         LOGGER.info("Table has been added to the database.")
 
     def show_delete_member(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
@@ -887,7 +907,7 @@ class StaffMenu():
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_account(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -924,7 +944,7 @@ class StaffMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def show_update_member(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
         self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
@@ -961,7 +981,7 @@ class StaffMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_employees(self):
-        self.frame = tk.Frame(window, bg = "lightsteelblue", width = 200)
+        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
         for i in range(0, (len(tables))):
@@ -969,9 +989,71 @@ class StaffMenu():
                                                 + f"\nNumber of seats: {tables[i][1]}")
             self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
 
+
+def loginfunc(username_lbl, password_lbl):
+    username = username_lbl.get()
+    password = password_lbl.get()
+    print(username, password)
+    status  = wilsonskitchen.staffmembers.check_login(username_lbl.get(), password_lbl.get())
+    attempts = userlogin.attempts
+    print(attempts)
+    if status[0] == True:
+        LOGGER.info("%s has logged in.", username)
+        userlogin.set_access(status[1])
+        window_login.destroy()
+    elif attempts >= 3:
+        # if invalid login details are entered 3 times:
+            # exits user
+        frame_login = tk.Frame(window_login, bg="LightSteelBlue")
+        frame_login.grid(row=0, column=0, sticky="nsew")
+        lbl = tk.Label(frame_login,
+                       bg="AliceBlue",
+                       text="You have entered the wrong"
+                            + "\ndetails 3 times so will now be"
+                            + "\nlocked out")
+        lbl.grid(row=0, column=0, padx=20, pady=20)
+        window_login.after(2000, sys.exit)
+
+    else:
+        userlogin.new_attempt()
+        
+        if status[1] == "neither":
+            frame_login = tk.Frame(window_login, bg="LightSteelBlue")
+            frame_login.grid(row=0, column=0, sticky="nsew")
+
+            lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered incorrect details.")
+            lbl.grid(row=0, column=0, padx=10, pady=10)
+            window_login.after(2000, lbl.destroy)
+        else:
+            frame_login = tk.Frame(window_login, bg="LightSteelBlue")
+            frame_login.grid(row=0, column=0, sticky="nsew")
+
+            lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered the incorrect password for your username.")
+            lbl.grid(row=0, column=0, padx=20, pady=20)
+            window_login.after(2000, lbl.destroy)
+        
+
+        lbl = tk.Label(frame_login, bg="AliceBlue", text="Please re-enter your details:")
+        lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+        username_lbl = tk.Label(frame_login, bg="AliceBlue", text="Username:")
+        username_lbl.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
+        username_lbl = tk.Entry(frame_login)
+        username_lbl.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
+
+        password_lbl = tk.Label(frame_login, bg="AliceBlue", text="Password:")
+        password_lbl.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
+        password_lbl = tk.Entry(frame_login)
+        password_lbl.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
+
+        login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
+        login_btn.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+
+
 def open_customers_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     custmenu = CustomersMenu(fr_main)
     
     btn_add_customer = tk.Button(fr_submenu, text="Add new customer", command=custmenu.show_add_new_customer)
@@ -986,12 +1068,12 @@ def open_customers_menu():
     btn_see_customer.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
     btn_see_customers.grid(row=4, column=1, sticky="ew", padx=20, pady=10)
     
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky='nsew')
 
 def open_bookings_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     bookmenu = BookingsMenu(fr_main)
 
     btn_add_booking = tk.Button(fr_submenu, text="Add new booking", command=bookmenu.show_add_booking)
@@ -1006,12 +1088,12 @@ def open_bookings_menu():
     btn_see_bookings.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
     btn_see_bill.grid(row=4, column=1, sticky="ew", padx=20, pady=10)
 
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_tables_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     tablemenu = TablesMenu(fr_main)
 
     btn_add_table = tk.Button(fr_submenu, text="Add new table", command=tablemenu.show_add_table)
@@ -1024,12 +1106,12 @@ def open_tables_menu():
     btn_update_table.grid(row=2, column=1, sticky="ew", padx=35, pady=10)
     btn_see_tables.grid(row=3, column=1, sticky="ew", padx=35, pady=10)
 
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_menu_order_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     menuorder = MenuandOrdersMenu(fr_main)
 
     btn_add_order = tk.Button(fr_submenu, text="Add new order", command=menuorder.show_add_order)
@@ -1050,12 +1132,12 @@ def open_menu_order_menu():
     btn_print_menu.grid(row=6, column=1, sticky="ew", padx=10, pady=10)
     btn_check_products.grid(row=7, column=1, sticky="ew", padx=10, pady=10)
 
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_ingredients_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width = 200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width = 200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     ingmenu = IngredientsMenu(fr_main)
 
     btn_add_ingredient = tk.Button(fr_submenu, text="Add new ingredient", command=ingmenu.show_add_ingredient)
@@ -1078,12 +1160,12 @@ def open_ingredients_menu():
     btn_see_batches.grid(row=7, column=1, sticky="ew", padx=10, pady=10)
     btn_delete_batches.grid(row=8, column=1, sticky="ew", padx=10, pady=10)
 
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
 
 def open_staff_menu():
-    fr_submenu = tk.Frame(window, bg = "cornflowerblue", width=200)
-    fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
+    fr_submenu = tk.Frame(window_main, bg = "cornflowerblue", width=200)
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     staffmenu = StaffMenu(fr_main)
 
     btn_add_staff = tk.Button(fr_submenu, text="Add new employee", command=staffmenu.show_add_member)
@@ -1098,22 +1180,56 @@ def open_staff_menu():
     btn_update_staff.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
     btn_see_staffs.grid(row=4, column=1, sticky="ew", padx=10, pady=10)
 
-    fr_submenu.grid(row=0, column=1, sticky="ns")
+    fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
     
 
-window = tk.Tk()
-window.title("Wilson's Kitchen")
 
-window.rowconfigure(0, minsize=500, weight=1)
-window.columnconfigure([0, 1, 2], minsize=100, weight=1)
+window_login = tk.Tk()
+window_login.title("Wilson's Kitchen")
+
+window_login.rowconfigure(0, minsize=200, weight=1)
+window_login.columnconfigure(0, minsize=150, weight=1)
+
+frame_login = tk.Frame(window_login, bg="LightSteelBlue")
+frame_login.grid(row=0, column=0, sticky="nsew")
+
+lbl = tk.Label(frame_login, bg="AliceBlue", text="Please enter your details:")
+lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+username_lbl = tk.Label(frame_login, bg="AliceBlue", text="Username:")
+username_lbl.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+username_lbl = tk.Entry(frame_login)
+username_lbl.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
+
+password_lbl = tk.Label(frame_login, bg="AliceBlue", text="Password:")
+password_lbl.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
+password_lbl = tk.Entry(frame_login)
+password_lbl.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
+
+userlogin = Login()
+
+login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
+login_btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+
+window_login.mainloop()
+
+window_main = tk.Tk()
+window_main.title("Wilson's Kitchen")
+
+window_main.rowconfigure(0, minsize=500, weight=1)
+window_main.columnconfigure([0, 1, 2], minsize=100, weight=1)
 
 #main
-fr_main = tk.Frame(window, bg = "lightsteelblue", width=325)
-fr_mainmenu = tk.Frame(window, bg = "navy", width=100)
+fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
+fr_mainmenu = tk.Frame(window_main, bg = "navy", width=100)
 
 fr_mainmenu.grid(row=0, column=0, sticky="nsew")
 fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
+
+lbl = tk.Label(fr_main, bg="LightSteelblue", text="Welcome!", font=("lucida 20 bold italic", 20))
+lbl.grid(row=2, column=3, sticky="ew", padx=10, pady=10)
 
 btn_customers = tk.Button(fr_mainmenu,
                           text="Customers",
@@ -1167,4 +1283,4 @@ btn_staff.grid(row=5,
                pady=10)
 
 
-window.mainloop()
+window_main.mainloop()
