@@ -160,7 +160,7 @@ class Restaurant():
             orderid = self._orders.add_order(tableid)
             ids = self._productidlist.return_list()
             quantity = self._quantitylist.return_list()
-
+            print(ids)
             check = True
             for i in range(0, n):
                 # checks that product is available

@@ -422,9 +422,9 @@ try:
                     orders = wilsonskitchen.orders.select_orders_for_table(tableid)
                     for i in range(0, (len(orders))):
                         print("\nOrder " + str(orders[i][0]) + " details:"
-                            + "\n   Date and Time: " + str(orders[i][1])
-                            + "\n   Total Price: " + str(orders[i][2])
-                            + "\n   Table ID: " + str(orders[i][3]))
+                            + "\n   Date and Time: " + str(orders[i][1]) + str(orders[i][2])
+                            + "\n   Total Price: " + str(orders[i][3])
+                            + "\n   Table ID: " + str(orders[i][4]))
                         LOGGER.info("Orders for table %s has been outputted.", tableid)
 
                 elif type == "d":
@@ -434,9 +434,9 @@ try:
                     orders = wilsonskitchen.orders.select_orders_for_date(date)
                     for i in range(0, (len(orders))):
                         print("\nOrder " + str(orders[i][0]) + " details:"
-                            + "\n   Date and Time: " + str(orders[i][1])
-                            + "\n   Total Price: " + str(orders[i][2])
-                            + "\n   Table ID: " + str(orders[i][3]))
+                            + "\n   Date and Time: " + str(orders[i][1]) + str(orders[i][2])
+                            + "\n   Total Price: " + str(orders[i][3])
+                            + "\n   Table ID: " + str(orders[i][4]))
                     LOGGER.info("Orders for date %s have been outputted.", chosendate)
 
         elif choice == "6":  # menu/prodcuts
@@ -549,10 +549,10 @@ try:
                 for i in range(0, (len(products))):
                     print("\nProduct " + str(products[i][0]) + " details:"
                         + "\n   Type: " + str(products[i][1])
-                            + "\n   Name: " + str(products[i][2])
-                            + "\n   Price: " + str(products[i][3])
-                            + "\n   Quantity Available: " + str(products[i][4])
-                            + "\n   Cost per portion: " + str(products[i][5]))
+                        + "\n   Name: " + str(products[i][2])
+                        + "\n   Price: " + str(products[i][3])
+                        + "\n   Quantity Available: " + str(products[i][4])
+                        + "\n   Cost per portion: " + str(products[i][5]))
                 LOGGER.info("Products have been outputted")
 
             elif menuchoice == "5":
