@@ -58,7 +58,8 @@ class StaffMembers(Table):
             # to execute sql
             # returns records
             sql = """SELECT * 
-                    FROM StaffMembers"""
+                    FROM StaffMembers
+                    ORDER BY Firstname ASC"""
             return self.select(sql)
         except BaseException as err:
             # logs error in log file
