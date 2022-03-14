@@ -676,7 +676,7 @@ try:
 
             if stockchoice == "1":
                 ingname = input("Please enter the name of the ingredient: ")
-                quantity = int(input("Please enter the quantity of the ingredient in kilos: "))
+                quantity = float(input("Please enter the quantity of the ingredient in kilos: "))
                 expirydate = input("Please enter the expriy date of the batch (YYYY-MM-DD): ")
                 # makes ingredient batch
                 wilsonskitchen.make_ingredientbatch(ingname, quantity, expirydate)
@@ -722,7 +722,7 @@ try:
             elif stockchoice == "5":
                 # deletes all out of date ingredient batches
                 wilsonskitchen.delete_outofdate_ingredients()
-                print("All out of stock ingredient batches have been deleted.")
+                print("All expired ingredient batches have been deleted.")
                 LOGGER.info("Out of date ingredient batches have been deleted.")
 
         elif choice == "9":  # login
