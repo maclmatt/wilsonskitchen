@@ -1145,23 +1145,76 @@ class StaffMenu():
     def show_add_member(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
+        if userlogin.access != 1:
+            self.lbl = tk.Label(self.frame, text="Your account does not have access"
+                                                 + "\nto add a new member.")
+            self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+        else:
+            self.lbl = tk.Label(self.frame, text= "Please enter the details of the new employee: ")
+            self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
-        self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+            self.emaillbl = tk.Label(self.frame, text = "Email:")
+            self.emaillbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+            self.email = tk.Entry(self.frame)
+            self.email.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
-        self.peoplelbl.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-        self.people = tk.Entry(self.frame)
-        self.people.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+            self.fnamelbl = tk.Label(self.frame, text = "Firstname:")
+            self.fnamelbl.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+            self.fname = tk.Entry(self.frame)
+            self.fname.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Add Table", command=self.add_new_table)
-        self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            self.snamelbl = tk.Label(self.frame, text = "Surname:")
+            self.snamelbl.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+            self.sname = tk.Entry(self.frame)
+            self.sname.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
+
+            self.joblbl = tk.Label(self.frame, text = "Job title:")
+            self.joblbl.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+            self.job = tk.Entry(self.frame)
+            self.job.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
+            
+            self.accesslevellbl = tk.Label(self.frame, text = "Access level:")
+            self.accesslevellbl.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+            self.accesslevel = tk.Entry(self.frame)
+            self.accesslevel.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+
+            self.btn = tk.Button(self.frame, text="Next", command=self.enter_password)
+            self.btn.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    def enter_password(self):
+        self.lbl = tk.Label(self.frame, text= "Please enter the password for the new employee:")
+        self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+
+        self.passwordlbl = tk.Label(self.frame, text = "Password:")
+        self.passwordlbl.grid(row=8, column=0, sticky="ew", padx=5, pady=5)
+        self.password = tk.Entry(self.frame)
+        self.password.grid(row=8, column=1, sticky="ew", padx=5, pady=5)
+            
+        self.password1lbl = tk.Label(self.frame, text = "Re-enter password:")
+        self.password1lbl.grid(row=9, column=0, sticky="ew", padx=5, pady=5)
+        self.password1 = tk.Entry(self.frame)
+        self.password1.grid(row=9, column=1, sticky="ew", padx=5, pady=5)
+
+        self.btn = tk.Button(self.frame, text="Add Employee", command=self.add_a_member)
+        self.btn.grid(row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def add_a_member(self):
-        wilsonskitchen.tables.add_table(self.people.get())
-        self.lbl = tk.Label(self.frame, text= "This table has been added.")
-        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-        LOGGER.info("Table has been added to the database.")
+        # checks that passwords inputted are the same
+        if self.password.get() == self.password1.get():
+            # adds new member of staff to database
+            newusername = wilsonskitchen.staffmembers.add_member(self.email.get(),
+                                                                 self.fname.get(),
+                                                                 self.sname.get(),
+                                                                 self.job.get(),
+                                                                 self.accesslevel.get(),
+                                                                 self.password.get())
+            self.lbl = tk.Label(self.frame, text= f"The employee has been added, the username is {newusername}")
+            self.lbl.grid(row=11, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+            LOGGER.info("Staff Member %s %s has been added.", self.fname.get(), self.sname.get())
+        else:
+            self.lbl = tk.Label(self.frame, text= "Your password entries do not match, please re-enter")
+            self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+            self.lbl.tkraise()
 
     def show_delete_member(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
