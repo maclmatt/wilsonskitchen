@@ -1454,8 +1454,16 @@ def open_staff_menu():
 
     fr_submenu.grid(row=0, column=1, sticky="nsew")
     fr_main.grid(row=0, column=2, sticky="nsew")
-    
 
+def logout():
+    fr_main = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
+    fr_main.grid(row=0, column=1, sticky="nsew")
+
+    lbl = tk.Label(fr_main, bg="AliceBlue", text="Goodbye!", font=("lucida 20 bold italic", 15))
+    lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+
+    LOGGER.info("User has logged out.")
+    window_main.after(2000, sys.exit)
 
 window_login = tk.Tk()
 window_login.title("Wilson's Kitchen")
@@ -1500,7 +1508,7 @@ fr_mainmenu = tk.Frame(window_main, bg = "darkblue", width=100)
 fr_mainmenu.grid(row=0, column=0, sticky="nsew")
 fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
-lbl = tk.Label(fr_main, bg="LightSteelblue", text="Welcome!", font=("lucida 20 bold italic", 20))
+lbl = tk.Label(fr_main, bg="AliceBlue", text="Welcome!", font=("lucida 20 bold italic", 15))
 lbl.grid(row=2, column=3, sticky="ew", padx=10, pady=10)
 
 btn_customers = tk.Button(fr_mainmenu,
@@ -1521,6 +1529,9 @@ btn_ingredients = tk.Button(fr_mainmenu,
 btn_staff = tk.Button(fr_mainmenu,
                       text="Employees",
                       command=open_staff_menu)
+btn_logout = tk.Button(fr_mainmenu,
+                       text="Logout",
+                       command=logout)
 
 
 btn_customers.grid(row=0,
@@ -1553,6 +1564,10 @@ btn_staff.grid(row=5,
                sticky="ew",
                padx=10,
                pady=10)
-
+btn_logout.grid(row=6,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=10)
 
 window_main.mainloop()
