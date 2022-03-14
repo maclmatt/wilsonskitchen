@@ -172,7 +172,8 @@ class Ingredients(Table):
             # to execute sql
             # returns records
             sql = """SELECT * 
-                    FROM Ingredients"""
+                    FROM Ingredients
+                    ORDER BY Name ASC"""
             return self.select(sql)
         except BaseException as err:
             # logs error in log file
