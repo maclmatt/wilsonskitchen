@@ -1410,7 +1410,6 @@ class StaffMenu():
 
 try:
 
-
     def loginfunc(username_lbl, password_lbl):
         status  = wilsonskitchen.staffmembers.check_login(username_lbl.get(), password_lbl.get())
         attempts = userlogin.attempts
@@ -1462,7 +1461,6 @@ try:
 
             login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
             login_btn.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-
 
     def open_customers_menu():
         fr_submenu = tk.Frame(window_main, bg = "steelblue", width = 200)
@@ -1633,7 +1631,7 @@ try:
     login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
     login_btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
-
+    #main
     window_login.mainloop()
 
     window_main = tk.Tk()
@@ -1642,7 +1640,6 @@ try:
     window_main.rowconfigure(0, minsize=500, weight=1)
     window_main.columnconfigure([0, 1, 2], minsize=100, weight=1)
 
-    #main
     fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
     fr_mainmenu = tk.Frame(window_main, bg = "darkblue", width=100)
 
