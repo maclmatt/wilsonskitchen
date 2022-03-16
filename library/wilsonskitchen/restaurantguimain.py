@@ -26,7 +26,7 @@ class Login():
     def set_access(self, useraccess):
         self._access = useraccess
 
-class CustomersMenu():
+class CustomersMenu():#tested
     def __init__(self, fr_main):
         self.lbl = None
         self.frame = fr_main
@@ -146,19 +146,36 @@ class CustomersMenu():
         self.custemail = tk.Entry(self.frame)
         self.custemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
+        self.lbl = "1 customer"
+
         self.see_customer_button = tk.Button(self.frame, text="See Customer", command=self.see_customers)
         self.see_customer_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def see_customers(self):
-        self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
-        self.frame.grid(row=0, column=2, sticky="nsew")
-        customers = wilsonskitchen.customers.select_customers()
-        for i in range(0, (len(customers))):
-            self.lbl = tk.Label(self.frame, text= f"Customer {customers[i][0]}'s details:"
-                                                + f"\nCustomer Email: {customers[i][1]}"
-                                                + f"\nCustomer Name: {customers[i][2]} {customers[i][3]}"
-                                                + f"\nPhone number: {customers[i][4]}")
-            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+        if self.lbl == "1 customer":
+            self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
+            self.frame.grid(row=0, column=2, sticky="nsew")
+            customer = wilsonskitchen.customers.select_customer(self.custemail.get())
+            self.box = tk.Listbox(self.frame, height=30, width=30)
+            self.box.insert(1, f"\n - Customer {customer[0]} details:")
+            self.box.insert(2, f"\n    Email: {customer[1]}")
+            self.box.insert(3, f"\n    Name: {customer[2]} {customer[3]}")
+            self.box.insert(4, f"\n    Phone number: {customer[4]}")
+            self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+            LOGGER.info("Customer % have been outputted.", self.custemail.get())
+        else:
+            self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
+            self.frame.grid(row=0, column=2, sticky="nsew")
+            customers = wilsonskitchen.customers.select_customers()
+            self.box = tk.Listbox(self.frame, height=30, width=30)
+            for i in range(0, len(customers)):
+                length = self.box.size()
+                self.box.insert(length+1, f"\n - Customer {customers[i][0]} details:")
+                self.box.insert(length+2, f"\n    Email: {customers[i][1]}")
+                self.box.insert(length+3, f"\n    Name: {customers[i][2]} {customers[i][3]}")
+                self.box.insert(length+4, f"\n    Phone number: {customers[i][4]}")
+            self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+            LOGGER.info("Customers have been outputted.")
 
 class BookingsMenu():
     def __init__(self, fr_main):
@@ -239,7 +256,7 @@ class BookingsMenu():
         self.date = tk.Entry(self.frame)
         self.date.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
 
-        self.delete_customer_button = tk.Button(self.frame, text="Delete Customer", command=self.delete_a_booking)
+        self.delete_customer_button = tk.Button(self.frame, text="Delete Booking", command=self.delete_a_booking)
         self.delete_customer_button.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_a_booking(self):
@@ -247,7 +264,7 @@ class BookingsMenu():
                                     self.time.get(),
                                     self.date.get())
         self.lbl = tk.Label(self.frame, text= "This booking has been deleted.")
-        self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.lbl.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         LOGGER.info("Booking at %s %s has been deleted.", self.time.get(), self.date.get())
 
     def show_update_booking(self):
@@ -285,12 +302,12 @@ class BookingsMenu():
         self.date = tk.Entry(self.frame)
         self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
 
-        self.peoplelbl = tk.Label(self.frame, text = "Time:")
+        self.peoplelbl = tk.Label(self.frame, text = "Number of people:")
         self.peoplelbl.grid(row=7, column=0, sticky="ew", padx=5, pady=5)
         self.people = tk.Entry(self.frame)
         self.people.grid(row=7, column=1, sticky="ew", padx=5, pady=5)
 
-        self.emaillbl = tk.Label(self.frame, text = "Date:")
+        self.emaillbl = tk.Label(self.frame, text = "Customer's email:")
         self.emaillbl.grid(row=8, column=0, sticky="ew", padx=5, pady=5)
         self.email = tk.Entry(self.frame)
         self.email.grid(row=8, column=1, sticky="ew", padx=5, pady=5)
@@ -346,25 +363,19 @@ class BookingsMenu():
     def see_bookings(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
-
-        self.lbl = tk.Label(self.frame,
-                            text=f"Bookings for the date {self.date.get()}:")
-        self.lbl.grid(row=0,
-                    column=0,
-                    columnspan=2,
-                    sticky="ew",
-                    padx=5,
-                    pady=5)
         bookings = wilsonskitchen.bookings.select_bookings_for_date(self.date.get())
-        for i in range(0, (len(bookings))):
-            self.lbl = tk.Label(self.frame, text= f"Booking {bookings[i][0]}'s details:"
-                                                + f"\nTime: {bookings[i][1]}"
-                                                + f"\nDate: {bookings[i][2]}"
-                                                + f"\nNumber of People: {bookings[i][3]}"
-                                                + f"\nTable booked: {bookings[i][4]}"
-                                                + f"\nCurrent bill: {bookings[i][5]}"
-                                                + f"\nCustomer ID: {bookings[i][6]}")
-            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+        self.box = tk.Listbox(self.frame, height=30, width=30)
+        for i in range(0, len(bookings)):
+            length = self.box.size()
+            self.box.insert(length+1, f"\n - Booking {bookings[i][0]} details:")
+            self.box.insert(length+2, f"\n    Time: {bookings[i][1]}")
+            self.box.insert(length+3, f"\n    Date: {bookings[i][2]}")
+            self.box.insert(length+4, f"\n    Number of People: {bookings[i][3]}")
+            self.box.insert(length+5, f"\n    Table booked: {bookings[i][4]}")
+            self.box.insert(length+6, f"\n    Current bill: {bookings[i][5]}")
+            self.box.insert(length+6, f"\n    Customer ID: {bookings[i][6]}")
+        self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+        LOGGER.info("Bookings have been outputted.")
 
     def show_see_bill(self):
         self.frame = tk.Frame(window_main,
@@ -514,10 +525,13 @@ class TablesMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         tables = wilsonskitchen.tables.print_all_tables()
-        for i in range(0, (len(tables))):
-            self.lbl = tk.Label(self.frame, text= f"Table {tables[i][0]}'s details:"
-                                                + f"\nNumber of seats: {tables[i][1]}")
-            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+        self.box = tk.Listbox(self.frame, height=30, width=30)
+        for i in range(0, len(tables)):
+            length = self.box.size()
+            self.box.insert(length+1, f"\n - Table {tables[i][0]} details:")
+            self.box.insert(length+2, f"\n    Number of seats: {tables[i][1]}")
+        self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+        LOGGER.info("Tables have been outputted.")
 
 class MenuandOrdersMenu():
     def __init__(self, fr_main):
@@ -613,12 +627,15 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         orders = wilsonskitchen.orders.select_orders_for_date(self.date.get())
-        for i in range(0, (len(orders))):
-            self.lbl = tk.Label(self.frame, text= f"Order {orders[i][0]}'s details:"
-                                                + f"\nDate and Time: {orders[i][1]} {orders[i][2]}"
-                                                + f"\nTotal Price: {orders[i][3]}"
-                                                + f"\nTable ID: {orders[i][4]}")
-            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+        self.box = tk.Listbox(self.frame, height=30, width=30)
+        for i in range(0, len(orders)):
+            length = self.box.size()
+            self.box.insert(length+1, f"\n - Order {orders[i][0]} details:")
+            self.box.insert(length+2, f"\n    Date and Time: {orders[i][1]} {orders[i][2]}")
+            self.box.insert(length+3, f"\n    Total Price: {orders[i][3]}")
+            self.box.insert(length+4, f"\n    Table ID: {orders[i][4]}")
+        self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+        LOGGER.info("Orders have been outputted.")
 
     def show_add_product(self):
         wilsonskitchen.ingredientnameslist.wipe()
@@ -705,7 +722,7 @@ class MenuandOrdersMenu():
         self.id = tk.Entry(self.frame)
         self.id.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Delete Table", command=self.delete_a_product)
+        self.btn = tk.Button(self.frame, text="Delete Product", command=self.delete_a_product)
         self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_a_product(self):
@@ -769,14 +786,17 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         products = wilsonskitchen.products.return_products()
-        for i in range(0, (len(products))):
-            self.lbl = tk.Label(self.frame, text= f"Product {products[i][0]} details:"
-                                                + f"\nType: {products[i][1]}"
-                                                + f"\nName: {products[i][2]}"
-                                                + f"\nPrice: {products[i][3]}"
-                                                + f"\nQuantity Available: {products[i][4]}"
-                                                + f"\nCost per portion: {products[i][5]}")
-            self.lbl.grid(row=i, column=0, columnspan=2, sticky= "ew", padx=10, pady=10)
+        self.box = tk.Listbox(self.frame, height=30, width=30)
+        for i in range(0, len(products)):
+            length = self.box.size()
+            self.box.insert(length+1, f"\n - Product {products[i][0]} details:")
+            self.box.insert(length+2, f"\n    Type: {products[i][1]}")
+            self.box.insert(length+3, f"\n    Name: {products[i][2]}")
+            self.box.insert(length+4, f"\n    Price: {products[i][3]}")
+            self.box.insert(length+5, f"\n    Quantity Available: {products[i][4]}")
+            self.box.insert(length+6, f"\n    Cost per portion: {products[i][5]}")
+        self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
+        LOGGER.info("Products have been outputted.")
 
     def see_menu(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
@@ -983,7 +1003,7 @@ class IngredientsMenu():
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         LOGGER.info("Ingredient %s has been updated.", self.name.get())
 
-    def see_ingredients(self):#best format + uses listbox
+    def see_ingredients(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
         # selects all ingredients
@@ -1222,7 +1242,7 @@ class StaffMenu():
         self.frame.grid(row=0, column=2, sticky="nsew")
         if userlogin.access != 1:
             self.lbl = tk.Label(self.frame, text="Your account does not have access"
-                                                 + "\nto add a new member.")
+                                                 + "\nto delete a new member.")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         else:
             self.lbl = tk.Label(self.frame, text= "Please enter the details of the employee you want to delete: ")
@@ -1313,7 +1333,7 @@ class StaffMenu():
         self.frame.grid(row=0, column=2, sticky="nsew")
         if userlogin.access != 1:
             self.lbl = tk.Label(self.frame, text="Your account does not have access"
-                                                 + "\nto add a new member.")
+                                                 + "\nto update a new member.")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         else:
             self.lbl = tk.Label(self.frame, text= "Please enter the details of the Employee: ")
@@ -1713,4 +1733,4 @@ try:
 except BaseException as err:
     LOGGER.error(err)
     # exits user from system if error has occured
-    sys.exit("Something went wrong: " + str(err))
+    sys.exit( "Something went wrong: " + str(err))
