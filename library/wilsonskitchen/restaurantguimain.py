@@ -35,7 +35,8 @@ class CustomersMenu():#tested
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new customer: ")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please enter the details of the new customer: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -58,8 +59,11 @@ class CustomersMenu():#tested
         self.custnumber = tk.Entry(self.frame)
         self.custnumber.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
         
-        self.add_new_customer_button = tk.Button(self.frame, text="Add Customer", command=self.add_new_customer)
-        self.add_new_customer_button.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.add_new_customer_button = tk.Button(self.frame,
+                                                text="Add Customer",
+                                                command=self.add_new_customer)
+        self.add_new_customer_button.grid(row=5, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def add_new_customer(self):
         wilsonskitchen.customers.add_customer(self.custemail.get(), 
@@ -73,7 +77,8 @@ class CustomersMenu():#tested
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                        text= "Please enter the details of the customer you want to delete: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -81,8 +86,11 @@ class CustomersMenu():#tested
         self.custemail = tk.Entry(self.frame)
         self.custemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.delete_customer_button = tk.Button(self.frame, text="Delete Customer", command=self.delete_a_customer)
-        self.delete_customer_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.delete_customer_button = tk.Button(self.frame,
+                                                text="Delete Customer",
+                                                command=self.delete_a_customer)
+        self.delete_customer_button.grid(row=2, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def delete_a_customer(self):
         custid = wilsonskitchen.customers.select_custid(self.custemail.get())
@@ -94,7 +102,8 @@ class CustomersMenu():#tested
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer: ")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please enter the details of the customer: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
@@ -122,8 +131,11 @@ class CustomersMenu():#tested
         self.custnumber = tk.Entry(self.frame)
         self.custnumber.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
         
-        self.update_customer_button = tk.Button(self.frame, text="Update Customer", command=self.update_a_customer)
-        self.update_customer_button.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.update_customer_button = tk.Button(self.frame,
+                                            text="Update Customer",
+                                            command=self.update_a_customer)
+        self.update_customer_button.grid(row=6, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def update_a_customer(self):
         wilsonskitchen.customers.update_customer(self.custemail.get(),
@@ -138,7 +150,8 @@ class CustomersMenu():#tested
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the customer: ")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please enter the details of the customer: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -148,8 +161,11 @@ class CustomersMenu():#tested
 
         self.lbl = "1 customer"
 
-        self.see_customer_button = tk.Button(self.frame, text="See Customer", command=self.see_customers)
-        self.see_customer_button.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.see_customer_button = tk.Button(self.frame,
+                                        text="See Customer",
+                                        command=self.see_customers)
+        self.see_customer_button.grid(row=2, column=0, columnspan=2,
+                                        sticky="ew", padx=10, pady=10)
 
     def see_customers(self):
         if self.lbl == "1 customer":
@@ -186,7 +202,8 @@ class BookingsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new booking: ")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please enter the details of the new booking: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.timelbl = tk.Label(self.frame, text = "Time:")
@@ -209,14 +226,19 @@ class BookingsMenu():
         self.email = tk.Entry(self.frame)
         self.email.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
         
-        self.add_new_booking_button = tk.Button(self.frame, text="Add Booking", command=self.add_new_booking)
-        self.add_new_booking_button.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.add_new_booking_button = tk.Button(self.frame,
+                                                text="Add Booking",
+                                                command=self.add_new_booking)
+        self.add_new_booking_button.grid(row=5, column=0, columnspan=2,
+                                                sticky="ew", padx=10, pady=10)
 
     def add_new_booking(self):
         # selects cust ID
         custid = wilsonskitchen.customers.select_custid(self.email.get())
         if custid == None:
-            self.lbl = tk.Label(self.frame, text="This customer needs to be added\nbefore a booking can be made.")
+            self.lbl = tk.Label(self.frame,
+                                text="This customer needs to be added"
+                                    + "\nbefore a booking can be made.")
             self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             return None
         custid = custid[0]
@@ -230,7 +252,8 @@ class BookingsMenu():
             self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("The Booking has been added to the database.")
         else:
-            self.lbl = tk.Label(self.frame, text= "There are no tables available for this time and date")
+            self.lbl = tk.Label(self.frame,
+                                text= "There are no tables available for this time and date")
             self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Booking unable to be added")
 
@@ -238,7 +261,9 @@ class BookingsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please enter the details of the booking you"
+                                + "want to delete:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -256,8 +281,11 @@ class BookingsMenu():
         self.date = tk.Entry(self.frame)
         self.date.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
 
-        self.delete_customer_button = tk.Button(self.frame, text="Delete Booking", command=self.delete_a_booking)
-        self.delete_customer_button.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.delete_customer_button = tk.Button(self.frame,
+                                                text="Delete Booking",
+                                                command=self.delete_a_booking)
+        self.delete_customer_button.grid(row=4, column=0, columnspan=2,
+                                        sticky="ew", padx=10, pady=10)
 
     def delete_a_booking(self):
         wilsonskitchen.delete_booking(self.custemail.get(),
@@ -271,7 +299,7 @@ class BookingsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking: ")
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the booking:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
@@ -289,7 +317,7 @@ class BookingsMenu():
         self.olddate = tk.Entry(self.frame)
         self.olddate.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking: ")
+        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the booking:")
         self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.timelbl = tk.Label(self.frame, text = "Time:")
@@ -312,8 +340,11 @@ class BookingsMenu():
         self.email = tk.Entry(self.frame)
         self.email.grid(row=8, column=1, sticky="ew", padx=5, pady=5)
 
-        self.update_booking_button = tk.Button(self.frame, text="Update Booking", command=self.update_a_booking)
-        self.update_booking_button.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.update_booking_button = tk.Button(self.frame,
+                                            text="Update Booking",
+                                            command=self.update_a_booking)
+        self.update_booking_button.grid(row=9, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def update_a_booking(self):
         wilsonskitchen.delete_booking(self.custoldemail.get(),
@@ -321,7 +352,9 @@ class BookingsMenu():
                                     self.olddate.get())
         custidtuple = wilsonskitchen.customers.select_custid(self.email.get())
         if custidtuple == None:
-            self.lbl = tk.Label(self.frame, text="This customer needs to be added\nbefore a booking can be made.")
+            self.lbl = tk.Label(self.frame,
+                                text="This customer needs to be added\nbefore a "
+                                    + "booking can be made.")
             self.lbl.grid(row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             return None
         custid = custidtuple[0]
@@ -334,7 +367,8 @@ class BookingsMenu():
             self.lbl.grid(row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("The Booking has been added to the database.")
         else:
-            self.lbl = tk.Label(self.frame, text= "There are no tables available for this time and date")
+            self.lbl = tk.Label(self.frame,
+                                text= "There are no tables available for this time and date")
             self.lbl.grid(row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Booking unable to be added")
 
@@ -342,7 +376,8 @@ class BookingsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 250)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please add the date of the bookings you would like to see.")
+        self.lbl = tk.Label(self.frame,
+                            text= "Please add the date of the bookings you would like to see.")
         self.lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.datelbl = tk.Label(self.frame, text = "Date:")
@@ -442,7 +477,7 @@ class TablesMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table: ")
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new table:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.peoplelbl = tk.Label(self.frame, text = "Number of seats:")
@@ -463,7 +498,8 @@ class TablesMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the table you want to delete:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.tablelbl = tk.Label(self.frame, text = "Table ID:")
@@ -479,19 +515,23 @@ class TablesMenu():
         if check == None:
             # deletes table
             wilsonskitchen.tables.delete_table(self.table.get())
-            self.lbl = tk.Label(self.frame, text= "The Table has been deleted from the database.")
+            self.lbl = tk.Label(self.frame,
+                                text="The Table has been deleted from the database.")
             self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Table %s has been deleted.", self.table.get())
         else:
-            self.lbl = tk.Label(self.frame, text= "You cannot delete this table as there are bookings made for it.")
+            self.lbl = tk.Label(self.frame,
+                                text="You cannot delete this table as there are "
+                                    + "bookings made for it.")
             self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-            LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.", self.table.get())
+            LOGGER.info("Table %s coudn't be deleted as there are bookings made for it.",
+                            self.table.get())
 
     def show_update_table(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table: ")
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the table:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.tablelbl = tk.Label(self.frame, text = "Table ID:")
@@ -504,7 +544,9 @@ class TablesMenu():
         self.people = tk.Entry(self.frame)
         self.people.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Update Table", command=self.update_a_table)
+        self.btn = tk.Button(self.frame,
+                            text="Update Table",
+                            command=self.update_a_table)
         self.btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def update_a_table(self):
@@ -513,13 +555,17 @@ class TablesMenu():
         if check == None:
             # updates table details
             wilsonskitchen.tables.update_table(self.table.get(), self.people.get())
-            self.lbl = tk.Label(self.frame, text= "The details of the table have been updated.")
+            self.lbl = tk.Label(self.frame,
+                                text="The details of the table have been updated.")
             self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Details of table %s has been updated", self.table.get())
         else:
-            self.lbl = tk.Label(self.frame, text= "You cannot update this table as there are bookings made for it.")
+            self.lbl = tk.Label(self.frame,
+                                text="You cannot update this table as there are "
+                                    + "bookings made for it.")
             self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-            LOGGER.info("Table %s coudn't be updated, due to bookings made for it.", self.table.get())
+            LOGGER.info("Table %s coudn't be updated, due to bookings made for it.",
+                            self.table.get())
 
     def see_tables(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
@@ -559,12 +605,15 @@ class MenuandOrdersMenu():
         self.number = tk.Entry(self.frame)
         self.number.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Enter items", command=self.enter_items_for_order)
+        self.btn = tk.Button(self.frame,
+                            text="Enter items",
+                            command=self.enter_items_for_order)
         self.btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def enter_items_for_order(self):
         for i in range(0, int(self.number.get())):
-            self.lbl = tk.Label(self.frame, text= "Please enter an item for the order:")
+            self.lbl = tk.Label(self.frame,
+                                text= "Please enter an item for the order:")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.productlbl = tk.Label(self.frame, text = "Product name:")
@@ -577,7 +626,9 @@ class MenuandOrdersMenu():
             self.quantity = tk.Entry(self.frame)
             self.quantity.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
 
-            self.btn = tk.Button(self.frame, text="Add item/s to order", command=self.add_item_to_order)
+            self.btn = tk.Button(self.frame,
+                                text="Add item/s to order",
+                                command=self.add_item_to_order)
             self.btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
         self.btn = tk.Button(self.frame, text="Done", command=self.add_a_order)
@@ -597,7 +648,9 @@ class MenuandOrdersMenu():
             LOGGER.info("Order has been added to the database.")
         else:
             self.btn.destroy()
-            self.lbl = tk.Label(self.frame, text= "One of the items is out of stock, please check out of stock items.")
+            self.lbl = tk.Label(self.frame,
+                                text="One of the items is out of stock, please "
+                                + "check out of stock items.")
             self.lbl.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Order unable to be added, possibly due to out of stock item.")
 
@@ -605,7 +658,8 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the orders you wish to see:")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the orders you wish to see:")
         self.lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.datelbl = tk.Label(self.frame, text = "Date:")
@@ -631,7 +685,8 @@ class MenuandOrdersMenu():
         for i in range(0, len(orders)):
             length = self.box.size()
             self.box.insert(length+1, f"\n - Order {orders[i][0]} details:")
-            self.box.insert(length+2, f"\n    Date and Time: {orders[i][1]} {orders[i][2]}")
+            self.box.insert(length+2,
+                                f"\n    Date and Time: {orders[i][1]} {orders[i][2]}")
             self.box.insert(length+3, f"\n    Total Price: {orders[i][3]}")
             self.box.insert(length+4, f"\n    Table ID: {orders[i][4]}")
         self.box.grid(row=0, column=1, rowspan=4, padx=5, pady=5)
@@ -644,7 +699,8 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new product: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the new product: ")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.typelbl = tk.Label(self.frame, text = "Type:")
@@ -667,7 +723,9 @@ class MenuandOrdersMenu():
         self.number = tk.Entry(self.frame)
         self.number.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Enter ingredients", command=self.enter_ingredients)
+        self.btn = tk.Button(self.frame,
+                            text="Enter ingredients",
+                            command=self.enter_ingredients)
         self.btn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def enter_ingredients(self):
@@ -675,7 +733,8 @@ class MenuandOrdersMenu():
             self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
             self.frame.grid(row=0, column=2, sticky="nsew")
 
-            self.lbl = tk.Label(self.frame, text= "Please enter an item for the order:")
+            self.lbl = tk.Label(self.frame,
+                                text="Please enter an item for the order:")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.ingredientlbl = tk.Label(self.frame, text = "Ingredient name:")
@@ -688,7 +747,9 @@ class MenuandOrdersMenu():
             self.quantity = tk.Entry(self.frame)
             self.quantity.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
             
-            self.btn = tk.Button(self.frame, text="Add ingredient to product", command=self.add_ing_to_product)
+            self.btn = tk.Button(self.frame,
+                                text="Add ingredient to product",
+                                command=self.add_ing_to_product)
             self.btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             
         self.btn = tk.Button(self.frame, text="Done", command=self.add_a_product)
@@ -705,8 +766,11 @@ class MenuandOrdersMenu():
             wilsonskitchen.ingredientquantitylist.add_item(float(self.quantity.get()))
 
     def add_a_product(self):
-        wilsonskitchen.make_product(self.type.get(), self.name.get(), float(self.price.get()), int(self.number.get()))
-        self.lbl = tk.Label(self.frame, text= "The Product has been added to the database.")
+        wilsonskitchen.make_product(self.type.get(),
+                                    self.name.get(),
+                                    float(self.price.get()),
+                                    int(self.number.get()))
+        self.lbl = tk.Label(self.frame, text="The Product has been added to the database.")
         self.lbl.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         LOGGER.info("Product %s has been added.", self.name.get())
 
@@ -714,7 +778,9 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the product you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the product you want "
+                                + "to delete:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.idlbl = tk.Label(self.frame, text = "Product ID:")
@@ -722,7 +788,9 @@ class MenuandOrdersMenu():
         self.id = tk.Entry(self.frame)
         self.id.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Delete Product", command=self.delete_a_product)
+        self.btn = tk.Button(self.frame,
+                            text="Delete Product",
+                            command=self.delete_a_product)
         self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_a_product(self):
@@ -738,7 +806,7 @@ class MenuandOrdersMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the product: ")
+        self.lbl = tk.Label(self.frame, text= "Please enter the details of the product:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.idlbl = tk.Label(self.frame, text = "Product ID:")
@@ -746,7 +814,8 @@ class MenuandOrdersMenu():
         self.id = tk.Entry(self.frame)
         self.id.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the new details of the product: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the new details of the product:")
         self.lbl.grid(row=2, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.typelbl = tk.Label(self.frame, text = "Type:")
@@ -769,8 +838,11 @@ class MenuandOrdersMenu():
         self.number = tk.Entry(self.frame)
         self.number.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
 
-        self.update_booking_button = tk.Button(self.frame, text="Update product", command=self.update_a_product)
-        self.update_booking_button.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.update_booking_button = tk.Button(self.frame,
+                                            text="Update product",
+                                            command=self.update_a_product)
+        self.update_booking_button.grid(row=7, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def update_a_product(self):
         # deletes product
@@ -886,7 +958,8 @@ class IngredientsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new ingredient: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the new ingredient:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.namelbl = tk.Label(self.frame, text = "Name:")
@@ -909,7 +982,9 @@ class IngredientsMenu():
         self.cost = tk.Entry(self.frame)
         self.cost.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Add Ingredient", command=self.add_a_ingredient)
+        self.btn = tk.Button(self.frame,
+                            text="Add Ingredient",
+                            command=self.add_a_ingredient)
         self.btn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def add_a_ingredient(self):
@@ -926,7 +1001,8 @@ class IngredientsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the ingredient you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the ingredient you want to delete:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.namelbl = tk.Label(self.frame, text = "Name:")
@@ -934,7 +1010,9 @@ class IngredientsMenu():
         self.name = tk.Entry(self.frame)
         self.name.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Delete Ingredient", command=self.delete_an_ingredient)
+        self.btn = tk.Button(self.frame,
+                            text="Delete Ingredient",
+                            command=self.delete_an_ingredient)
         self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_an_ingredient(self):
@@ -945,7 +1023,8 @@ class IngredientsMenu():
         if uses == []:
             # deletes ingredient
             wilsonskitchen._ingredients.delete_ingredient(ingid)
-            self.lbl = tk.Label(self.frame, text= "This Ingredient has been deleted.")
+            self.lbl = tk.Label(self.frame,
+                                text="This Ingredient has been deleted.")
             self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             LOGGER.info("Ingredient %s has been deleted.", self.name.get())
         else:
@@ -953,21 +1032,25 @@ class IngredientsMenu():
                                                   + "\non the menu, would you like to"
                                                   + "\ndelete these products as well?.")
             self.lbl.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-            self.btn = tk.Button(self.frame, text="Delete products as well", command=partial(self.delete_ingredient_and_products, ingid))
+            self.btn = tk.Button(self.frame,
+                                text="Delete products as well",
+                                command=partial(self.delete_ingredient_and_products, ingid))
             self.btn.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_ingredient_and_products(self, ingid):
         # deletes ingredient, products the ingredient is used for and the uses records
         wilsonskitchen.delete_ingredient_and_products(ingid)
-        self.lbl = tk.Label(self.frame, text= "The Ingredient has been deleted from the database.")
+        self.lbl = tk.Label(self.frame,
+                            text="The Ingredient has been deleted from the database.")
         self.lbl.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
-        LOGGER.info("Ingredient %s and all of its uses have been deleted.", self.name.get())
+        LOGGER.info("Ingredient %s and all of its uses have been deleted.",
+                        self.name.get())
 
     def show_update_ingredient(self):
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the ingredient: ")
+        self.lbl = tk.Label(self.frame, text="Please enter the details of the ingredient:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.namelbl = tk.Label(self.frame, text = "Name:")
@@ -990,8 +1073,11 @@ class IngredientsMenu():
         self.cost = tk.Entry(self.frame)
         self.cost.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
 
-        self.update_booking_button = tk.Button(self.frame, text="Update Ingredient", command=self.update_a_ingredient)
-        self.update_booking_button.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.update_booking_button = tk.Button(self.frame,
+                                            text="Update Ingredient",
+                                            command=self.update_a_ingredient)
+        self.update_booking_button.grid(row=5, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def update_a_ingredient(self):
         # updates ingredient details
@@ -1022,7 +1108,7 @@ class IngredientsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the new batch: ")
+        self.lbl = tk.Label(self.frame, text="Please enter the details of the new batch:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.ingredientlbl = tk.Label(self.frame, text = "Ingredient name:")
@@ -1056,7 +1142,8 @@ class IngredientsMenu():
         self.frame = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         self.frame.grid(row=0, column=2, sticky="nsew")
 
-        self.lbl = tk.Label(self.frame, text= "Please enter the details of the batch you want to delete: ")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the details of the batch you want to delete:")
         self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.namelbl = tk.Label(self.frame, text = "Ingredient name:")
@@ -1116,8 +1203,11 @@ class IngredientsMenu():
         self.date = tk.Entry(self.frame)
         self.date.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
 
-        self.update_booking_button = tk.Button(self.frame, text="Update Batch", command=self.update_a_batch)
-        self.update_booking_button.grid(row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+        self.update_booking_button = tk.Button(self.frame,
+                                            text="Update Batch",
+                                            command=self.update_a_batch)
+        self.update_booking_button.grid(row=7, column=0, columnspan=2,
+                                            sticky="ew", padx=10, pady=10)
 
     def update_a_batch(self):
         # selects ingredient id
@@ -1152,7 +1242,8 @@ class IngredientsMenu():
         self.frame.grid(row=0, column=2, sticky="nsew")
         # deletes all out of date ingredient batches
         wilsonskitchen.delete_outofdate_ingredients()
-        self.lbl = tk.Label(self.frame, text= "All expired ingredient batches have been deleted.")
+        self.lbl = tk.Label(self.frame,
+                            text="All expired ingredient batches have been deleted.")
         self.lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         LOGGER.info("Out of date ingredient batches have been deleted.")
 
@@ -1171,7 +1262,8 @@ class StaffMenu():
                                                  + "\nto add a new member.")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         else:
-            self.lbl = tk.Label(self.frame, text= "Please enter the details of the new employee: ")
+            self.lbl = tk.Label(self.frame,
+                                text="Please enter the details of the new employee:")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -1199,11 +1291,14 @@ class StaffMenu():
             self.accesslevel = tk.Entry(self.frame)
             self.accesslevel.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
 
-            self.btn = tk.Button(self.frame, text="Next", command=self.enter_password)
+            self.btn = tk.Button(self.frame,
+                                text="Next",
+                                command=self.enter_password)
             self.btn.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def enter_password(self):
-        self.lbl = tk.Label(self.frame, text= "Please enter the password for the new employee:")
+        self.lbl = tk.Label(self.frame,
+                            text="Please enter the password for the new employee:")
         self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.passwordlbl = tk.Label(self.frame, text = "Password:")
@@ -1216,7 +1311,9 @@ class StaffMenu():
         self.password1 = tk.Entry(self.frame)
         self.password1.grid(row=9, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Add Employee", command=self.add_a_member)
+        self.btn = tk.Button(self.frame,
+                            text="Add Employee",
+                            command=self.add_a_member)
         self.btn.grid(row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def add_a_member(self):
@@ -1229,11 +1326,15 @@ class StaffMenu():
                                                                  self.job.get(),
                                                                  self.accesslevel.get(),
                                                                  self.password.get())
-            self.lbl = tk.Label(self.frame, text= f"The employee has been added, the username is {newusername}")
+            self.lbl = tk.Label(self.frame,
+                                text= f"The employee has been added, "
+                                    + "the username is {newusername}")
             self.lbl.grid(row=11, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
-            LOGGER.info("Staff Member %s %s has been added.", self.fname.get(), self.sname.get())
+            LOGGER.info("Staff Member %s %s has been added.",
+                            self.fname.get(), self.sname.get())
         else:
-            self.lbl = tk.Label(self.frame, text= "Your password entries do not match, please re-enter")
+            self.lbl = tk.Label(self.frame,
+                                text="Your password entries do not match, please re-enter:")
             self.lbl.grid(row=7, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
             self.lbl.tkraise()
 
@@ -1245,7 +1346,9 @@ class StaffMenu():
                                                  + "\nto delete a new member.")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         else:
-            self.lbl = tk.Label(self.frame, text= "Please enter the details of the employee you want to delete: ")
+            self.lbl = tk.Label(self.frame,
+                                text="Please enter the details of the employee you "
+                                    + "want to delete:")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -1253,7 +1356,9 @@ class StaffMenu():
             self.email = tk.Entry(self.frame)
             self.email.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-            self.btn = tk.Button(self.frame, text="Delete Employee", command=self.delete_a_member)
+            self.btn = tk.Button(self.frame,
+                                text="Delete Employee",
+                                command=self.delete_a_member)
             self.btn.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def delete_a_member(self):
@@ -1308,7 +1413,9 @@ class StaffMenu():
         self.password1 = tk.Entry(self.frame)
         self.password1.grid(row=8, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Update Employee", command=self.update_account)
+        self.btn = tk.Button(self.frame,
+                            text="Update Employee",
+                            command=self.update_account)
         self.btn.grid(row=9, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def update_account(self):
@@ -1322,9 +1429,12 @@ class StaffMenu():
                                                           self.password.get())
             self.lbl = tk.Label(self.frame, text= "Your account has been updated")
             self.lbl.grid(row=10, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
-            LOGGER.info("Staff Member %s %s has been updated.", self.fname.get(), self.sname.get())
+            LOGGER.info("Staff Member %s %s has been updated.",
+                            self.fname.get(), self.sname.get())
         else:
-            self.lbl = tk.Label(self.frame, text= "Your password entries do not match, please re-enter")
+            self.lbl = tk.Label(self.frame,
+                                text="Your password entries do not match, "
+                                    + "please re-enter:")
             self.lbl.grid(row=6, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
             self.lbl.tkraise()
 
@@ -1336,7 +1446,8 @@ class StaffMenu():
                                                  + "\nto update a new member.")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         else:
-            self.lbl = tk.Label(self.frame, text= "Please enter the details of the Employee: ")
+            self.lbl = tk.Label(self.frame,
+                                text="Please enter the details of the Employee:")
             self.lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.oldemaillbl = tk.Label(self.frame, text = "Old email:")
@@ -1344,7 +1455,8 @@ class StaffMenu():
             self.oldemail = tk.Entry(self.frame)
             self.oldemail.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
-            self.lbl = tk.Label(self.frame, text= "Please enter the new details of the Employee:")
+            self.lbl = tk.Label(self.frame,
+                                text="Please enter the new details of the Employee:")
             self.lbl.grid(row=2, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
             self.emaillbl = tk.Label(self.frame, text = "Email:")
@@ -1372,8 +1484,11 @@ class StaffMenu():
             self.accesslevel = tk.Entry(self.frame)
             self.accesslevel.grid(row=7, column=1, sticky="ew", padx=5, pady=5)
 
-            self.update_booking_button = tk.Button(self.frame, text="Update Employee", command=self.enter_newemployee_password)
-            self.update_booking_button.grid(row=8, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+            self.update_booking_button = tk.Button(self.frame,
+                                                text="Update Employee",
+                                                command=self.enter_newemployee_password)
+            self.update_booking_button.grid(row=8, column=0, columnspan=2,
+                                                sticky="ew", padx=10, pady=10)
 
     def enter_newemployee_password(self):
         self.lbl = tk.Label(self.frame, text= "Please enter your new password:")
@@ -1389,7 +1504,9 @@ class StaffMenu():
         self.password1 = tk.Entry(self.frame)
         self.password1.grid(row=11, column=1, sticky="ew", padx=5, pady=5)
 
-        self.btn = tk.Button(self.frame, text="Update Employee", command=self.update_member)
+        self.btn = tk.Button(self.frame,
+                            text="Update Employee",
+                            command=self.update_member)
         self.btn.grid(row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def update_member(self):
@@ -1404,10 +1521,14 @@ class StaffMenu():
                                                      self.accesslevel.get(),
                                                      self.password.get())
             self.lbl = tk.Label(self.frame, text= "The employee has been updated")
-            self.lbl.grid(row=13, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
-            LOGGER.info("Staff Member %s %s has been updated.", self.fname.get(), self.sname.get())
+            self.lbl.grid(row=13, column=0, columnspan=2,
+                            sticky="ew", padx=5, pady=5)
+            LOGGER.info("Staff Member %s %s has been updated.",
+                            self.fname.get(), self.sname.get())
         else:
-            self.lbl = tk.Label(self.frame, text= "Your password entries do not match, please re-enter")
+            self.lbl = tk.Label(self.frame, 
+                                text="Your password entries do not match, please "
+                                    + "re-enter:")
             self.lbl.grid(row=9, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
             self.lbl.tkraise()
 
@@ -1419,9 +1540,11 @@ class StaffMenu():
         self.box = tk.Listbox(self.frame, height=30, width=30)
         for i in range(0, len(staffmembers)):
             length = self.box.size()
-            self.box.insert(length+1, f"\n - Staff Member {staffmembers[i][0]}'s details:")
+            self.box.insert(length+1,
+                                f"\n - Staff Member {staffmembers[i][0]}'s details:")
             self.box.insert(length+2, f"\n    Email: {staffmembers[i][1]}")
-            self.box.insert(length+3, f"\n    Name: {staffmembers[i][2]} {staffmembers[i][3]}")
+            self.box.insert(length+3, 
+                                f"\n    Name: {staffmembers[i][2]} {staffmembers[i][3]}")
             self.box.insert(length+4, f"\n    Job Title: {staffmembers[i][4]}")
             self.box.insert(length+5, f"\n    Access Level: {staffmembers[i][5]}")
             self.box.insert(length+6, f"\n    Username: {staffmembers[i][6]}")
@@ -1431,7 +1554,8 @@ class StaffMenu():
 try:
 
     def loginfunc(username_lbl, password_lbl):
-        status  = wilsonskitchen.staffmembers.check_login(username_lbl.get(), password_lbl.get())
+        status  = wilsonskitchen.staffmembers.check_login(username_lbl.get(),
+                                                            password_lbl.get())
         attempts = userlogin.attempts
         if status[0] == True:
             LOGGER.info("%s has logged in.", username_lbl.get())
@@ -1457,16 +1581,22 @@ try:
                 frame_login = tk.Frame(window_login, bg="LightSteelBlue")
                 frame_login.grid(row=0, column=0, sticky="nsew")
 
-                lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered incorrect details.")
+                lbl = tk.Label(frame_login,
+                            bg="AliceBlue",
+                            text="You have entered incorrect details.")
                 lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
             else:
                 frame_login = tk.Frame(window_login, bg="LightSteelBlue")
                 frame_login.grid(row=0, column=0, sticky="nsew")
 
-                lbl = tk.Label(frame_login, bg="AliceBlue", text="You have entered the incorrect password.")
+                lbl = tk.Label(frame_login,
+                            bg="AliceBlue",
+                            text="You have entered the incorrect password.")
                 lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
-            lbl = tk.Label(frame_login, bg="AliceBlue", text="Please re-enter your details:")
+            lbl = tk.Label(frame_login,
+                        bg="AliceBlue",
+                        text="Please re-enter your details:")
             lbl.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
             username_lbl = tk.Label(frame_login, bg="AliceBlue", text="Username:")
@@ -1479,7 +1609,10 @@ try:
             password_lbl = tk.Entry(frame_login)
             password_lbl.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
 
-            login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
+            login_btn = tk.Button(frame_login,
+                                bg="AliceBlue",
+                                text="Login",
+                                command=partial(loginfunc, username_lbl, password_lbl))
             login_btn.grid(row=4, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     def open_customers_menu():
@@ -1487,11 +1620,21 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         custmenu = CustomersMenu(fr_main)
         
-        btn_add_customer = tk.Button(fr_submenu, text="Add new customer", command=custmenu.show_add_new_customer)
-        btn_delete_customer = tk.Button(fr_submenu, text="Delete customer", command=custmenu.show_delete_customer)
-        btn_update_customer = tk.Button(fr_submenu, text="Update customer", command=custmenu.show_update_customer)
-        btn_see_customer = tk.Button(fr_submenu, text="See Customer", command=custmenu.see_customer)
-        btn_see_customers = tk.Button(fr_submenu, text="See Customers", command=custmenu.see_customers)
+        btn_add_customer = tk.Button(fr_submenu,
+                                    text="Add new customer",
+                                    command=custmenu.show_add_new_customer)
+        btn_delete_customer = tk.Button(fr_submenu,
+                                        text="Delete customer",
+                                        command=custmenu.show_delete_customer)
+        btn_update_customer = tk.Button(fr_submenu,
+                                        text="Update customer",
+                                        command=custmenu.show_update_customer)
+        btn_see_customer = tk.Button(fr_submenu,
+                                    text="See Customer",
+                                    command=custmenu.see_customer)
+        btn_see_customers = tk.Button(fr_submenu,
+                                    text="See Customers",
+                                    command=custmenu.see_customers)
         
         btn_add_customer.grid(row=0, column=1, sticky="ew", padx=20, pady=10)
         btn_delete_customer.grid(row=1, column=1, sticky="ew", padx=20, pady=10)
@@ -1507,11 +1650,21 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         bookmenu = BookingsMenu(fr_main)
 
-        btn_add_booking = tk.Button(fr_submenu, text="Add new booking", command=bookmenu.show_add_booking)
-        btn_delete_booking = tk.Button(fr_submenu, text="Delete booking", command=bookmenu.show_delete_booking)
-        btn_update_booking = tk.Button(fr_submenu, text="Update booking", command=bookmenu.show_update_booking)
-        btn_see_bookings = tk.Button(fr_submenu, text="See bookings", command=bookmenu.show_see_bookings)
-        btn_see_bill = tk.Button(fr_submenu, text="See Bill", command=bookmenu.show_see_bill)
+        btn_add_booking = tk.Button(fr_submenu,
+                                    text="Add new booking",
+                                    command=bookmenu.show_add_booking)
+        btn_delete_booking = tk.Button(fr_submenu,
+                                    text="Delete booking",
+                                    command=bookmenu.show_delete_booking)
+        btn_update_booking = tk.Button(fr_submenu,
+                                    text="Update booking",
+                                    command=bookmenu.show_update_booking)
+        btn_see_bookings = tk.Button(fr_submenu,
+                                    text="See bookings",
+                                    command=bookmenu.show_see_bookings)
+        btn_see_bill = tk.Button(fr_submenu,
+                                text="See Bill",
+                                command=bookmenu.show_see_bill)
 
         btn_add_booking.grid(row=0, column=1, sticky="ew", padx=20, pady=10)
         btn_delete_booking.grid(row=1, column=1, sticky="ew", padx=20, pady=10)
@@ -1527,10 +1680,18 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         tablemenu = TablesMenu(fr_main)
 
-        btn_add_table = tk.Button(fr_submenu, text="Add new table", command=tablemenu.show_add_table)
-        btn_delete_table = tk.Button(fr_submenu, text="Delete table", command=tablemenu.show_delete_table)
-        btn_update_table = tk.Button(fr_submenu, text="Update table", command=tablemenu.show_update_table)
-        btn_see_tables = tk.Button(fr_submenu, text="See tables", command=tablemenu.see_tables)
+        btn_add_table = tk.Button(fr_submenu,
+                                text="Add new table",
+                                command=tablemenu.show_add_table)
+        btn_delete_table = tk.Button(fr_submenu,
+                                    text="Delete table",
+                                    command=tablemenu.show_delete_table)
+        btn_update_table = tk.Button(fr_submenu,
+                                    text="Update table",
+                                    command=tablemenu.show_update_table)
+        btn_see_tables = tk.Button(fr_submenu,
+                                text="See tables",
+                                command=tablemenu.see_tables)
 
         btn_add_table.grid(row=0, column=1, sticky="ew", padx=35, pady=10)
         btn_delete_table.grid(row=1, column=1, sticky="ew", padx=35, pady=10)
@@ -1545,14 +1706,30 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         menuorder = MenuandOrdersMenu(fr_main)
 
-        btn_add_order = tk.Button(fr_submenu, text="Add new order", command=menuorder.show_add_order)
-        btn_see_orders = tk.Button(fr_submenu, text="See orders", command=menuorder.show_see_orders)
-        btn_add_product = tk.Button(fr_submenu, text="Add new product", command=menuorder.show_add_product)
-        btn_delete_product = tk.Button(fr_submenu, text="Delete product", command=menuorder.show_delete_product)
-        btn_update_product = tk.Button(fr_submenu, text="Update product", command=menuorder.show_update_product)
-        btn_see_products = tk.Button(fr_submenu, text="See products", command=menuorder.see_products)
-        btn_print_menu = tk.Button(fr_submenu, text="Print menu", command=menuorder.see_menu)
-        btn_check_products = tk.Button(fr_submenu, text="Check stock of products", command=menuorder.check_out_of_stock)
+        btn_add_order = tk.Button(fr_submenu,
+                                text="Add new order",
+                                command=menuorder.show_add_order)
+        btn_see_orders = tk.Button(fr_submenu,
+                                text="See orders",
+                                command=menuorder.show_see_orders)
+        btn_add_product = tk.Button(fr_submenu,
+                                    text="Add new product",
+                                    command=menuorder.show_add_product)
+        btn_delete_product = tk.Button(fr_submenu,
+                                    text="Delete product",
+                                    command=menuorder.show_delete_product)
+        btn_update_product = tk.Button(fr_submenu,
+                                    text="Update product",
+                                    command=menuorder.show_update_product)
+        btn_see_products = tk.Button(fr_submenu,
+                                    text="See products",
+                                    command=menuorder.see_products)
+        btn_print_menu = tk.Button(fr_submenu,
+                                text="Print menu",
+                                command=menuorder.see_menu)
+        btn_check_products = tk.Button(fr_submenu,
+                                    text="Check stock of products",
+                                    command=menuorder.check_out_of_stock)
 
         btn_add_order.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
         btn_see_orders.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -1571,15 +1748,33 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         ingmenu = IngredientsMenu(fr_main)
 
-        btn_add_ingredient = tk.Button(fr_submenu, text="Add new ingredient", command=ingmenu.show_add_ingredient)
-        btn_delete_ingredient = tk.Button(fr_submenu, text="Delete ingredient", command=ingmenu.show_delete_ingredient)
-        btn_update_ingredient = tk.Button(fr_submenu, text="Update ingredient", command=ingmenu.show_update_ingredient)
-        btn_see_ingredients = tk.Button(fr_submenu, text="See ingredients", command=ingmenu.see_ingredients)
-        btn_add_batch = tk.Button(fr_submenu, text="Add new batch", command=ingmenu.show_add_batch)
-        btn_delete_batch = tk.Button(fr_submenu, text="Delete batch", command=ingmenu.show_delete_batch)
-        btn_update_batch = tk.Button(fr_submenu, text="Update batch", command=ingmenu.show_update_batch)
-        btn_see_batches = tk.Button(fr_submenu, text="See batches", command=ingmenu.see_batches)
-        btn_delete_batches = tk.Button(fr_submenu, text="Delete expired batches", command=ingmenu.delete_expired)
+        btn_add_ingredient = tk.Button(fr_submenu,
+                                    text="Add new ingredient",
+                                        command=ingmenu.show_add_ingredient)
+        btn_delete_ingredient = tk.Button(fr_submenu,
+                                        text="Delete ingredient",
+                                        command=ingmenu.show_delete_ingredient)
+        btn_update_ingredient = tk.Button(fr_submenu,
+                                        text="Update ingredient",
+                                        command=ingmenu.show_update_ingredient)
+        btn_see_ingredients = tk.Button(fr_submenu,
+                                        text="See ingredients",
+                                        command=ingmenu.see_ingredients)
+        btn_add_batch = tk.Button(fr_submenu,
+                                text="Add new batch",
+                                command=ingmenu.show_add_batch)
+        btn_delete_batch = tk.Button(fr_submenu,
+                                    text="Delete batch",
+                                    command=ingmenu.show_delete_batch)
+        btn_update_batch = tk.Button(fr_submenu,
+                                    text="Update batch",
+                                    command=ingmenu.show_update_batch)
+        btn_see_batches = tk.Button(fr_submenu,
+                                    text="See batches",
+                                    command=ingmenu.see_batches)
+        btn_delete_batches = tk.Button(fr_submenu,
+                                    text="Delete expired batches",
+                                    command=ingmenu.delete_expired)
 
         btn_add_ingredient.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
         btn_delete_ingredient.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -1599,11 +1794,21 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width=325)
         staffmenu = StaffMenu(fr_main)
 
-        btn_add_staff = tk.Button(fr_submenu, text="Add new employee", command=staffmenu.show_add_member)
-        btn_delete_staff = tk.Button(fr_submenu, text="Delete an employee", command=staffmenu.show_delete_member)
-        btn_update_self = tk.Button(fr_submenu, text="Update account details", command=staffmenu.show_update_account)
-        btn_update_staff = tk.Button(fr_submenu, text="Update an employee", command=staffmenu.show_update_member)
-        btn_see_staffs = tk.Button(fr_submenu, text="See employees", command=staffmenu.see_employees)
+        btn_add_staff = tk.Button(fr_submenu,
+                                text="Add new employee",
+                                command=staffmenu.show_add_member)
+        btn_delete_staff = tk.Button(fr_submenu,
+                                    text="Delete an employee",
+                                    command=staffmenu.show_delete_member)
+        btn_update_self = tk.Button(fr_submenu,
+                                    text="Update account details",
+                                    command=staffmenu.show_update_account)
+        btn_update_staff = tk.Button(fr_submenu,
+                                    text="Update an employee",
+                                    command=staffmenu.show_update_member)
+        btn_see_staffs = tk.Button(fr_submenu,
+                                text="See employees",
+                                command=staffmenu.see_employees)
 
         btn_add_staff.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
         btn_delete_staff.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
@@ -1618,7 +1823,10 @@ try:
         fr_main = tk.Frame(window_main, bg = "lightsteelblue", width = 200)
         fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
-        lbl = tk.Label(fr_main, bg="AliceBlue", text="Goodbye!", font=("lucida 20 bold italic", 15))
+        lbl = tk.Label(fr_main,
+                    bg="AliceBlue",
+                    text="Goodbye!",
+                    font=("lucida 20 bold italic", 15))
         lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
         LOGGER.info("User has logged out.")
@@ -1633,7 +1841,9 @@ try:
     frame_login = tk.Frame(window_login, bg="LightSteelBlue")
     frame_login.grid(row=0, column=0, sticky="nsew")
 
-    lbl = tk.Label(frame_login, bg="AliceBlue", text="Please enter your details:")
+    lbl = tk.Label(frame_login,
+                bg="AliceBlue",
+                text="Please enter your details:")
     lbl.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     username_lbl = tk.Label(frame_login, bg="AliceBlue", text="Username:")
@@ -1648,7 +1858,10 @@ try:
 
     userlogin = Login()
 
-    login_btn = tk.Button(frame_login, bg="AliceBlue", text="Login", command=partial(loginfunc, username_lbl, password_lbl))
+    login_btn = tk.Button(frame_login,
+                        bg="AliceBlue",
+                        text="Login",
+                        command=partial(loginfunc, username_lbl, password_lbl))
     login_btn.grid(row=3, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
     #main
@@ -1666,7 +1879,10 @@ try:
     fr_mainmenu.grid(row=0, column=0, sticky="nsew")
     fr_main.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
-    lbl = tk.Label(fr_main, bg="AliceBlue", text="Welcome!", font=("lucida 20 bold italic", 15))
+    lbl = tk.Label(fr_main,
+                bg="AliceBlue",
+                text="Welcome!",
+                font=("lucida 20 bold italic", 15))
     lbl.grid(row=2, column=3, sticky="ew", padx=10, pady=10)
 
     btn_customers = tk.Button(fr_mainmenu,
@@ -1682,51 +1898,19 @@ try:
                             text="Menu and Orders",
                             command=open_menu_order_menu)
     btn_ingredients = tk.Button(fr_mainmenu,
-                                text="Ingredients",
-                                command=open_ingredients_menu)
-    btn_staff = tk.Button(fr_mainmenu,
-                        text="Employees",
-                        command=open_staff_menu)
-    btn_logout = tk.Button(fr_mainmenu,
-                        text="Logout",
-                        command=logout)
+                            text="Ingredients",
+                            command=open_ingredients_menu)
+    btn_staff = tk.Button(fr_mainmenu, text="Employees", command=open_staff_menu)
+    btn_logout = tk.Button(fr_mainmenu, text="Logout", command=logout)
 
 
-    btn_customers.grid(row=0,
-                    column=0,
-                    sticky="ew",
-                    padx=10,
-                    pady=10)
-    btn_bookings.grid(row=1,
-                    column=0,
-                    sticky="ew",
-                    padx=10,
-                    pady=10)
-    btn_tables.grid(row=2,
-                    column=0,
-                    sticky="ew",
-                    padx=10,
-                    pady=10)
-    btn_menu_order.grid(row=3,
-                        column=0,
-                        sticky="ew",
-                        padx=10,
-                        pady=10)
-    btn_ingredients.grid(row=4,
-                        column=0,
-                        sticky="ew",
-                        padx=10,
-                        pady=10)
-    btn_staff.grid(row=5,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=10)
-    btn_logout.grid(row=6,
-                    column=0,
-                    sticky="ew",
-                    padx=10,
-                    pady=10)
+    btn_customers.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+    btn_bookings.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+    btn_tables.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
+    btn_menu_order.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
+    btn_ingredients.grid(row=4, column=0, sticky="ew", padx=10, pady=10)
+    btn_staff.grid(row=5, column=0, sticky="ew", padx=10, pady=10)
+    btn_logout.grid(row=6, column=0, sticky="ew", padx=10, pady=10)
 
     window_main.mainloop()
 
